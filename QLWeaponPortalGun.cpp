@@ -1,4 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//----------------------------------------
+// Quarter Life
+//
+// MIT license
+//
+//  (\-/)
+// (='.'=)
+// (")-(")o
+//----------------------------------------
 
 #include "QL.h"
 #include "QLWeaponPortalGun.h"
@@ -6,6 +14,7 @@
 AQLWeaponPortalGun::AQLWeaponPortalGun()
 {
     Name = "portal gun";
+    SetCrosshairTexture(TEXT("/Game/Textures/Crosshair/portal_gun_crosshair_original_empty_processed"));
 }
 
 void AQLWeaponPortalGun::Fire()

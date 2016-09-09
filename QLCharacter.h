@@ -1,4 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//----------------------------------------
+// Quarter Life
+//
+// MIT license
+//
+//  (\-/)
+// (='.'=)
+// (")-(")o
+//----------------------------------------
 
 #pragma once
 
@@ -13,11 +21,19 @@ const int maxNumWeapon = 10;
 class QL_API QLWeaponManager
 {
 public:
-    QLWeaponManager();
-    ~QLWeaponManager();
     AQLWeapon* CurrentWeapon;
+    AQLWeapon* LastWeapon;
+
+    QLWeaponManager() {};
+    QLWeaponManager(AQLCharacter* QLCharacter);
+    ~QLWeaponManager();
     TMap<FString, AQLWeapon*> WeaponList;
     bool IsEquipped(const FString& Name);
+    void ChangeCurrentWeapon(AQLWeapon* Weapon);
+    void PickUpWeapon(AQLWeapon* Weapon);
+
+protected:
+    AQLCharacter* QLCharacter;
 };
 
 UCLASS()
@@ -26,6 +42,8 @@ class QL_API AQLCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
+    QLWeaponManager WeaponManager;
+
     UPROPERTY(VisibleAnywhere)
     UCameraComponent* QLCameraComponent;
 
@@ -44,6 +62,8 @@ public:
     virtual void Landed(const FHitResult& Hit) override;
 
     void RayTrace();
+
+    void UnlockAllWeapon();
 
     // Handles input for moving forward and backward.
     UFUNCTION()
@@ -94,10 +114,12 @@ public:
     UFUNCTION()
     void SwitchToNeutronAWP();
 
+    UFUNCTION()
+    void SwitchToLastWeapon();
+
     // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health pickup component")
 
-private:
-    QLWeaponManager WeaponManager;
+protected:
     float RunningTime;
     float FixedInterval;
     int DoubleJumpCounter;

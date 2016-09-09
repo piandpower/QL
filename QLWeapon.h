@@ -1,4 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//----------------------------------------
+// Quarter Life
+//
+// MIT license
+//
+//  (\-/)
+// (='.'=)
+// (")-(")o
+//----------------------------------------
 
 #pragma once
 
@@ -22,6 +30,7 @@ protected:
     bool bIsFireHeldDown;
     bool bIsAltFireHeldDown;
     AQLCharacter* owner;
+    UTexture2D* CrosshairTexture;
 
 public:
     // Sets default values for this actor's properties
@@ -42,4 +51,8 @@ public:
     virtual void AltFireRepeat() {};
 
     void SetOwner(AQLCharacter* owner);
+
+    UTexture2D* GetCrosshairTexture()  const;
+    void SetCrosshairTexture(const TCHAR* textureName);
+    const FString& GetWeaponName() const;
 };

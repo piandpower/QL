@@ -1,11 +1,24 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//----------------------------------------
+// Quarter Life
+//
+// MIT license
+//
+//  (\-/)
+// (='.'=)
+// (")-(")o
+//----------------------------------------
 
 #include "QL.h"
 #include "QLCharacter.h"
 
-QLWeaponManager::QLWeaponManager()
+QLWeaponManager::QLWeaponManager(AQLCharacter* QLCharacter)
 {
+    this->QLCharacter = QLCharacter;
+    WeaponList.Add("GravityGun", nullptr);
+    WeaponList.Add("PortalGun",  nullptr);
+    WeaponList.Add("NeutronAWP", nullptr);
     CurrentWeapon = nullptr;
+    LastWeapon = nullptr;
 }
 
 QLWeaponManager::~QLWeaponManager()
@@ -20,6 +33,33 @@ QLWeaponManager::~QLWeaponManager()
     }
 }
 
+void QLWeaponManager::ChangeCurrentWeapon(AQLWeapon* Weapon)
+{
+    // if the target weapon exists
+    // note that the current weapon is allowed to be nonexistent
+    if (Weapon != nullptr)
+    {
+        // if the target weapon is not the same with the current weapon
+        if (CurrentWeapon != Weapon)
+        {
+            LastWeapon = CurrentWeapon;
+            CurrentWeapon = Weapon;
+            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString(TEXT("switch to ")) + Weapon->GetWeaponName());
+        }
+    }
+}
+
+void QLWeaponManager::PickUpWeapon(AQLWeapon* Weapon)
+{
+    // if the weapon exists
+    if (Weapon)
+    {
+        ChangeCurrentWeapon(Weapon);
+        Weapon->SetOwner(QLCharacter);
+    }
+}
+
+// check if the specified weapon is equipped by the player
 bool QLWeaponManager::IsEquipped(const FString& Name)
 {
     if (WeaponList[Name] != nullptr)
@@ -33,7 +73,7 @@ bool QLWeaponManager::IsEquipped(const FString& Name)
 }
 
 // Sets default values
-AQLCharacter::AQLCharacter()
+AQLCharacter::AQLCharacter() : WeaponManager(this)
 {
     RunningTime = 0.0f;
     FixedInterval = 1.0f;
@@ -46,7 +86,7 @@ AQLCharacter::AQLCharacter()
     PrimaryActorTick.bCanEverTick = true;
 
     // movement
-    GetCharacterMovement()->JumpZVelocity = 500.0f;
+    GetCharacterMovement()->JumpZVelocity = 400.0f;
     GetCharacterMovement()->AirControl = 1.0f;
     GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
     MaxWalkSpeed = 600.0f;
@@ -69,16 +109,6 @@ AQLCharacter::~AQLCharacter()
 void AQLCharacter::BeginPlay()
 {
     Super::BeginPlay();
-
-    // test only
-    WeaponManager.WeaponList.Add("GravityGun", GetWorld()->SpawnActor<AQLWeaponGravityGun>(AQLWeaponGravityGun::StaticClass()));
-    WeaponManager.WeaponList.Add("PortalGun",  GetWorld()->SpawnActor<AQLWeaponPortalGun>(AQLWeaponPortalGun::StaticClass()));
-    WeaponManager.WeaponList.Add("NeutronAWP", nullptr);
-    WeaponManager.WeaponList["GravityGun"]->SetOwner(this);
-    WeaponManager.WeaponList["PortalGun"]->SetOwner(this);
-    //WeaponManager.WeaponList["NeutronAW"]->SetOwner(this);
-
-    WeaponManager.CurrentWeapon = WeaponManager.WeaponList["GravityGun"];
 }
 
 // Called every frame
@@ -118,6 +148,8 @@ void AQLCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompone
     InputComponent->BindAction("SwitchToGravityGun", IE_Pressed, this, &AQLCharacter::SwitchToGravityGun);
     InputComponent->BindAction("SwitchToPortalGun", IE_Pressed, this, &AQLCharacter::SwitchToPortalGun);
     InputComponent->BindAction("SwitchToNeutronAWP", IE_Pressed, this, &AQLCharacter::SwitchToNeutronAWP);
+    InputComponent->BindAction("SwitchToLastWeapon", IE_Pressed, this, &AQLCharacter::SwitchToLastWeapon);
+    InputComponent->BindAction("Test", IE_Pressed, this, &AQLCharacter::UnlockAllWeapon);
 
     // Set up "axis" bindings.
     InputComponent->BindAxis("MoveForward", this, &AQLCharacter::MoveForward);
@@ -248,8 +280,7 @@ void AQLCharacter::SwitchToGravityGun()
 {
     if (WeaponManager.IsEquipped(FString(TEXT("GravityGun"))))
     {
-        WeaponManager.CurrentWeapon = WeaponManager.WeaponList["GravityGun"];
-        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString(TEXT("switch to gravity gun.")));
+        WeaponManager.ChangeCurrentWeapon(WeaponManager.WeaponList["GravityGun"]);
     }
 }
 
@@ -257,8 +288,7 @@ void AQLCharacter::SwitchToPortalGun()
 {
     if (WeaponManager.IsEquipped(FString(TEXT("PortalGun"))))
     {
-        WeaponManager.CurrentWeapon = WeaponManager.WeaponList["PortalGun"];
-        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString(TEXT("switch to portal gun.")));
+        WeaponManager.ChangeCurrentWeapon(WeaponManager.WeaponList["PortalGun"]);
     }
 }
 
@@ -269,6 +299,11 @@ void AQLCharacter::SwitchToNeutronAWP()
         WeaponManager.CurrentWeapon = WeaponManager.WeaponList["NeutronAWP"];
     }
     GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString(TEXT("try to switch to neutron awp.")));
+}
+
+void AQLCharacter::SwitchToLastWeapon()
+{
+    WeaponManager.ChangeCurrentWeapon(WeaponManager.LastWeapon);
 }
 
 void AQLCharacter::RayTrace()
@@ -293,4 +328,18 @@ void AQLCharacter::RayTrace()
     FString ImpactPointFVertor = RV_Hit.ImpactPoint.ToString();
     DrawDebugLine(GetWorld(), start, RV_Hit.ImpactPoint, FColor(255, 0, 0), true, -1, 0, 10);
     GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, bBlockingHitString + FString(TEXT("  ")) + ImpactPointFVertor);
+}
+
+void AQLCharacter::UnlockAllWeapon()
+{
+    WeaponManager.WeaponList["GravityGun"] = GetWorld()->SpawnActor<AQLWeaponGravityGun>(AQLWeaponGravityGun::StaticClass());
+    WeaponManager.WeaponList["GravityGun"]->SetOwner(this);
+
+    WeaponManager.WeaponList["PortalGun"]  = GetWorld()->SpawnActor<AQLWeaponPortalGun>(AQLWeaponPortalGun::StaticClass());
+    WeaponManager.WeaponList["PortalGun"]->SetOwner(this);
+
+    //WeaponManager.WeaponList["NeutronAWP"] = GetWorld()->SpawnActor<AQLWeaponNeutronAWP>(AQLWeaponPortalGun::StaticClass());
+    //WeaponManager.WeaponList["NeutronAWP"]->SetOwner(this);
+
+    WeaponManager.CurrentWeapon = WeaponManager.WeaponList["GravityGun"];
 }

@@ -1,4 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//----------------------------------------
+// Quarter Life
+//
+// MIT license
+//
+//  (\-/)
+// (='.'=)
+// (")-(")o
+//----------------------------------------
 
 #include "QL.h"
 #include "QLWeaponGravityGun.h"
@@ -8,6 +16,7 @@ AQLWeaponGravityGun::AQLWeaponGravityGun()
 {
     Name = "gravity gun";
     bIsHoldingObject = false;
+    SetCrosshairTexture(TEXT("/Game/Textures/Crosshair/gravity_gun_crosshair"));
 }
 
 void AQLWeaponGravityGun::Fire()
