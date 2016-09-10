@@ -16,6 +16,7 @@
 
 // constant
 const float attractiveForceMultFactor = 1000.0f;
+const float repulsiveForceMultFactor = 2000.0f;
 const float distanceFromCharacterToActorWhenHold = 400.0f;
 
 UCLASS()
