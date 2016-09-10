@@ -157,7 +157,7 @@ void AQLWeaponGravityGun::Tick(float DeltaSeconds)
     if (bIsAltFireHeldDown)
     {
         // If AltFireRepeat() is called for every tick, the attracted object will gain
-        // momentum in a riduculous rapid fasion. As a workaround, AltFireRepeat() is
+        // momentum in a riduculous rapid fashion. As a workaround, AltFireRepeat() is
         // called every FixedInterval.
         RunningTimeAltFireHeldDown += DeltaSeconds;
         if (RunningTimeAltFireHeldDown >= FixedIntervalAltFireHeldDown)
