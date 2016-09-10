@@ -97,6 +97,15 @@ AQLCharacter::AQLCharacter() : WeaponManager(this)
     QLCameraComponent->AttachTo(GetCapsuleComponent());
     QLCameraComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 64.0f + BaseEyeHeight));
     QLCameraComponent->bUsePawnControlRotation = true;
+
+    // physics handle
+    PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
+    //PhysicsHandle->LinearDamping = 200.f;
+    //PhysicsHandle->LinearStiffness = 750.f;
+    //PhysicsHandle->AngularDamping = 500.f;
+    //PhysicsHandle->AngularStiffness = 1500.f;
+    //PhysicsHandle->InterpolationSpeed = 50.f;
+    //PhysicsHandle->bRotationConstrained = true;
 }
 
 AQLCharacter::~AQLCharacter()
@@ -318,14 +327,13 @@ FHitResult AQLCharacter::RayTraceFromCharacterPOV()
     FHitResult hit(ForceInit);
     GetWorld()->LineTraceSingleByChannel(hit, start, end, ECC_Pawn, lineTraceParams);
 
-    // hit.bBlockingHit //did hit something? (bool)
-    // hit.GetActor(); //the hit actor if there is one
-    // hit.ImpactPoint;  //FVector
-    // hit.ImpactNormal;  //FVector
-    //FString bBlockingHitString = hit.bBlockingHit ? TEXT("true") : TEXT("false");
-    //FString ImpactPointFVertor = hit.ImpactPoint.ToString();
-    DrawDebugLine(GetWorld(), start, hit.ImpactPoint, FColor(255, 0, 0), true, -1, 0, 10);
-    //GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, bBlockingHitString + FString(TEXT("  ")) + ImpactPointFVertor);
+    // hit.bBlockingHit  // did ray hit something? (bool)
+    // hit.GetActor();   // the hit actor if there is one
+    // hit.ImpactPoint;  // FVector
+    // hit.ImpactNormal; // FVector
+
+    // for debugging purpose
+    // DrawDebugLine(GetWorld(), start, hit.ImpactPoint, FColor(255, 0, 0), true, -1, 0, 10);
 
     return hit;
 }

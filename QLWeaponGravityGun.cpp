@@ -30,8 +30,6 @@ AQLWeaponGravityGun::AQLWeaponGravityGun()
 // the apply impulse to it.
 void AQLWeaponGravityGun::Fire()
 {
-    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString(TEXT("gravity gun fire")));
-
     // the actor is being held by the player
     if (bIsGravityGunCompatibleActorHeld)
     {
@@ -49,10 +47,10 @@ void AQLWeaponGravityGun::Fire()
 
                 // reenable collision between character and component
                 // enum members are shown in engine source code: EngineTypes.h
-                comp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+                comp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
 
-                // reenable component physics when the player is holding it
-                comp->SetSimulatePhysics(true);
+                // physicsl handle releases the component
+                Owner->PhysicsHandle->ReleaseComponent();
 
                 // apply repulsive force to the component
                 APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(Owner->GetWorld(), 0);
@@ -64,14 +62,14 @@ void AQLWeaponGravityGun::Fire()
     // the actor is not being held by the player
     else
     {
-        FHitResult hit = Owner->RayTraceFromCharacterPOV();
+        Hit = Owner->RayTraceFromCharacterPOV();
         // if hit occurs
-        if (hit.bBlockingHit)
+        if (Hit.bBlockingHit)
         {
             // check if the hit actor compatible with (i.e. responsive to) gravity gun
             // if it is not, the result of cast is nullptr
             // note: this is a convenient runtime polymorphic type check!!
-            AActor* hitActor = hit.GetActor();
+            AActor* hitActor = Hit.GetActor();
             ggcActor = Cast<AQLGravityGunCompatibleActor>(hitActor);
             if (ggcActor)
             {
@@ -129,10 +127,10 @@ void AQLWeaponGravityGun::AltFire()
 
                     // reenable collision between character and component
                     // enum members are shown in engine source code: EngineTypes.h
-                    comp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+                    comp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
 
-                    // reenable component physics when the player is holding it
-                    comp->SetSimulatePhysics(true);
+                    // physicsl handle releases the component
+                    Owner->PhysicsHandle->ReleaseComponent();
                 }
             }
         }
@@ -140,14 +138,14 @@ void AQLWeaponGravityGun::AltFire()
     // the actor is not being held by the player
     else
     {
-        FHitResult hit = Owner->RayTraceFromCharacterPOV();
+        Hit = Owner->RayTraceFromCharacterPOV();
         // if hit occurs
-        if (hit.bBlockingHit)
+        if (Hit.bBlockingHit)
         {
             // check if the hit actor compatible with (i.e. responsive to) gravity gun
             // if it is not, the result of cast is nullptr
             // note: this is a convenient runtime polymorphic type check!!
-            AActor* hitActor = hit.GetActor();
+            AActor* hitActor = Hit.GetActor();
             ggcActor = Cast<AQLGravityGunCompatibleActor>(hitActor);
             if (ggcActor)
             {
@@ -170,12 +168,12 @@ void AQLWeaponGravityGun::AltFire()
                         DeltaRotation = ggcActorRotation - cameraRotation;
                         DeltaRotation.Normalize();
 
+                        // physicsl handle grabs the component
+                        Owner->PhysicsHandle->GrabComponent(comp, Hit.BoneName, Hit.Location, true);
+
                         // disable collision between character and component
                         // enum members are shown in engine source code: EngineTypes.h
                         comp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
-
-                        // disable component physics when the player is holding it
-                        comp->SetSimulatePhysics(false);
 
                         // consequently player then holds the actor for every tick
                         // refer to Tick()
@@ -237,17 +235,19 @@ void AQLWeaponGravityGun::Tick(float DeltaSeconds)
     {
         if (ggcActor)
         {
-            // FIX ME :o(
-            // not behave as expected. actor's rotation relative to character is not a fixed vector.
-            // FIX ME :O(
-            // this implementation forces actor to be in front of the character.
-            // as a result, the actor becomes invincible --- being able to bulldoze large object
-            // also, the actor becomes embedded into the ground when the character is looking down
+            // note:
+            // --> ggcActor->SetActorLocation(newLocation);
+            //     ggcActor->SetActorRotation(newRotation);
+            //     will force actor to be in front of the character, in which case
+            //     the actor may be embedded into the ground when the character is looking down
+            // --> the actor may deviate from the camera center when rotating it fast.
+            //     this is because full physics simulation is still enabled and the actor cannot be
+            //     moved instantly with the camera.
             APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
             FVector newLocation = cm->GetCameraLocation() + cm->GetActorForwardVector() * distanceFromCharacterToActorWhenHold;
             FRotator newRotation = cm->GetCameraRotation() + DeltaRotation;
-            ggcActor->SetActorLocation(newLocation);
-            ggcActor->SetActorRotation(newRotation);
+            Owner->PhysicsHandle->SetTargetLocation(newLocation);
+            Owner->PhysicsHandle->SetTargetRotation(newRotation);
         }
     }
 }

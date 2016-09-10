@@ -16,8 +16,8 @@
 
 // constant
 const float attractiveForceMultFactor = 1000.0f;
-const float repulsiveForceMultFactor = 2000.0f;
-const float distanceFromCharacterToActorWhenHold = 400.0f;
+const float repulsiveForceMultFactor = 4000.0f;
+const float distanceFromCharacterToActorWhenHold = 300.0f;
 
 UCLASS()
 class QL_API AQLWeaponGravityGun : public AQLWeapon

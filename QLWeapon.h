@@ -53,4 +53,5 @@ public:
     UTexture2D* GetCrosshairTexture()  const;
     void SetCrosshairTexture(const TCHAR* textureName);
     const FString& GetWeaponName() const;
+    FHitResult Hit;
 };

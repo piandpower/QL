@@ -48,6 +48,7 @@ public:
 
     UPROPERTY(VisibleAnywhere)
     UCameraComponent* QLCameraComponent;
+    UPhysicsHandleComponent* PhysicsHandle;
 
 	AQLCharacter();
     ~AQLCharacter();
