@@ -21,15 +21,6 @@ UCLASS()
 class QL_API AQLWeapon : public AActor
 {
     GENERATED_BODY()
-
-protected:
-    FString Name;
-    bool bIsFireHeldDown;
-    bool bIsAltFireHeldDown; // key/button is held down for some time
-    bool bIsAltFirePressed; // key/button is pressed, regardless if it is subsequently released or held down
-    AQLCharacter* Owner;
-    UTexture2D* CrosshairTexture;
-
 public:
     // Sets default values for this actor's properties
     AQLWeapon();
@@ -53,5 +44,13 @@ public:
     UTexture2D* GetCrosshairTexture()  const;
     void SetCrosshairTexture(const TCHAR* textureName);
     const FString& GetWeaponName() const;
+
+protected:
+    FString Name;
+    bool bIsFireHeldDown;
+    bool bIsAltFireHeldDown; // key/button is held down for some time
+    bool bIsAltFirePressed; // key/button is pressed, regardless if it is subsequently released or held down
+    AQLCharacter* Owner;
+    UTexture2D* CrosshairTexture;
     FHitResult Hit;
 };

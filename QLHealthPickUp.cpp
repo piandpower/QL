@@ -14,13 +14,13 @@
 // Sets default values
 AQLHealthPickUp::AQLHealthPickUp()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    PrimaryActorTick.bCanEverTick = true;
 
-    BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
+    BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
     RootComponent = BoxComponent;
-    BoxComponent->InitBoxExtent(FVector(20.0f, 20.0f, 20.0f));
-    BoxComponent->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
+    BoxComponent->InitBoxExtent(FVector(100.0f));
+    BoxComponent->SetSimulatePhysics(true);
 }
 
 // Called when the game starts or when spawned

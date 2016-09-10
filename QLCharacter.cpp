@@ -100,12 +100,6 @@ AQLCharacter::AQLCharacter() : WeaponManager(this)
 
     // physics handle
     PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
-    //PhysicsHandle->LinearDamping = 200.f;
-    //PhysicsHandle->LinearStiffness = 750.f;
-    //PhysicsHandle->AngularDamping = 500.f;
-    //PhysicsHandle->AngularStiffness = 1500.f;
-    //PhysicsHandle->InterpolationSpeed = 50.f;
-    //PhysicsHandle->bRotationConstrained = true;
 }
 
 AQLCharacter::~AQLCharacter()
@@ -122,21 +116,6 @@ void AQLCharacter::BeginPlay()
 void AQLCharacter::Tick( float DeltaTime )
 {
     Super::Tick( DeltaTime );
-
-    //// display message every fixed interval
-    //RunningTime += DeltaTime;
-    //if(RunningTime > FixedInterval)
-    //{
-    //    if (GEngine)
-    //    {
-    //        // Display a debug message for five seconds.
-    //        // The -1 "Key" value (first argument) indicates that we will never need to update or refresh this message.
-    //        GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, TEXT("player speed = ") + FString::SanitizeFloat(GetVelocity().Size()));
-    //        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, GetCharacterMovement()->GetMovementName());
-    //    }
-
-    //    RunningTime -= FixedInterval;
-    //}
 }
 
 // Called to bind functionality to input
@@ -145,18 +124,18 @@ void AQLCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompone
     Super::SetupPlayerInputComponent(InputComponent);
 
     // Set up "action" bindings.
-    InputComponent->BindAction("Jump", IE_Pressed, this, &AQLCharacter::StartJump);
-    InputComponent->BindAction("Jump", IE_Released, this, &AQLCharacter::StopJump);
-    InputComponent->BindAction("Crouch", IE_Pressed, this, &AQLCharacter::ToggleCrouch);
-    InputComponent->BindAction("Sprint", IE_Pressed, this, &AQLCharacter::ToggleSprint);
-    InputComponent->BindAction("Fire", IE_Pressed, this, &AQLCharacter::Fire);
-    InputComponent->BindAction("AltFire", IE_Pressed, this, &AQLCharacter::AltFire);
-    InputComponent->BindAction("AltFire", IE_Released, this, &AQLCharacter::AltFireReleased);
-    InputComponent->BindAction("SwitchToGravityGun", IE_Pressed, this, &AQLCharacter::SwitchToGravityGun);
-    InputComponent->BindAction("SwitchToPortalGun", IE_Pressed, this, &AQLCharacter::SwitchToPortalGun);
-    InputComponent->BindAction("SwitchToNeutronAWP", IE_Pressed, this, &AQLCharacter::SwitchToNeutronAWP);
-    InputComponent->BindAction("SwitchToLastWeapon", IE_Pressed, this, &AQLCharacter::SwitchToLastWeapon);
-    InputComponent->BindAction("Test", IE_Pressed, this, &AQLCharacter::UnlockAllWeapon);
+    InputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &AQLCharacter::StartJump);
+    InputComponent->BindAction("Jump", EInputEvent::IE_Released, this, &AQLCharacter::StopJump);
+    InputComponent->BindAction("Crouch", EInputEvent::IE_Pressed, this, &AQLCharacter::ToggleCrouch);
+    InputComponent->BindAction("Sprint", EInputEvent::IE_Pressed, this, &AQLCharacter::ToggleSprint);
+    InputComponent->BindAction("Fire", EInputEvent::IE_Pressed, this, &AQLCharacter::Fire);
+    InputComponent->BindAction("AltFire", EInputEvent::IE_Pressed, this, &AQLCharacter::AltFire);
+    InputComponent->BindAction("AltFire", EInputEvent::IE_Released, this, &AQLCharacter::AltFireReleased);
+    InputComponent->BindAction("SwitchToGravityGun", EInputEvent::IE_Pressed, this, &AQLCharacter::SwitchToGravityGun);
+    InputComponent->BindAction("SwitchToPortalGun", EInputEvent::IE_Pressed, this, &AQLCharacter::SwitchToPortalGun);
+    InputComponent->BindAction("SwitchToNeutronAWP", EInputEvent::IE_Pressed, this, &AQLCharacter::SwitchToNeutronAWP);
+    InputComponent->BindAction("SwitchToLastWeapon", EInputEvent::IE_Pressed, this, &AQLCharacter::SwitchToLastWeapon);
+    InputComponent->BindAction("Test", EInputEvent::IE_Pressed, this, &AQLCharacter::UnlockAllWeapon);
 
     // Set up "axis" bindings.
     InputComponent->BindAxis("MoveForward", this, &AQLCharacter::MoveForward);

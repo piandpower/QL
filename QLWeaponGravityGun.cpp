@@ -47,7 +47,7 @@ void AQLWeaponGravityGun::Fire()
 
                 // reenable collision between character and component
                 // enum members are shown in engine source code: EngineTypes.h
-                comp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+                comp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 
                 // physicsl handle releases the component
                 Owner->PhysicsHandle->ReleaseComponent();
@@ -127,7 +127,7 @@ void AQLWeaponGravityGun::AltFire()
 
                     // reenable collision between character and component
                     // enum members are shown in engine source code: EngineTypes.h
-                    comp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+                    comp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 
                     // physicsl handle releases the component
                     Owner->PhysicsHandle->ReleaseComponent();
@@ -173,7 +173,7 @@ void AQLWeaponGravityGun::AltFire()
 
                         // disable collision between character and component
                         // enum members are shown in engine source code: EngineTypes.h
-                        comp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+                        comp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 
                         // consequently player then holds the actor for every tick
                         // refer to Tick()

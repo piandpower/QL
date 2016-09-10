@@ -132,4 +132,6 @@ protected:
 
     float MaxWalkSpeed;
     float MaxWalkSpeedCrouched;
+
+    int Health;
 };

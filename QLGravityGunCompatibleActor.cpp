@@ -20,7 +20,6 @@ AQLGravityGunCompatibleActor::AQLGravityGunCompatibleActor()
     BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
     RootComponent = BoxComponent;
     BoxComponent->InitBoxExtent(FVector(defaultBoxComponentDim));
-    BoxComponent->SetCollisionProfileName(TEXT("PhysicsActor"));
     BoxComponent->SetSimulatePhysics(true);
     BoxComponent->SetLinearDamping(defaultLinearDamping);
     BoxComponent->SetAngularDamping(defaultAngularDamping);

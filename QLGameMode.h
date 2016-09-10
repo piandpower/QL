@@ -13,9 +13,6 @@
 #include "GameFramework/GameMode.h"
 #include "QLGameMode.generated.h"
 
-/**
- *
- */
 UCLASS()
 class QL_API AQLGameMode : public AGameMode
 {
