@@ -17,6 +17,8 @@
 
 // constant
 const int maxNumWeapon = 10;
+const float rayTraceRange = 10000.0f;
+const float nextToPlayerThreshold = 400.0f;
 
 class QL_API QLWeaponManager
 {
@@ -61,7 +63,8 @@ public:
 
     virtual void Landed(const FHitResult& Hit) override;
 
-    void RayTrace();
+    FHitResult RayTraceFromCharacterPOV();
+    bool IsObjectNextToCharacter(AQLGravityGunCompatibleActor* ggcActor);
 
     void UnlockAllWeapon();
 
@@ -120,8 +123,6 @@ public:
     // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health pickup component")
 
 protected:
-    float RunningTime;
-    float FixedInterval;
     int DoubleJumpCounter;
 
     // bool bHaveSprintAbility; // whether player has gained the ability

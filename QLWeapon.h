@@ -17,9 +17,6 @@
 // forward declaration
 class AQLCharacter;
 
-// constant
-const float rayTraceEnd = 4000.0f;
-
 UCLASS()
 class QL_API AQLWeapon : public AActor
 {
@@ -28,8 +25,9 @@ class QL_API AQLWeapon : public AActor
 protected:
     FString Name;
     bool bIsFireHeldDown;
-    bool bIsAltFireHeldDown;
-    AQLCharacter* owner;
+    bool bIsAltFireHeldDown; // key/button is held down for some time
+    bool bIsAltFirePressed; // key/button is pressed, regardless if it is subsequently released or held down
+    AQLCharacter* Owner;
     UTexture2D* CrosshairTexture;
 
 public:

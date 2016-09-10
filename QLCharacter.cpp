@@ -75,8 +75,6 @@ bool QLWeaponManager::IsEquipped(const FString& Name)
 // Sets default values
 AQLCharacter::AQLCharacter() : WeaponManager(this)
 {
-    RunningTime = 0.0f;
-    FixedInterval = 1.0f;
     DoubleJumpCounter = 0;
 
     bIsSprinting = false;
@@ -86,7 +84,7 @@ AQLCharacter::AQLCharacter() : WeaponManager(this)
     PrimaryActorTick.bCanEverTick = true;
 
     // movement
-    GetCharacterMovement()->JumpZVelocity = 400.0f;
+    GetCharacterMovement()->JumpZVelocity = 600.0f;
     GetCharacterMovement()->AirControl = 1.0f;
     GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
     MaxWalkSpeed = 600.0f;
@@ -240,7 +238,7 @@ bool AQLCharacter::CanSprint() const
 void AQLCharacter::Sprint()
 {
     bWantToSprint = true;
-    GetCharacterMovement()->MaxWalkSpeed = 2.0f * MaxWalkSpeed;
+    GetCharacterMovement()->MaxWalkSpeed = 3.0f * MaxWalkSpeed;
 }
 
 void AQLCharacter::UnSprint()
@@ -306,28 +304,49 @@ void AQLCharacter::SwitchToLastWeapon()
     WeaponManager.ChangeCurrentWeapon(WeaponManager.LastWeapon);
 }
 
-void AQLCharacter::RayTrace()
+FHitResult AQLCharacter::RayTraceFromCharacterPOV()
 {
-    FCollisionQueryParams RV_TraceParams = FCollisionQueryParams(FName(TEXT("RV_Trace")), true, this);
-    RV_TraceParams.bTraceComplex = true;
-    RV_TraceParams.bTraceAsyncScene = true;
-    RV_TraceParams.bReturnPhysicalMaterial = false;
+    FCollisionQueryParams lineTraceParams = FCollisionQueryParams(FName(TEXT("lineTrace")), true, this);
+    lineTraceParams.bTraceComplex = true;
+    lineTraceParams.bTraceAsyncScene = true;
+    lineTraceParams.bReturnPhysicalMaterial = false;
 
     APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
     FVector start = cm->GetCameraLocation();
-    FVector end = cm->GetActorForwardVector() * rayTraceEnd + start;
+    FVector end = cm->GetActorForwardVector() * rayTraceRange + start;
 
-    FHitResult RV_Hit(ForceInit);
-    GetWorld()->LineTraceSingleByChannel(RV_Hit, start, end, ECC_Pawn, RV_TraceParams);
+    FHitResult hit(ForceInit);
+    GetWorld()->LineTraceSingleByChannel(hit, start, end, ECC_Pawn, lineTraceParams);
 
-    // RV_Hit.bBlockingHit //did hit something? (bool)
-    // RV_Hit.GetActor(); //the hit actor if there is one
-    // RV_Hit.ImpactPoint;  //FVector
-    // RV_Hit.ImpactNormal;  //FVector
-    FString bBlockingHitString = RV_Hit.bBlockingHit ? TEXT("true") : TEXT("false");
-    FString ImpactPointFVertor = RV_Hit.ImpactPoint.ToString();
-    DrawDebugLine(GetWorld(), start, RV_Hit.ImpactPoint, FColor(255, 0, 0), true, -1, 0, 10);
-    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, bBlockingHitString + FString(TEXT("  ")) + ImpactPointFVertor);
+    // hit.bBlockingHit //did hit something? (bool)
+    // hit.GetActor(); //the hit actor if there is one
+    // hit.ImpactPoint;  //FVector
+    // hit.ImpactNormal;  //FVector
+    //FString bBlockingHitString = hit.bBlockingHit ? TEXT("true") : TEXT("false");
+    //FString ImpactPointFVertor = hit.ImpactPoint.ToString();
+    DrawDebugLine(GetWorld(), start, hit.ImpactPoint, FColor(255, 0, 0), true, -1, 0, 10);
+    //GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, bBlockingHitString + FString(TEXT("  ")) + ImpactPointFVertor);
+
+    return hit;
+}
+
+bool AQLCharacter::IsObjectNextToCharacter(AQLGravityGunCompatibleActor* ggcActor)
+{
+    if (ggcActor)
+    {
+        if (GetDistanceTo(ggcActor) <= nextToPlayerThreshold)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void AQLCharacter::UnlockAllWeapon()

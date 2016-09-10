@@ -17,12 +17,9 @@ UCLASS()
 class QL_API AQLWeaponPortalGun : public AQLWeapon
 {
     GENERATED_BODY()
-
-private:
-    bool bIsHoldingObject;
-
 public:
     AQLWeaponPortalGun();
     virtual void Fire() override;
     virtual void AltFire() override;
+protected:
 };

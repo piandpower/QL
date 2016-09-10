@@ -20,7 +20,8 @@ AQLWeapon::AQLWeapon()
     FString Name = FString(TEXT(""));
     bIsFireHeldDown = false;
     bIsAltFireHeldDown = false;
-    owner = nullptr;
+    bIsAltFirePressed = false;
+    Owner = nullptr;
     CrosshairTexture = nullptr;
 }
 
@@ -37,9 +38,9 @@ void AQLWeapon::Tick( float DeltaTime )
     Super::Tick( DeltaTime );
 }
 
-void AQLWeapon::SetOwner(AQLCharacter* owner)
+void AQLWeapon::SetOwner(AQLCharacter* Owner)
 {
-    this->owner = owner;
+    this->Owner = Owner;
 }
 
 UTexture2D* AQLWeapon::GetCrosshairTexture() const
