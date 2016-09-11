@@ -38,7 +38,7 @@ void AQLHUD::DrawWeaponCrosshairIfAny()
         // if owning pawn's weapon exists
         if (CurrentWeapon)
         {
-            UTexture2D* CrosshairTexture = CurrentWeapon->GetCrosshairTexture();
+            UTexture2D* CrosshairTexture = CurrentWeapon->GetCurrentCrosshairTexture();
             // if owning pawn's weapon' crosshair exists
             if (CrosshairTexture)
             {

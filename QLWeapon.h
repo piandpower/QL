@@ -42,9 +42,9 @@ public:
 
     void SetWeaponOwner(AQLCharacter* owner);
 
-    UTexture2D* GetCrosshairTexture()  const;
-    void SetCrosshairTexture(const TCHAR* texturePath);
-    //void SetWeaponSound(USceneComponent*& RootComponent, USoundWave* soundWave, UAudioComponent* soundComp);
+    void SetCurrentCrosshairTexture(const FName& crosshairTextureName);
+    UTexture2D* GetCurrentCrosshairTexture()  const;
+    UTexture2D* CreateCrosshairTexture(const TCHAR* texturePath);
     UAudioComponent* CreateWeaponSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName);
     void PlayWeaponSound(const FName& soundName);
     const FString& GetWeaponName() const;
@@ -55,7 +55,8 @@ protected:
     bool bIsAltFireHeldDown; // key/button is held down for some time
     bool bIsAltFirePressed; // key/button is pressed, regardless if it is subsequently released or held down
     AQLCharacter* Owner;
-    UTexture2D* CrosshairTexture;
     FHitResult Hit;
     TMap<FName, UAudioComponent*> WeaponSoundList;
+    UTexture2D* CurrentCrosshairTexture;
+    TMap<FName, UTexture2D*> CrosshairTextureList;
 };

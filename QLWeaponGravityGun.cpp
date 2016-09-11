@@ -19,12 +19,14 @@ AQLWeaponGravityGun::AQLWeaponGravityGun()
     Name = "gravity gun";
     bIsGravityGunCompatibleActorHeld = false;
     bIsAltFireHeldDown = false;
-    SetCrosshairTexture(TEXT("/Game/Textures/Crosshair/gravity_gun_crosshair"));
     RunningTimeAltFirePressed = 0.0f;
     FixedIntervalAltFirePressed = 0.2f;
     RunningTimeAltFireHeldDown = 0.0f;
     FixedIntervalAltFireHeldDown = 0.2f;
     ggcActor = nullptr;
+
+    CrosshairTextureList.Add("Regular", CreateCrosshairTexture(TEXT("/Game/Textures/Crosshair/gravity_gun_crosshair")));
+    SetCurrentCrosshairTexture("Regular");
 
     WeaponSoundList.Add("None", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/bottle"), TEXT("soundWrongComp")));
     WeaponSoundList.Add("Hold", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/zoom_in"), TEXT("soundHoldComp")));

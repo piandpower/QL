@@ -24,7 +24,7 @@ AQLWeapon::AQLWeapon()
     bIsAltFireHeldDown = false;
     bIsAltFirePressed = false;
     Owner = nullptr;
-    CrosshairTexture = nullptr;
+    CurrentCrosshairTexture = nullptr;
 }
 
 //------------------------------------------------------------
@@ -53,17 +53,42 @@ void AQLWeapon::SetWeaponOwner(AQLCharacter* Owner)
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-UTexture2D* AQLWeapon::GetCrosshairTexture() const
+void AQLWeapon::SetCurrentCrosshairTexture(const FName& crosshairTextureName)
 {
-    return CrosshairTexture;
+    UTexture2D** valuePtr = CrosshairTextureList.Find(crosshairTextureName);
+    if (valuePtr)
+    {
+        UTexture2D* crosshairTexture = *valuePtr;
+        if (crosshairTexture)
+        {
+            CurrentCrosshairTexture = crosshairTexture;
+        }
+    }
 }
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLWeapon::SetCrosshairTexture(const TCHAR* texturePath)
+UTexture2D* AQLWeapon::GetCurrentCrosshairTexture() const
+{
+    return CurrentCrosshairTexture;
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+UTexture2D* AQLWeapon::CreateCrosshairTexture(const TCHAR* texturePath)
 {
     ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTextureObj(texturePath);
-    CrosshairTexture = CrosshairTextureObj.Object;
+    UTexture2D* CrosshairTexture = CrosshairTextureObj.Object;
+
+    if(CrosshairTextureObj.Object->IsValidLowLevel() && CrosshairTexture)
+    {
+        return CrosshairTexture;
+    }
+    else
+    {
+        QLUtility::QLSay(TEXT("AQLWeapon::CreateCrosshairTexture() failed."));
+        return nullptr;
+    }
 }
 
 //------------------------------------------------------------
