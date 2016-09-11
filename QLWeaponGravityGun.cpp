@@ -26,17 +26,9 @@ AQLWeaponGravityGun::AQLWeaponGravityGun()
     FixedIntervalAltFireHeldDown = 0.2f;
     ggcActor = nullptr;
 
-    ConstructorHelpers::FObjectFinder<USoundWave> soundWaveWrong(TEXT("/Game/Sounds/bottle"));
-    soundWrongComp = CreateDefaultSubobject<UAudioComponent>(TEXT("soundWrongComp"));
-    SetWeaponSound(RootComponent, soundWaveWrong.Object, soundWrongComp);
-
-    ConstructorHelpers::FObjectFinder<USoundWave> soundWaveHold(TEXT("/Game/Sounds/zoom_in"));
-    soundHoldComp = CreateDefaultSubobject<UAudioComponent>(TEXT("soundHoldComp"));
-    SetWeaponSound(RootComponent, soundWaveHold.Object, soundHoldComp);
-
-    ConstructorHelpers::FObjectFinder<USoundWave> soundWaveFire(TEXT("/Game/Sounds/pl_gun2"));
-    soundFireComp = CreateDefaultSubobject<UAudioComponent>(TEXT("soundFireComp"));
-    SetWeaponSound(RootComponent, soundWaveFire.Object, soundFireComp);
+    WeaponSoundList.Add("None", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/bottle"), TEXT("soundWrongComp")));
+    WeaponSoundList.Add("Hold", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/zoom_in"), TEXT("soundHoldComp")));
+    WeaponSoundList.Add("Fire", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/gravity_gun_fire"), TEXT("soundFireComp")));
 }
 
 //------------------------------------------------------------
@@ -74,7 +66,7 @@ void AQLWeaponGravityGun::Fire()
                 comp->AddImpulse(Impulse);
 
                 // apply sound
-                soundFireComp->Play();
+                PlayWeaponSound("Fire");
             }
         }
     }
@@ -107,7 +99,7 @@ void AQLWeaponGravityGun::Fire()
                         comp->AddImpulse(Impulse);
 
                         // apply sound
-                        soundFireComp->Play();
+                        PlayWeaponSound("Fire");
                     }
                 }
             }
@@ -201,7 +193,7 @@ void AQLWeaponGravityGun::AltFire()
                         comp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 
                         // apply sound
-                        soundHoldComp->Play();
+                        PlayWeaponSound("Hold");
 
                         // consequently player then holds the actor for every tick
                         // refer to Tick()
@@ -215,11 +207,17 @@ void AQLWeaponGravityGun::AltFire()
                     }
                 }
             }
+            // the ggcActor is not gravity gun compatible
+            else
+            {
+                // apply sound
+                PlayWeaponSound("None");
+            }
         }
         else
         {
             // apply sound
-            soundWrongComp->Play();
+            PlayWeaponSound("None");
         }
     }
 }

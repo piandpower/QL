@@ -60,32 +60,53 @@ UTexture2D* AQLWeapon::GetCrosshairTexture() const
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLWeapon::SetCrosshairTexture(const TCHAR* textureName)
+void AQLWeapon::SetCrosshairTexture(const TCHAR* texturePath)
 {
-    ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTextureObj(textureName);
+    ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTextureObj(texturePath);
     CrosshairTexture = CrosshairTextureObj.Object;
 }
 
 //------------------------------------------------------------
+// note: ConstructorHelpers::FObjectFinder<T> and
+// CreateDefaultSubobject<T> can only be used inside ctor!!!
 //------------------------------------------------------------
-void AQLWeapon::SetWeaponSound(USceneComponent*& RootComponent, USoundWave* soundWave, UAudioComponent* soundComp)
+UAudioComponent* AQLWeapon::CreateWeaponSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName)
 {
+    ConstructorHelpers::FObjectFinder<USoundWave> soundWave(soundPath);
+    UAudioComponent* soundComp = CreateDefaultSubobject<UAudioComponent>(soundName);
+
     bool success = false;
-    if (soundWave && soundComp)
+    if (soundWave.Object->IsValidLowLevel() && soundComp)
     {
-        if (soundWave->IsValidLowLevel())
-        {
-            soundComp->SetSound(soundWave);
-            soundComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-            soundComp->SetRelativeLocation(FVector(0.0f));
-            soundComp->bAutoActivate = false;
-            success = true;
-        }
+        soundComp->SetSound(soundWave.Object);
+        soundComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+        soundComp->SetRelativeLocation(FVector(0.0f));
+        soundComp->bAutoActivate = false;
+        success = true;
     }
 
     if (!success)
     {
-        QLUtility::QLSay(TEXT("AQLWeapon::SetWeaponSound() failed."));
+        QLUtility::QLSay(TEXT("AQLWeapon::CreateWeaponSoundComponent() failed."));
+        soundComp = nullptr;
+    }
+
+    return soundComp;
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLWeapon::PlayWeaponSound(const FName& soundName)
+{
+    UAudioComponent** valuePtr = WeaponSoundList.Find(soundName);
+    if (valuePtr)
+    {
+        UAudioComponent* soundComp = *valuePtr;
+        // c++ standard: evaluation order from left to right
+        if (soundComp && !soundComp->IsPlaying())
+        {
+            soundComp->Play();
+        }
     }
 }
 

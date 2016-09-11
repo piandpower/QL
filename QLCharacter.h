@@ -30,8 +30,8 @@ public:
     QLWeaponManager() {};
     QLWeaponManager(AQLCharacter* QLCharacter);
     ~QLWeaponManager();
-    TMap<FString, AQLWeapon*> WeaponList;
-    bool IsEquipped(const FString& Name);
+    TMap<FName, AQLWeapon*> WeaponList;
+    bool IsEquipped(const FName& Name);
     void ChangeCurrentWeapon(AQLWeapon* Weapon);
     void PickUpWeapon(AQLWeapon* Weapon);
 

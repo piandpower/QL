@@ -70,7 +70,7 @@ void QLWeaponManager::PickUpWeapon(AQLWeapon* Weapon)
 //------------------------------------------------------------
 // check if the specified weapon is equipped by the player
 //------------------------------------------------------------
-bool QLWeaponManager::IsEquipped(const FString& Name)
+bool QLWeaponManager::IsEquipped(const FName& Name)
 {
     if (WeaponList[Name] != nullptr)
     {
@@ -314,7 +314,7 @@ void AQLCharacter::AltFireReleased()
 //------------------------------------------------------------
 void AQLCharacter::SwitchToGravityGun()
 {
-    if (WeaponManager.IsEquipped(FString(TEXT("GravityGun"))))
+    if (WeaponManager.IsEquipped("GravityGun"))
     {
         WeaponManager.ChangeCurrentWeapon(WeaponManager.WeaponList["GravityGun"]);
     }
@@ -324,7 +324,7 @@ void AQLCharacter::SwitchToGravityGun()
 //------------------------------------------------------------
 void AQLCharacter::SwitchToPortalGun()
 {
-    if (WeaponManager.IsEquipped(FString(TEXT("PortalGun"))))
+    if (WeaponManager.IsEquipped("PortalGun"))
     {
         WeaponManager.ChangeCurrentWeapon(WeaponManager.WeaponList["PortalGun"]);
     }
@@ -334,7 +334,7 @@ void AQLCharacter::SwitchToPortalGun()
 //------------------------------------------------------------
 void AQLCharacter::SwitchToNeutronAWP()
 {
-    if (WeaponManager.IsEquipped(FString(TEXT("NeutronAWP"))))
+    if (WeaponManager.IsEquipped("NeutronAWP"))
     {
         WeaponManager.CurrentWeapon = WeaponManager.WeaponList["NeutronAWP"];
     }

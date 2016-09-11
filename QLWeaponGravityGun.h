@@ -39,7 +39,4 @@ protected:
     float FixedIntervalAltFireHeldDown;
     FRotator DeltaRotation;
     AQLGravityGunCompatibleActor* ggcActor;
-    UAudioComponent* soundWrongComp;
-    UAudioComponent* soundHoldComp;
-    UAudioComponent* soundFireComp;
 };

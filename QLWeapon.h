@@ -43,8 +43,10 @@ public:
     void SetWeaponOwner(AQLCharacter* owner);
 
     UTexture2D* GetCrosshairTexture()  const;
-    void SetCrosshairTexture(const TCHAR* textureName);
-    void SetWeaponSound(USceneComponent*& RootComponent, USoundWave* soundWave, UAudioComponent* soundComp);
+    void SetCrosshairTexture(const TCHAR* texturePath);
+    //void SetWeaponSound(USceneComponent*& RootComponent, USoundWave* soundWave, UAudioComponent* soundComp);
+    UAudioComponent* CreateWeaponSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName);
+    void PlayWeaponSound(const FName& soundName);
     const FString& GetWeaponName() const;
 
 protected:
@@ -55,4 +57,5 @@ protected:
     AQLCharacter* Owner;
     UTexture2D* CrosshairTexture;
     FHitResult Hit;
+    TMap<FName, UAudioComponent*> WeaponSoundList;
 };
