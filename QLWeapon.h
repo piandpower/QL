@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "QLUtility.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Actor.h"
 #include "QLWeapon.generated.h"
@@ -39,10 +40,11 @@ public:
     virtual void AltFireReleased() {};
     virtual void AltFireRepeat() {};
 
-    void SetOwner(AQLCharacter* owner);
+    void SetWeaponOwner(AQLCharacter* owner);
 
     UTexture2D* GetCrosshairTexture()  const;
     void SetCrosshairTexture(const TCHAR* textureName);
+    void SetWeaponSound(USceneComponent*& RootComponent, USoundWave* soundWave, UAudioComponent* soundComp);
     const FString& GetWeaponName() const;
 
 protected:

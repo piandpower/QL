@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "QLUtility.h"
 #include "GameFramework/GameMode.h"
 #include "QLGameMode.generated.h"
 

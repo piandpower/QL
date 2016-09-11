@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "QLUtility.h"
 #include "GameFramework/Actor.h"
 #include "QLGravityGunCompatibleActor.generated.h"
 
@@ -36,6 +37,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gravity gun compatible actor")
     UBoxComponent* BoxComponent;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gravity gun compatible actor")
-    UStaticMeshComponent* StaticMeshComponent;
+    // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gravity gun compatible actor")
+    // UStaticMeshComponent* StaticMeshComponent;
 };

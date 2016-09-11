@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "QLUtility.h"
 #include "QLGravityGunCompatibleActor.h"
 #include "QLWeapon.h"
 #include "QLWeaponGravityGun.generated.h"
@@ -38,4 +39,7 @@ protected:
     float FixedIntervalAltFireHeldDown;
     FRotator DeltaRotation;
     AQLGravityGunCompatibleActor* ggcActor;
+    UAudioComponent* soundWrongComp;
+    UAudioComponent* soundHoldComp;
+    UAudioComponent* soundFireComp;
 };

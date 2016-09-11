@@ -11,7 +11,9 @@
 #include "QL.h"
 #include "QLGravityGunCompatibleActor.h"
 
+//------------------------------------------------------------
 // Sets default values
+//------------------------------------------------------------
 AQLGravityGunCompatibleActor::AQLGravityGunCompatibleActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -21,17 +23,23 @@ AQLGravityGunCompatibleActor::AQLGravityGunCompatibleActor()
     RootComponent = BoxComponent;
     BoxComponent->InitBoxExtent(FVector(defaultBoxComponentDim));
     BoxComponent->SetSimulatePhysics(true);
+    BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
     BoxComponent->SetLinearDamping(defaultLinearDamping);
     BoxComponent->SetAngularDamping(defaultAngularDamping);
 }
 
+//------------------------------------------------------------
 // Called when the game starts or when spawned
+//------------------------------------------------------------
 void AQLGravityGunCompatibleActor::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
+//------------------------------------------------------------
 // Called every frame
+//------------------------------------------------------------
 void AQLGravityGunCompatibleActor::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );

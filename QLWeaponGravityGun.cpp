@@ -12,6 +12,8 @@
 #include "QLWeaponGravityGun.h"
 #include "QLCharacter.h"
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 AQLWeaponGravityGun::AQLWeaponGravityGun()
 {
     Name = "gravity gun";
@@ -23,11 +25,25 @@ AQLWeaponGravityGun::AQLWeaponGravityGun()
     RunningTimeAltFireHeldDown = 0.0f;
     FixedIntervalAltFireHeldDown = 0.2f;
     ggcActor = nullptr;
+
+    ConstructorHelpers::FObjectFinder<USoundWave> soundWaveWrong(TEXT("/Game/Sounds/bottle"));
+    soundWrongComp = CreateDefaultSubobject<UAudioComponent>(TEXT("soundWrongComp"));
+    SetWeaponSound(RootComponent, soundWaveWrong.Object, soundWrongComp);
+
+    ConstructorHelpers::FObjectFinder<USoundWave> soundWaveHold(TEXT("/Game/Sounds/zoom_in"));
+    soundHoldComp = CreateDefaultSubobject<UAudioComponent>(TEXT("soundHoldComp"));
+    SetWeaponSound(RootComponent, soundWaveHold.Object, soundHoldComp);
+
+    ConstructorHelpers::FObjectFinder<USoundWave> soundWaveFire(TEXT("/Game/Sounds/pl_gun2"));
+    soundFireComp = CreateDefaultSubobject<UAudioComponent>(TEXT("soundFireComp"));
+    SetWeaponSound(RootComponent, soundWaveFire.Object, soundFireComp);
 }
 
+//------------------------------------------------------------
 // If the actor that is compatible with gravity gun is within range but not being
 // held by the character, or if that actor is being held by the character,
 // the apply impulse to it.
+//------------------------------------------------------------
 void AQLWeaponGravityGun::Fire()
 {
     // the actor is being held by the player
@@ -56,6 +72,9 @@ void AQLWeaponGravityGun::Fire()
                 APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(Owner->GetWorld(), 0);
                 FVector Impulse = repulsiveForceMultFactor * comp->GetMass() * cm->GetActorForwardVector();
                 comp->AddImpulse(Impulse);
+
+                // apply sound
+                soundFireComp->Play();
             }
         }
     }
@@ -86,6 +105,9 @@ void AQLWeaponGravityGun::Fire()
                         APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(Owner->GetWorld(), 0);
                         FVector Impulse = repulsiveForceMultFactor * comp->GetMass() * cm->GetActorForwardVector();
                         comp->AddImpulse(Impulse);
+
+                        // apply sound
+                        soundFireComp->Play();
                     }
                 }
             }
@@ -93,6 +115,7 @@ void AQLWeaponGravityGun::Fire()
     }
 }
 
+//------------------------------------------------------------
 // If the actor that is compatible with gravity gun is far away,
 // AltFire() will exert attractive force on it, until it becomes
 // next to the player, when the player starts to hold it.
@@ -101,7 +124,9 @@ void AQLWeaponGravityGun::Fire()
 //
 // Note that:
 // bool bIsAltFireHeldDown; // key/button is held down for some time
-// bool bIsAltFirePressed; // key/button is pressed, regardless if it is subsequently released or held down
+// bool bIsAltFirePressed; // key/button is pressed, regardless if
+// it is subsequently released or held down
+//------------------------------------------------------------
 void AQLWeaponGravityGun::AltFire()
 {
     bIsAltFirePressed = true;
@@ -175,6 +200,9 @@ void AQLWeaponGravityGun::AltFire()
                         // enum members are shown in engine source code: EngineTypes.h
                         comp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 
+                        // apply sound
+                        soundHoldComp->Play();
+
                         // consequently player then holds the actor for every tick
                         // refer to Tick()
                     }
@@ -188,24 +216,35 @@ void AQLWeaponGravityGun::AltFire()
                 }
             }
         }
+        else
+        {
+            // apply sound
+            soundWrongComp->Play();
+        }
     }
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLWeaponGravityGun::AltFireReleased()
 {
     bIsAltFireHeldDown = false;
     bIsAltFirePressed = false;
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLWeaponGravityGun::AltFireRepeat()
 {
     AltFire();
 }
 
+//------------------------------------------------------------
 // In Tick() several things are done:
 // --- if alt fire is pressed, check if it is being held down
 // --- if alt fire is being held down, call AltFireRepeat() at a constant interval
 // --- if gravity gun compatible actor is being held, move it along with the character
+//------------------------------------------------------------
 void AQLWeaponGravityGun::Tick(float DeltaSeconds)
 {
     if (bIsAltFirePressed)

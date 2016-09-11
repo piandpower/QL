@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "QLUtility.h"
 #include "QLWeaponGravityGun.h"
 #include "QLWeaponPortalGun.h"
 #include "GameFramework/Character.h"
@@ -67,6 +68,7 @@ public:
     FHitResult RayTraceFromCharacterPOV();
     bool IsObjectNextToCharacter(AQLGravityGunCompatibleActor* ggcActor);
 
+    // implementation makes sure this function can only be called once
     void UnlockAllWeapon();
 
     // Handles input for moving forward and backward.
@@ -134,4 +136,6 @@ protected:
     float MaxWalkSpeedCrouched;
 
     int Health;
+
+    bool bAllWeaponUnlockable;
 };

@@ -11,6 +11,8 @@
 #include "QL.h"
 #include "QLCharacter.h"
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 QLWeaponManager::QLWeaponManager(AQLCharacter* QLCharacter)
 {
     this->QLCharacter = QLCharacter;
@@ -21,6 +23,8 @@ QLWeaponManager::QLWeaponManager(AQLCharacter* QLCharacter)
     LastWeapon = nullptr;
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 QLWeaponManager::~QLWeaponManager()
 {
     // iterate all weapons the player possesses
@@ -33,6 +37,8 @@ QLWeaponManager::~QLWeaponManager()
     }
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void QLWeaponManager::ChangeCurrentWeapon(AQLWeapon* Weapon)
 {
     // if the target weapon exists
@@ -49,17 +55,21 @@ void QLWeaponManager::ChangeCurrentWeapon(AQLWeapon* Weapon)
     }
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void QLWeaponManager::PickUpWeapon(AQLWeapon* Weapon)
 {
     // if the weapon exists
     if (Weapon)
     {
         ChangeCurrentWeapon(Weapon);
-        Weapon->SetOwner(QLCharacter);
+        Weapon->SetWeaponOwner(QLCharacter);
     }
 }
 
+//------------------------------------------------------------
 // check if the specified weapon is equipped by the player
+//------------------------------------------------------------
 bool QLWeaponManager::IsEquipped(const FString& Name)
 {
     if (WeaponList[Name] != nullptr)
@@ -72,13 +82,16 @@ bool QLWeaponManager::IsEquipped(const FString& Name)
     }
 }
 
+//------------------------------------------------------------
 // Sets default values
+//------------------------------------------------------------
 AQLCharacter::AQLCharacter() : WeaponManager(this)
 {
     DoubleJumpCounter = 0;
 
     bIsSprinting = false;
     bWantToSprint = false;
+    bAllWeaponUnlockable = true;
 
     // Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
@@ -94,7 +107,7 @@ AQLCharacter::AQLCharacter() : WeaponManager(this)
 
     // camera
     QLCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-    QLCameraComponent->AttachTo(GetCapsuleComponent());
+    QLCameraComponent->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
     QLCameraComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 64.0f + BaseEyeHeight));
     QLCameraComponent->bUsePawnControlRotation = true;
 
@@ -102,23 +115,31 @@ AQLCharacter::AQLCharacter() : WeaponManager(this)
     PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 AQLCharacter::~AQLCharacter()
 {
 }
 
+//------------------------------------------------------------
 // Called when the game starts or when spawned
+//------------------------------------------------------------
 void AQLCharacter::BeginPlay()
 {
     Super::BeginPlay();
 }
 
+//------------------------------------------------------------
 // Called every frame
+//------------------------------------------------------------
 void AQLCharacter::Tick( float DeltaTime )
 {
     Super::Tick( DeltaTime );
 }
 
+//------------------------------------------------------------
 // Called to bind functionality to input
+//------------------------------------------------------------
 void AQLCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 {
     Super::SetupPlayerInputComponent(InputComponent);
@@ -144,6 +165,8 @@ void AQLCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompone
     InputComponent->BindAxis("LookUp", this, &AQLCharacter::AddControllerPitchInput);
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLCharacter::MoveForward(float Value)
 {
     // Find out which way is "forward" and record that the player wants to move that way.
@@ -151,6 +174,8 @@ void AQLCharacter::MoveForward(float Value)
     AddMovementInput(Direction, Value);
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLCharacter::MoveRight(float Value)
 {
     // Find out which way is "right" and record that the player wants to move that way.
@@ -158,6 +183,8 @@ void AQLCharacter::MoveRight(float Value)
     AddMovementInput(Direction, Value);
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLCharacter::StartJump()
 {
     if (0 == DoubleJumpCounter)
@@ -166,22 +193,29 @@ void AQLCharacter::StartJump()
     }
     else if (1 == DoubleJumpCounter)
     {
-        LaunchCharacter({0 , 0, 2.0f * GetCharacterMovement()->JumpZVelocity}, false, true);
+        // perform double jump
+        LaunchCharacter({0 , 0, GetCharacterMovement()->JumpZVelocity}, false, true);
     }
 
     ++DoubleJumpCounter;
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLCharacter::StopJump()
 {
     bPressedJump = false;
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLCharacter::Landed(const FHitResult& Hit)
 {
     DoubleJumpCounter = 0;
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLCharacter::ToggleCrouch()
 {
     // If we are crouching then CanCrouch will return false. If we cannot crouch then calling Crouch() wont do anything
@@ -195,6 +229,8 @@ void AQLCharacter::ToggleCrouch()
     }
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLCharacter::ToggleSprint()
 {
     // toggle logic
@@ -210,7 +246,9 @@ void AQLCharacter::ToggleSprint()
     }
 }
 
+//------------------------------------------------------------
 // only true when the player wants to sprint and is not sprinting
+//------------------------------------------------------------
 bool AQLCharacter::CanSprint() const
 {
     if (bWantToSprint == true && bIsSprinting == false)
@@ -223,19 +261,25 @@ bool AQLCharacter::CanSprint() const
     }
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLCharacter::Sprint()
 {
     bWantToSprint = true;
     GetCharacterMovement()->MaxWalkSpeed = 3.0f * MaxWalkSpeed;
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLCharacter::UnSprint()
 {
     bWantToSprint = false;
     GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
 }
 
+//------------------------------------------------------------
 // delegate to weapon member function
+//------------------------------------------------------------
 void AQLCharacter::Fire()
 {
     if (WeaponManager.CurrentWeapon)
@@ -244,7 +288,9 @@ void AQLCharacter::Fire()
     }
 }
 
+//------------------------------------------------------------
 // delegate to weapon member function
+//------------------------------------------------------------
 void AQLCharacter::AltFire()
 {
     if (WeaponManager.CurrentWeapon)
@@ -253,7 +299,9 @@ void AQLCharacter::AltFire()
     }
 }
 
+//------------------------------------------------------------
 // delegate to weapon member function
+//------------------------------------------------------------
 void AQLCharacter::AltFireReleased()
 {
     if (WeaponManager.CurrentWeapon)
@@ -262,6 +310,8 @@ void AQLCharacter::AltFireReleased()
     }
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLCharacter::SwitchToGravityGun()
 {
     if (WeaponManager.IsEquipped(FString(TEXT("GravityGun"))))
@@ -270,6 +320,8 @@ void AQLCharacter::SwitchToGravityGun()
     }
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLCharacter::SwitchToPortalGun()
 {
     if (WeaponManager.IsEquipped(FString(TEXT("PortalGun"))))
@@ -278,6 +330,8 @@ void AQLCharacter::SwitchToPortalGun()
     }
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLCharacter::SwitchToNeutronAWP()
 {
     if (WeaponManager.IsEquipped(FString(TEXT("NeutronAWP"))))
@@ -287,11 +341,15 @@ void AQLCharacter::SwitchToNeutronAWP()
     GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString(TEXT("try to switch to neutron awp.")));
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLCharacter::SwitchToLastWeapon()
 {
     WeaponManager.ChangeCurrentWeapon(WeaponManager.LastWeapon);
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 FHitResult AQLCharacter::RayTraceFromCharacterPOV()
 {
     FCollisionQueryParams lineTraceParams = FCollisionQueryParams(FName(TEXT("lineTrace")), true, this);
@@ -317,6 +375,8 @@ FHitResult AQLCharacter::RayTraceFromCharacterPOV()
     return hit;
 }
 
+//------------------------------------------------------------
+//------------------------------------------------------------
 bool AQLCharacter::IsObjectNextToCharacter(AQLGravityGunCompatibleActor* ggcActor)
 {
     if (ggcActor)
@@ -336,16 +396,25 @@ bool AQLCharacter::IsObjectNextToCharacter(AQLGravityGunCompatibleActor* ggcActo
     }
 }
 
+//------------------------------------------------------------
+// bAllWeaponUnlockable makes sure UnlockAllWeapon()
+// can only be called once per character life cycle
+//------------------------------------------------------------
 void AQLCharacter::UnlockAllWeapon()
 {
-    WeaponManager.WeaponList["GravityGun"] = GetWorld()->SpawnActor<AQLWeaponGravityGun>(AQLWeaponGravityGun::StaticClass());
-    WeaponManager.WeaponList["GravityGun"]->SetOwner(this);
+    if (bAllWeaponUnlockable)
+    {
+        WeaponManager.WeaponList["GravityGun"] = GetWorld()->SpawnActor<AQLWeaponGravityGun>(AQLWeaponGravityGun::StaticClass());
+        WeaponManager.WeaponList["GravityGun"]->SetWeaponOwner(this);
 
-    WeaponManager.WeaponList["PortalGun"]  = GetWorld()->SpawnActor<AQLWeaponPortalGun>(AQLWeaponPortalGun::StaticClass());
-    WeaponManager.WeaponList["PortalGun"]->SetOwner(this);
+        WeaponManager.WeaponList["PortalGun"] = GetWorld()->SpawnActor<AQLWeaponPortalGun>(AQLWeaponPortalGun::StaticClass());
+        WeaponManager.WeaponList["PortalGun"]->SetWeaponOwner(this);
 
-    //WeaponManager.WeaponList["NeutronAWP"] = GetWorld()->SpawnActor<AQLWeaponNeutronAWP>(AQLWeaponPortalGun::StaticClass());
-    //WeaponManager.WeaponList["NeutronAWP"]->SetOwner(this);
+        //WeaponManager.WeaponList["NeutronAWP"] = GetWorld()->SpawnActor<AQLWeaponNeutronAWP>(AQLWeaponPortalGun::StaticClass());
+        //WeaponManager.WeaponList["NeutronAWP"]->SetWeaponOwner(this);
 
-    WeaponManager.CurrentWeapon = WeaponManager.WeaponList["GravityGun"];
+        WeaponManager.CurrentWeapon = WeaponManager.WeaponList["GravityGun"];
+
+        bAllWeaponUnlockable = false;
+    }
 }
