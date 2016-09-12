@@ -18,7 +18,7 @@
 UCLASS()
 class QL_API AQLHUD : public AHUD
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 public:
     AQLHUD();
     virtual void DrawHUD() override;

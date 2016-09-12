@@ -25,17 +25,17 @@ const float defaultBoxComponentDim = 80.0f;
 UCLASS()
 class QL_API AQLGravityGunCompatibleActor : public AActor
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
-	AQLGravityGunCompatibleActor();
+    // Sets default values for this actor's properties
+    AQLGravityGunCompatibleActor();
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
 
-	// Called every frame
-	virtual void Tick( float DeltaSeconds ) override;
+    // Called every frame
+    virtual void Tick( float DeltaSeconds ) override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gravity gun compatible actor")
     UBoxComponent* BoxComponent;

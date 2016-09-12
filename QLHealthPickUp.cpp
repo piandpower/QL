@@ -8,8 +8,8 @@
 //------------------------------------------------------------
 AQLHealthPickUp::AQLHealthPickUp()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    PrimaryActorTick.bCanEverTick = true;
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
     RootComponent = BoxComponent;
@@ -28,7 +28,7 @@ AQLHealthPickUp::AQLHealthPickUp()
 //------------------------------------------------------------
 void AQLHealthPickUp::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 }
 
 //------------------------------------------------------------
@@ -36,7 +36,7 @@ void AQLHealthPickUp::BeginPlay()
 //------------------------------------------------------------
 void AQLHealthPickUp::Tick( float DeltaTime )
 {
-	Super::Tick( DeltaTime );
+    Super::Tick( DeltaTime );
 }
 
 //------------------------------------------------------------

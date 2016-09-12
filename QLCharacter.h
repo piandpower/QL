@@ -41,7 +41,7 @@ protected:
 UCLASS()
 class QL_API AQLCharacter : public ACharacter
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
     QLWeaponManager WeaponManager;
@@ -50,17 +50,17 @@ public:
     UCameraComponent* QLCameraComponent;
     UPhysicsHandleComponent* PhysicsHandle;
 
-	AQLCharacter();
+    AQLCharacter();
     ~AQLCharacter();
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
 
-	// Called every frame
-	virtual void Tick( float DeltaSeconds ) override;
+    // Called every frame
+    virtual void Tick( float DeltaSeconds ) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+    // Called to bind functionality to input
+    virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
     virtual void Landed(const FHitResult& Hit) override;
 

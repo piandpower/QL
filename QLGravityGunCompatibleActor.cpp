@@ -16,8 +16,8 @@
 //------------------------------------------------------------
 AQLGravityGunCompatibleActor::AQLGravityGunCompatibleActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    PrimaryActorTick.bCanEverTick = true;
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
     RootComponent = BoxComponent;
@@ -34,7 +34,7 @@ AQLGravityGunCompatibleActor::AQLGravityGunCompatibleActor()
 //------------------------------------------------------------
 void AQLGravityGunCompatibleActor::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 }
 
 //------------------------------------------------------------
@@ -42,5 +42,5 @@ void AQLGravityGunCompatibleActor::BeginPlay()
 //------------------------------------------------------------
 void AQLGravityGunCompatibleActor::Tick( float DeltaTime )
 {
-	Super::Tick( DeltaTime );
+    Super::Tick( DeltaTime );
 }

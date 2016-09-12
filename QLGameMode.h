@@ -17,6 +17,6 @@
 UCLASS()
 class QL_API AQLGameMode : public AGameMode
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
     virtual void StartPlay() override;
 };

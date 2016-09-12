@@ -9,17 +9,17 @@
 UCLASS()
 class QL_API AQLHealthPickUp : public AActor
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
-	AQLHealthPickUp();
+    // Sets default values for this actor's properties
+    AQLHealthPickUp();
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
 
-	// Called every frame
-	virtual void Tick( float DeltaSeconds ) override;
+    // Called every frame
+    virtual void Tick( float DeltaSeconds ) override;
 
     UFUNCTION()
     void OnOverlapBeginForComp(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
