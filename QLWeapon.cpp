@@ -24,7 +24,7 @@ AQLWeapon::AQLWeapon()
     bIsFireHeldDown = false;
     bIsAltFireHeldDown = false;
     bIsAltFirePressed = false;
-    Owner = nullptr;
+    WeaponOwner = nullptr;
     CurrentCrosshairTexture = nullptr;
 
     UBoxComponent* BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
@@ -56,15 +56,22 @@ void AQLWeapon::Tick( float DeltaTime )
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLWeapon::SetWeaponOwner(AQLCharacter* Owner)
+AQLCharacter* AQLWeapon::GetWeaponOwner() const
+{
+    return WeaponOwner;
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLWeapon::SetWeaponOwner(AQLCharacter* WeaponOwner)
 {
     // set logical ownership
     // so that the weapon will know which character is owning it
     // and can call character's member function
-    this->Owner = Owner;
+    this->WeaponOwner = WeaponOwner;
 
     // set logical ownership
-    Owner->AddToInventory(this);
+    WeaponOwner->AddToInventory(this);
 }
 
 //------------------------------------------------------------

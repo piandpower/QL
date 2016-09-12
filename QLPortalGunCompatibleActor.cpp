@@ -11,6 +11,7 @@
 #include "QL.h"
 #include "QLPortalGunCompatibleActor.h"
 #include "QLCharacter.h"
+#include "QLWeaponPortalGun.h"
 
 //------------------------------------------------------------
 //------------------------------------------------------------
@@ -25,6 +26,9 @@ AQLPortalGunCompatibleActor::AQLPortalGunCompatibleActor()
     BoxComponent->SetSimulatePhysics(false);
     BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+
+    TheOTherPortal = nullptr;
+    PortalOwner = nullptr;
 
     // built-in dynamic delegate
     this->OnActorBeginOverlap.AddDynamic(this, &AQLPortalGunCompatibleActor::OnOverlapBeginForActor);
@@ -48,14 +52,39 @@ void AQLPortalGunCompatibleActor::Tick( float DeltaTime )
 
 //------------------------------------------------------------
 //------------------------------------------------------------
+void AQLPortalGunCompatibleActor::SetPortalOwner(AQLWeaponPortalGun* PortalOwner)
+{
+    // set logical ownership
+    // so that the portal will know which portal gun is owning it
+    // and can call portal gun's member function
+    this->PortalOwner = PortalOwner;
+}
+
+//------------------------------------------------------------
+// The portal does not transport an actor when it
+// is not character but is currently owned by character
+//------------------------------------------------------------
 void AQLPortalGunCompatibleActor::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor)
 {
     FString info = FString("overlapping actor = ") + OtherActor->GetName();
-    AQLCharacter* player = Cast<AQLCharacter>(OtherActor);
-    if (player)
-    {
-        info += " --> player.";
-    }
 
-    QLUtility::QLSay(info);
+    //// OtherActor is character
+    //if (OtherActor->IsA(this->GetOwner()))
+    //{
+    //    info += " --> player.";
+    //}
+    //// OtherActor is not character
+    //{
+    //    // OtherActor's owner is character
+    //    if (OtherActor->GetOwner() == PortalOwner->GetWeaponOwner())
+    //    {
+    //        info += " --> owned by player.";
+    //    }
+    //    else
+    //    {
+    //        info += " --> not owned by player.";
+    //    }
+    //}
+
+    //QLUtility::QLSay(info);
 }

@@ -40,7 +40,8 @@ public:
     virtual void AltFireReleased() {};
     virtual void AltFireRepeat() {};
 
-    void SetWeaponOwner(AQLCharacter* owner);
+    AQLCharacter* GetWeaponOwner()  const;
+    void SetWeaponOwner(AQLCharacter* WeaponOwner);
 
     void SetCurrentCrosshairTexture(const FName& crosshairTextureName);
     UTexture2D* GetCurrentCrosshairTexture()  const;
@@ -57,7 +58,7 @@ protected:
     bool bIsFireHeldDown;
     bool bIsAltFireHeldDown; // key/button is held down for some time
     bool bIsAltFirePressed; // key/button is pressed, regardless if it is subsequently released or held down
-    AQLCharacter* Owner;
+    AQLCharacter* WeaponOwner;
     FHitResult Hit;
     TMap<FName, UAudioComponent*> WeaponSoundList;
     UTexture2D* CurrentCrosshairTexture;

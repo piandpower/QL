@@ -61,13 +61,13 @@ void AQLWeaponGravityGun::Fire()
                 comp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 
                 // physical handle releases the component
-                Owner->PhysicsHandle->ReleaseComponent();
+                WeaponOwner->PhysicsHandle->ReleaseComponent();
 
                 // unset logical ownership
-                Owner->RemoveFromInventory(ggcActor);
+                WeaponOwner->RemoveFromInventory(ggcActor);
 
                 // apply repulsive force to the component
-                APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(Owner->GetWorld(), 0);
+                APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(WeaponOwner->GetWorld(), 0);
                 FVector Impulse = repulsiveForceMultFactor * comp->GetMass() * cm->GetActorForwardVector();
                 comp->AddImpulse(Impulse);
 
@@ -79,7 +79,7 @@ void AQLWeaponGravityGun::Fire()
     // the actor is not being held by the player
     else
     {
-        Hit = Owner->RayTraceFromCharacterPOV();
+        Hit = WeaponOwner->RayTraceFromCharacterPOV();
         // if hit occurs
         if (Hit.bBlockingHit)
         {
@@ -97,10 +97,10 @@ void AQLWeaponGravityGun::Fire()
                 if (comp)
                 {
                     // if the compatible actor is considered next to the actor
-                    if (Owner->IsObjectNextToCharacter(ggcActor))
+                    if (WeaponOwner->IsObjectNextToCharacter(ggcActor))
                     {
                         // apply repulsive force to the component
-                        APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(Owner->GetWorld(), 0);
+                        APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(WeaponOwner->GetWorld(), 0);
                         FVector Impulse = repulsiveForceMultFactor * comp->GetMass() * cm->GetActorForwardVector();
                         comp->AddImpulse(Impulse);
 
@@ -153,10 +153,10 @@ void AQLWeaponGravityGun::AltFire()
                     comp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 
                     // physical handle releases the component
-                    Owner->PhysicsHandle->ReleaseComponent();
+                    WeaponOwner->PhysicsHandle->ReleaseComponent();
 
                     // unset logical ownership
-                    Owner->RemoveFromInventory(ggcActor);
+                    WeaponOwner->RemoveFromInventory(ggcActor);
                 }
             }
         }
@@ -164,7 +164,7 @@ void AQLWeaponGravityGun::AltFire()
     // the actor is not being held by the player
     else
     {
-        Hit = Owner->RayTraceFromCharacterPOV();
+        Hit = WeaponOwner->RayTraceFromCharacterPOV();
         // if hit occurs
         if (Hit.bBlockingHit)
         {
@@ -182,23 +182,23 @@ void AQLWeaponGravityGun::AltFire()
                 if (comp)
                 {
                     // if the compatible actor is considered next to the actor
-                    if (Owner->IsObjectNextToCharacter(ggcActor))
+                    if (WeaponOwner->IsObjectNextToCharacter(ggcActor))
                     {
                         // character holds the actor
                         bIsGravityGunCompatibleActorHeld = true;
 
                         // get rotation delta between character and component
                         FRotator ggcActorRotation = comp->GetComponentRotation();
-                        APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(Owner->GetWorld(), 0);
+                        APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(WeaponOwner->GetWorld(), 0);
                         FRotator cameraRotation = cm->GetCameraRotation();
                         DeltaRotation = ggcActorRotation - cameraRotation;
                         DeltaRotation.Normalize();
 
                         // physical handle grabs the component
-                        Owner->PhysicsHandle->GrabComponent(comp, Hit.BoneName, Hit.Location, true);
+                        WeaponOwner->PhysicsHandle->GrabComponent(comp, Hit.BoneName, Hit.Location, true);
 
                         // set logical ownership
-                        Owner->AddToInventory(ggcActor);
+                        WeaponOwner->AddToInventory(ggcActor);
 
                         // disable collision between character and component
                         // enum members are shown in engine source code: EngineTypes.h
@@ -213,7 +213,7 @@ void AQLWeaponGravityGun::AltFire()
                     else
                     {
                         // apply attractive force to the component
-                        APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(Owner->GetWorld(), 0);
+                        APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(WeaponOwner->GetWorld(), 0);
                         FVector Impulse = -attractiveForceMultFactor * comp->GetMass() * cm->GetActorForwardVector();
                         comp->AddImpulse(Impulse);
                     }
@@ -295,8 +295,8 @@ void AQLWeaponGravityGun::Tick(float DeltaSeconds)
             APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
             FVector newLocation = cm->GetCameraLocation() + cm->GetActorForwardVector() * distanceFromCharacterToActorWhenHold;
             FRotator newRotation = cm->GetCameraRotation() + DeltaRotation;
-            Owner->PhysicsHandle->SetTargetLocation(newLocation);
-            Owner->PhysicsHandle->SetTargetRotation(newRotation);
+            WeaponOwner->PhysicsHandle->SetTargetLocation(newLocation);
+            WeaponOwner->PhysicsHandle->SetTargetRotation(newRotation);
         }
     }
 }
