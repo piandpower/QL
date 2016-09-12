@@ -53,6 +53,12 @@ public:
     UFUNCTION()
     void OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor);
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BoxComponent")
+    UBoxComponent* BoxComponent;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StaticMeshComponent")
+    UStaticMeshComponent* StaticMeshComponent;
+
 protected:
     FName Name;
     bool bIsFireHeldDown;

@@ -36,9 +36,10 @@ AQLCharacter::AQLCharacter()
     //GetCharacterMovement()->MaxStepHeight = 100.0f;
 
     // camera
+    // note pawn has a member var: BaseEyeHeight
     QLCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-    QLCameraComponent->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-    QLCameraComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 64.0f + BaseEyeHeight));
+    QLCameraComponent->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+    QLCameraComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight));
     QLCameraComponent->bUsePawnControlRotation = true;
 
     // physics handle
@@ -347,11 +348,11 @@ void AQLCharacter::UnlockAllWeapon()
     {
         if (!IsEquipped("GravityGun"))
         {
-            PickUpWeapon(GetWorld()->SpawnActor<AQLWeaponGravityGun>(AQLWeaponGravityGun::StaticClass()));
+            PickUpWeapon(GetWorld()->SpawnActor<AQLWeaponGravityGun>(AQLWeaponGravityGun::StaticClass(), this->GetActorLocation(), FRotator::ZeroRotator));
         }
         if (!IsEquipped("PortalGun"))
         {
-            PickUpWeapon(GetWorld()->SpawnActor<AQLWeaponPortalGun>(AQLWeaponPortalGun::StaticClass()));
+            PickUpWeapon(GetWorld()->SpawnActor<AQLWeaponPortalGun>(AQLWeaponPortalGun::StaticClass(), this->GetActorLocation(), FRotator::ZeroRotator));
         }
         if (!CurrentWeapon)
         {
@@ -379,7 +380,7 @@ void AQLCharacter::PickUpWeapon(AQLWeapon* Weapon)
             Weapon->SetWeaponOwner(this);
 
             // physical attachment
-            Weapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+            Weapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
 
             PlayCharacterSound("EquipWeapon");
         }
@@ -434,7 +435,7 @@ UAudioComponent* AQLCharacter::CreateCharacterSoundComponent(USceneComponent*& R
     if (soundWave.Object->IsValidLowLevel() && soundComp)
     {
         soundComp->SetSound(soundWave.Object);
-        soundComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+        soundComp->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
         soundComp->SetRelativeLocation(FVector(0.0f));
         soundComp->bAutoActivate = false;
         success = true;

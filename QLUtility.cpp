@@ -17,7 +17,21 @@ namespace QLUtility
     //------------------------------------------------------------
     void QLSay(const FString& string)
     {
-        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, string);
+        QLSay(string, 5.0f);
+    }
+
+    //------------------------------------------------------------
+    //------------------------------------------------------------
+    void QLSayLong(const FString& string)
+    {
+        QLSay(string, 600.0f);
+    }
+
+    //------------------------------------------------------------
+    //------------------------------------------------------------
+    void QLSay(const FString& string, const float time)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, time, FColor::Cyan, string);
     }
 
     //------------------------------------------------------------

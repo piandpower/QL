@@ -27,12 +27,20 @@ AQLWeapon::AQLWeapon()
     WeaponOwner = nullptr;
     CurrentCrosshairTexture = nullptr;
 
-    UBoxComponent* BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
+    BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
     BoxComponent->InitBoxExtent(FVector(10.0f));
     BoxComponent->SetSimulatePhysics(false);
     BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
     RootComponent = BoxComponent;
+
+    StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+    const ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Cube"));
+    StaticMeshComponent->SetStaticMesh(StaticMeshObj.Object);
+    StaticMeshComponent->SetSimulatePhysics(false);
+    StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    StaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+    StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
 
     // built-in dynamic delegate
     this->OnActorBeginOverlap.AddDynamic(this, &AQLWeapon::OnOverlapBeginForActor);
@@ -127,7 +135,7 @@ UAudioComponent* AQLWeapon::CreateWeaponSoundComponent(USceneComponent*& RootCom
     if (soundWave.Object->IsValidLowLevel() && soundComp)
     {
         soundComp->SetSound(soundWave.Object);
-        soundComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+        soundComp->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
         soundComp->SetRelativeLocation(FVector(0.0f));
         soundComp->bAutoActivate = false;
         success = true;

@@ -40,6 +40,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gravity gun compatible actor")
     UBoxComponent* BoxComponent;
 
-    // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gravity gun compatible actor")
-    // UStaticMeshComponent* StaticMeshComponent;
+     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gravity gun compatible actor")
+     UStaticMeshComponent* StaticMeshComponent;
 };

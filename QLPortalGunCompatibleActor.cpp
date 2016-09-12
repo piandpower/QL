@@ -27,6 +27,14 @@ AQLPortalGunCompatibleActor::AQLPortalGunCompatibleActor()
     BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 
+    StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+    const ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Cube"));
+    StaticMeshComponent->SetStaticMesh(StaticMeshObj.Object);
+    StaticMeshComponent->SetSimulatePhysics(false);
+    StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    StaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+    StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+
     TheOTherPortal = nullptr;
     PortalOwner = nullptr;
 
