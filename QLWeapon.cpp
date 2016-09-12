@@ -139,16 +139,7 @@ UAudioComponent* AQLWeapon::CreateWeaponSoundComponent(USceneComponent*& RootCom
 //------------------------------------------------------------
 void AQLWeapon::PlayWeaponSound(const FName& soundName)
 {
-    UAudioComponent** valuePtr = WeaponSoundList.Find(soundName);
-    if (valuePtr)
-    {
-        UAudioComponent* soundComp = *valuePtr;
-        // c++ standard: evaluation order from left to right
-        if (soundComp && !soundComp->IsPlaying())
-        {
-            soundComp->Play();
-        }
-    }
+    QLUtility::PlaySound(WeaponSoundList, soundName);
 }
 
 //------------------------------------------------------------

@@ -28,9 +28,10 @@ AQLWeaponGravityGun::AQLWeaponGravityGun()
     CrosshairTextureList.Add("Regular", CreateCrosshairTexture(TEXT("/Game/Textures/Crosshair/gravity_gun_crosshair")));
     SetCurrentCrosshairTexture("Regular");
 
-    WeaponSoundList.Add("None", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/bottle"), TEXT("soundWrongComp")));
-    WeaponSoundList.Add("Hold", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/zoom_in"), TEXT("soundHoldComp")));
-    WeaponSoundList.Add("Fire", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/gravity_gun_fire"), TEXT("soundFireComp")));
+    // sound
+    WeaponSoundList.Add("None", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/bottle"), TEXT("SoundWrongComp")));
+    WeaponSoundList.Add("Hold", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/zoom_in"), TEXT("SoundHoldComp")));
+    WeaponSoundList.Add("Fire", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/gravity_gun_fire"), TEXT("SoundFireComp")));
 }
 
 //------------------------------------------------------------

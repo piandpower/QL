@@ -13,4 +13,5 @@
 namespace QLUtility
 {
     void QLSay(const FString& string);
+    void PlaySound(TMap<FName, UAudioComponent*>& SoundList, const FName& SoundName);
 }

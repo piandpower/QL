@@ -113,6 +113,8 @@ public:
     void PickUpWeapon(AQLWeapon* Weapon);
     AQLWeapon* GetCurrentWeapon() const;
 
+    UAudioComponent* CreateCharacterSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName);
+    void PlayCharacterSound(const FName& soundName);
 protected:
     int DoubleJumpCounter;
 
@@ -131,4 +133,5 @@ protected:
     AQLWeapon* LastWeapon;
     TMap<FName, AQLWeapon*> WeaponList;
     TMap<FString, AActor*> Inventory;
+    TMap<FName, UAudioComponent*> CharacterSoundList;
 };

@@ -12,50 +12,6 @@
 #include "QLCharacter.h"
 
 //------------------------------------------------------------
-//------------------------------------------------------------
-void AQLCharacter::ChangeCurrentWeapon(AQLWeapon* Weapon)
-{
-    // if the target weapon exists
-    // note that the current weapon is allowed to be nonexistent
-    if (Weapon != nullptr)
-    {
-        // if the target weapon is not the same with the current weapon
-        if (CurrentWeapon != Weapon)
-        {
-            LastWeapon = CurrentWeapon;
-            CurrentWeapon = Weapon;
-            QLUtility::QLSay(FString(TEXT("switch to ")) + Weapon->GetWeaponName().ToString());
-        }
-    }
-}
-
-//------------------------------------------------------------
-// check if the specified type of weapon (identified by name)
-// is already equipped by the player
-//------------------------------------------------------------
-bool AQLCharacter::IsEquipped(const FName& Name)
-{
-    // if the given name exists in the preset list
-    if (WeaponList.Contains(Name))
-    {
-        // if the player has that type of weapon
-        if (WeaponList[Name] != nullptr)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    else
-    {
-        QLUtility::QLSay("AQLCharacter::IsEquipped(): unknown weapon type.");
-        return false;
-    }
-}
-
-//------------------------------------------------------------
 // Sets default values
 //------------------------------------------------------------
 AQLCharacter::AQLCharacter()
@@ -94,6 +50,10 @@ AQLCharacter::AQLCharacter()
     WeaponList.Add("NeutronAWP", nullptr);
     CurrentWeapon = nullptr;
     LastWeapon = nullptr;
+
+    // sound
+    CharacterSoundList.Add("EquipWeapon", CreateCharacterSoundComponent(RootComponent, TEXT("/Game/Sounds/medshot4_from_hl2"), TEXT("SoundEquipWeaponComp")));
+    CharacterSoundList.Add("SwitchWeapon", CreateCharacterSoundComponent(RootComponent, TEXT("/Game/Sounds/swords_collide"), TEXT("SoundSwitchWeaponComp")));
 }
 
 //------------------------------------------------------------
@@ -420,6 +380,8 @@ void AQLCharacter::PickUpWeapon(AQLWeapon* Weapon)
 
             // physical attachment
             Weapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+
+            PlayCharacterSound("EquipWeapon");
         }
     }
 }
@@ -457,4 +419,85 @@ void AQLCharacter::RemoveFromInventory(AActor* Actor)
 
     // unset logical ownership
     Actor->SetOwner(nullptr);
+}
+
+//------------------------------------------------------------
+// note: ConstructorHelpers::FObjectFinder<T> and
+// CreateDefaultSubobject<T> can only be used inside ctor!!!
+//------------------------------------------------------------
+UAudioComponent* AQLCharacter::CreateCharacterSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName)
+{
+    ConstructorHelpers::FObjectFinder<USoundWave> soundWave(soundPath);
+    UAudioComponent* soundComp = CreateDefaultSubobject<UAudioComponent>(soundName);
+
+    bool success = false;
+    if (soundWave.Object->IsValidLowLevel() && soundComp)
+    {
+        soundComp->SetSound(soundWave.Object);
+        soundComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+        soundComp->SetRelativeLocation(FVector(0.0f));
+        soundComp->bAutoActivate = false;
+        success = true;
+    }
+
+    if (!success)
+    {
+        QLUtility::QLSay(TEXT("AQLCharacter::CreateWeaponSoundComponent() failed."));
+        soundComp = nullptr;
+    }
+
+    return soundComp;
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLCharacter::PlayCharacterSound(const FName& soundName)
+{
+    QLUtility::PlaySound(CharacterSoundList, soundName);
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLCharacter::ChangeCurrentWeapon(AQLWeapon* Weapon)
+{
+    // if the target weapon exists
+    // note that the current weapon is allowed to be nonexistent
+    if (Weapon != nullptr)
+    {
+        // if the target weapon is not the same with the current weapon
+        if (CurrentWeapon != Weapon)
+        {
+            LastWeapon = CurrentWeapon;
+            CurrentWeapon = Weapon;
+            QLUtility::QLSay(FString(TEXT("switch to ")) + Weapon->GetWeaponName().ToString());
+
+            PlayCharacterSound("SwitchWeapon");
+        }
+    }
+}
+
+//------------------------------------------------------------
+// check if the specified type of weapon (identified by name)
+// is already equipped by the player
+//------------------------------------------------------------
+bool AQLCharacter::IsEquipped(const FName& Name)
+{
+    // if the given name exists in the preset list
+    if (WeaponList.Contains(Name))
+    {
+        // if the player has that type of weapon
+        if (WeaponList[Name] != nullptr)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        QLUtility::QLSay("AQLCharacter::IsEquipped(): unknown weapon type.");
+        return false;
+    }
 }
