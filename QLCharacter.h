@@ -33,7 +33,6 @@ public:
     TMap<FName, AQLWeapon*> WeaponList;
     bool IsEquipped(const FName& Name);
     void ChangeCurrentWeapon(AQLWeapon* Weapon);
-    void PickUpWeapon(AQLWeapon* Weapon);
 
 protected:
     AQLCharacter* QLCharacter;
@@ -124,6 +123,8 @@ public:
     void SwitchToLastWeapon();
 
     // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health pickup component")
+
+    void PickUpWeapon(AQLWeapon* Weapon);
 
 protected:
     int DoubleJumpCounter;

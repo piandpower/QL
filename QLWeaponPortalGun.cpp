@@ -15,7 +15,7 @@
 //------------------------------------------------------------
 AQLWeaponPortalGun::AQLWeaponPortalGun()
 {
-    Name = "portal gun";
+    Name = "PortalGun";
     CrosshairTextureList.Add("BothEmpty", CreateCrosshairTexture(TEXT("/Game/Textures/Crosshair/portal_gun_crosshair_original_empty_processed")));
     SetCurrentCrosshairTexture("BothEmpty");
 }

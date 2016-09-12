@@ -13,7 +13,7 @@ AQLHealthPickUp::AQLHealthPickUp()
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
     RootComponent = BoxComponent;
-    BoxComponent->InitBoxExtent(FVector(200.0f, 200.0f, 200.0f));
+    BoxComponent->InitBoxExtent(FVector(40.0f, 20.0f, 40.0f));
     BoxComponent->SetSimulatePhysics(false);
     BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     BoxComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);

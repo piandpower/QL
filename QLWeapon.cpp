@@ -10,6 +10,7 @@
 
 #include "QL.h"
 #include "QLWeapon.h"
+#include "QLCharacter.h"
 
 //------------------------------------------------------------
 // Sets default values
@@ -19,12 +20,22 @@ AQLWeapon::AQLWeapon()
     // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
-    FString Name = FString(TEXT(""));
+    Name = "None";
     bIsFireHeldDown = false;
     bIsAltFireHeldDown = false;
     bIsAltFirePressed = false;
     Owner = nullptr;
     CurrentCrosshairTexture = nullptr;
+
+    UBoxComponent* BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
+    BoxComponent->InitBoxExtent(FVector(10.0f));
+    BoxComponent->SetSimulatePhysics(false);
+    BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+    RootComponent = BoxComponent;
+
+    // built-in dynamic delegate
+    this->OnActorBeginOverlap.AddDynamic(this, &AQLWeapon::OnOverlapBeginForActor);
 }
 
 //------------------------------------------------------------
@@ -33,7 +44,7 @@ AQLWeapon::AQLWeapon()
 void AQLWeapon::BeginPlay()
 {
     Super::BeginPlay();
-    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, Name + FString(TEXT(" created")));
+    QLUtility::QLSay(Name.ToString() + FString(TEXT(" created")));
 }
 
 //------------------------------------------------------------
@@ -48,6 +59,7 @@ void AQLWeapon::Tick( float DeltaTime )
 //------------------------------------------------------------
 void AQLWeapon::SetWeaponOwner(AQLCharacter* Owner)
 {
+    // logical attachment
     this->Owner = Owner;
 }
 
@@ -137,7 +149,19 @@ void AQLWeapon::PlayWeaponSound(const FName& soundName)
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-const FString& AQLWeapon::GetWeaponName() const
+const FName& AQLWeapon::GetWeaponName() const
 {
     return Name;
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLWeapon::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor)
+{
+    AQLCharacter* player = Cast<AQLCharacter>(OtherActor);
+    // if the overlapping actor is player, equip him with the weapon
+    if (player)
+    {
+        player->PickUpWeapon(this);
+    }
 }

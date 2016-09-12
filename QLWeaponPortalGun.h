@@ -11,8 +11,11 @@
 #pragma once
 
 #include "QLUtility.h"
+#include "QLPortalGunCompatibleActor.h"
 #include "QLWeapon.h"
 #include "QLWeaponPortalGun.generated.h"
+
+// constant
 
 UCLASS()
 class QL_API AQLWeaponPortalGun : public AQLWeapon
@@ -23,4 +26,8 @@ public:
     virtual void Fire() override;
     virtual void AltFire() override;
 protected:
+    bool bBluePortalCreated;
+    bool bOrangePortalCreated;
+    AQLPortalGunCompatibleActor* BluePortal;
+    AQLPortalGunCompatibleActor* OrangePortal;
 };

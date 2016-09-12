@@ -47,10 +47,13 @@ public:
     UTexture2D* CreateCrosshairTexture(const TCHAR* texturePath);
     UAudioComponent* CreateWeaponSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName);
     void PlayWeaponSound(const FName& soundName);
-    const FString& GetWeaponName() const;
+    const FName& GetWeaponName() const;
+
+    UFUNCTION()
+    void OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor);
 
 protected:
-    FString Name;
+    FName Name;
     bool bIsFireHeldDown;
     bool bIsAltFireHeldDown; // key/button is held down for some time
     bool bIsAltFirePressed; // key/button is pressed, regardless if it is subsequently released or held down

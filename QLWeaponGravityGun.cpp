@@ -16,7 +16,7 @@
 //------------------------------------------------------------
 AQLWeaponGravityGun::AQLWeaponGravityGun()
 {
-    Name = "gravity gun";
+    Name = "GravityGun";
     bIsGravityGunCompatibleActorHeld = false;
     bIsAltFireHeldDown = false;
     RunningTimeAltFirePressed = 0.0f;
@@ -81,7 +81,7 @@ void AQLWeaponGravityGun::Fire()
         {
             // check if the hit actor compatible with (i.e. responsive to) gravity gun
             // if it is not, the result of cast is nullptr
-            // note: this is a convenient runtime polymorphic type check!!
+            // this is a convenient runtime polymorphic type check
             AActor* hitActor = Hit.GetActor();
             ggcActor = Cast<AQLGravityGunCompatibleActor>(hitActor);
             if (ggcActor)
@@ -187,7 +187,7 @@ void AQLWeaponGravityGun::AltFire()
                         DeltaRotation = ggcActorRotation - cameraRotation;
                         DeltaRotation.Normalize();
 
-                        // physicsl handle grabs the component
+                        // physical handle grabs the component
                         Owner->PhysicsHandle->GrabComponent(comp, Hit.BoneName, Hit.Location, true);
 
                         // disable collision between character and component

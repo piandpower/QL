@@ -16,6 +16,8 @@
 QLWeaponManager::QLWeaponManager(AQLCharacter* QLCharacter)
 {
     this->QLCharacter = QLCharacter;
+
+    // creat all weapon slots
     WeaponList.Add("GravityGun", nullptr);
     WeaponList.Add("PortalGun",  nullptr);
     WeaponList.Add("NeutronAWP", nullptr);
@@ -27,14 +29,6 @@ QLWeaponManager::QLWeaponManager(AQLCharacter* QLCharacter)
 //------------------------------------------------------------
 QLWeaponManager::~QLWeaponManager()
 {
-    // iterate all weapons the player possesses
-    for (auto it = WeaponList.CreateIterator(); it; ++it)
-    {
-        if (IsEquipped(it.Key()))
-        {
-            it.Value()->Destroy();
-        }
-    }
 }
 
 //------------------------------------------------------------
@@ -50,34 +44,33 @@ void QLWeaponManager::ChangeCurrentWeapon(AQLWeapon* Weapon)
         {
             LastWeapon = CurrentWeapon;
             CurrentWeapon = Weapon;
-            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString(TEXT("switch to ")) + Weapon->GetWeaponName());
+            QLUtility::QLSay(FString(TEXT("switch to ")) + Weapon->GetWeaponName().ToString());
         }
     }
 }
 
 //------------------------------------------------------------
-//------------------------------------------------------------
-void QLWeaponManager::PickUpWeapon(AQLWeapon* Weapon)
-{
-    // if the weapon exists
-    if (Weapon)
-    {
-        ChangeCurrentWeapon(Weapon);
-        Weapon->SetWeaponOwner(QLCharacter);
-    }
-}
-
-//------------------------------------------------------------
-// check if the specified weapon is equipped by the player
+// check if the specified type of weapon (identified by name)
+// is already equipped by the player
 //------------------------------------------------------------
 bool QLWeaponManager::IsEquipped(const FName& Name)
 {
-    if (WeaponList[Name] != nullptr)
+    // if the given name exists in the preset list
+    if (WeaponList.Contains(Name))
     {
-        return true;
+        // if the player has that type of weapon
+        if (WeaponList[Name] != nullptr)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     else
     {
+        QLUtility::QLSay("QLWeaponManager::IsEquipped(): unknown weapon type.");
         return false;
     }
 }
@@ -104,6 +97,7 @@ AQLCharacter::AQLCharacter() : WeaponManager(this)
     GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
     MaxWalkSpeedCrouched = 100.0f;
     GetCharacterMovement()->MaxWalkSpeedCrouched = MaxWalkSpeedCrouched;
+    //GetCharacterMovement()->MaxStepHeight = 100.0f;
 
     // camera
     QLCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
@@ -404,17 +398,45 @@ void AQLCharacter::UnlockAllWeapon()
 {
     if (bAllWeaponUnlockable)
     {
-        WeaponManager.WeaponList["GravityGun"] = GetWorld()->SpawnActor<AQLWeaponGravityGun>(AQLWeaponGravityGun::StaticClass());
-        WeaponManager.WeaponList["GravityGun"]->SetWeaponOwner(this);
-
-        WeaponManager.WeaponList["PortalGun"] = GetWorld()->SpawnActor<AQLWeaponPortalGun>(AQLWeaponPortalGun::StaticClass());
-        WeaponManager.WeaponList["PortalGun"]->SetWeaponOwner(this);
-
-        //WeaponManager.WeaponList["NeutronAWP"] = GetWorld()->SpawnActor<AQLWeaponNeutronAWP>(AQLWeaponPortalGun::StaticClass());
-        //WeaponManager.WeaponList["NeutronAWP"]->SetWeaponOwner(this);
-
-        WeaponManager.CurrentWeapon = WeaponManager.WeaponList["GravityGun"];
+        if (!WeaponManager.IsEquipped("GravityGun"))
+        {
+            PickUpWeapon(GetWorld()->SpawnActor<AQLWeaponGravityGun>(AQLWeaponGravityGun::StaticClass()));
+        }
+        if (!WeaponManager.IsEquipped("PortalGun"))
+        {
+            PickUpWeapon(GetWorld()->SpawnActor<AQLWeaponPortalGun>(AQLWeaponPortalGun::StaticClass()));
+        }
+        if (!WeaponManager.CurrentWeapon)
+        {
+            WeaponManager.CurrentWeapon = WeaponManager.WeaponList["GravityGun"];
+        }
 
         bAllWeaponUnlockable = false;
+    }
+    else
+    {
+        QLUtility::QLSay(WeaponManager.IsEquipped("GravityGun") ? "true" : "false");
+    }
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLCharacter::PickUpWeapon(AQLWeapon* Weapon)
+{
+    // if the weapon exists
+    if (Weapon)
+    {
+        // if the player does not have this weapon yet
+        if (!WeaponManager.IsEquipped(Weapon->GetWeaponName()))
+        {
+            WeaponManager.WeaponList[Weapon->GetWeaponName()] = Weapon;
+            WeaponManager.ChangeCurrentWeapon(Weapon);
+
+            // logical attachment
+            Weapon->SetWeaponOwner(this);
+
+            // physical attachment
+            Weapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+        }
     }
 }
