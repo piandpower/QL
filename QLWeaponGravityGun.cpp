@@ -59,8 +59,11 @@ void AQLWeaponGravityGun::Fire()
                 // enum members are shown in engine source code: EngineTypes.h
                 comp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 
-                // physicsl handle releases the component
+                // physical handle releases the component
                 Owner->PhysicsHandle->ReleaseComponent();
+
+                // unset logical ownership
+                Owner->RemoveFromInventory(ggcActor);
 
                 // apply repulsive force to the component
                 APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(Owner->GetWorld(), 0);
@@ -148,8 +151,11 @@ void AQLWeaponGravityGun::AltFire()
                     // enum members are shown in engine source code: EngineTypes.h
                     comp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 
-                    // physicsl handle releases the component
+                    // physical handle releases the component
                     Owner->PhysicsHandle->ReleaseComponent();
+
+                    // unset logical ownership
+                    Owner->RemoveFromInventory(ggcActor);
                 }
             }
         }
@@ -189,6 +195,9 @@ void AQLWeaponGravityGun::AltFire()
 
                         // physical handle grabs the component
                         Owner->PhysicsHandle->GrabComponent(comp, Hit.BoneName, Hit.Location, true);
+
+                        // set logical ownership
+                        Owner->AddToInventory(ggcActor);
 
                         // disable collision between character and component
                         // enum members are shown in engine source code: EngineTypes.h

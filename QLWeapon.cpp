@@ -44,7 +44,6 @@ AQLWeapon::AQLWeapon()
 void AQLWeapon::BeginPlay()
 {
     Super::BeginPlay();
-    QLUtility::QLSay(Name.ToString() + FString(TEXT(" created")));
 }
 
 //------------------------------------------------------------
@@ -59,8 +58,13 @@ void AQLWeapon::Tick( float DeltaTime )
 //------------------------------------------------------------
 void AQLWeapon::SetWeaponOwner(AQLCharacter* Owner)
 {
-    // logical attachment
+    // set logical ownership
+    // so that the weapon will know which character is owning it
+    // and can call character's member function
     this->Owner = Owner;
+
+    // set logical ownership
+    Owner->AddToInventory(this);
 }
 
 //------------------------------------------------------------

@@ -34,7 +34,7 @@ void AQLHUD::DrawWeaponCrosshairIfAny()
     // if owning pawn exists
     if (QLCharacter)
     {
-        AQLWeapon* CurrentWeapon = QLCharacter->WeaponManager.CurrentWeapon;
+        AQLWeapon* CurrentWeapon = QLCharacter->GetCurrentWeapon();
         // if owning pawn's weapon exists
         if (CurrentWeapon)
         {

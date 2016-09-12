@@ -10,6 +10,7 @@
 
 #include "QL.h"
 #include "QLPortalGunCompatibleActor.h"
+#include "QLCharacter.h"
 
 //------------------------------------------------------------
 //------------------------------------------------------------
@@ -49,35 +50,11 @@ void AQLPortalGunCompatibleActor::Tick( float DeltaTime )
 //------------------------------------------------------------
 void AQLPortalGunCompatibleActor::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor)
 {
-    // find if OtherActor is attached to or is being attached to by any actors
-    FString info = OtherActor->GetName();
-
-    //first, find parent
-    AActor* parent = OtherActor->GetAttachParentActor();
-    info += FString(TEXT("     parent = "));
-    if (parent)
+    FString info = FString("overlapping actor = ") + OtherActor->GetName();
+    AQLCharacter* player = Cast<AQLCharacter>(OtherActor);
+    if (player)
     {
-        info += parent->GetName();
-    }
-    else
-    {
-        info += FString(TEXT("no parent"));
-    }
-
-    // second, find children
-    TArray<AActor*> children;
-    OtherActor->GetAttachedActors(children);
-    info += FString(TEXT("     children = "));
-    if (children.Num())
-    {
-        for (int32 i = 0; i < children.Num(); ++i)
-        {
-            info += children[i]->GetName() + " ";
-        }
-    }
-    else
-    {
-        info += FString(TEXT("no children")) + " ";
+        info += " --> player.";
     }
 
     QLUtility::QLSay(info);

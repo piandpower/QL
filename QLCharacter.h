@@ -21,30 +21,16 @@ const int maxNumWeapon = 10;
 const float rayTraceRange = 10000.0f;
 const float nextToPlayerThreshold = 400.0f;
 
-class QL_API QLWeaponManager
-{
-public:
-    AQLWeapon* CurrentWeapon;
-    AQLWeapon* LastWeapon;
-
-    QLWeaponManager() {};
-    QLWeaponManager(AQLCharacter* QLCharacter);
-    ~QLWeaponManager();
-    TMap<FName, AQLWeapon*> WeaponList;
-    bool IsEquipped(const FName& Name);
-    void ChangeCurrentWeapon(AQLWeapon* Weapon);
-
-protected:
-    AQLCharacter* QLCharacter;
-};
-
 UCLASS()
 class QL_API AQLCharacter : public ACharacter
 {
     GENERATED_BODY()
 
 public:
-    QLWeaponManager WeaponManager;
+    bool IsEquipped(const FName& Name);
+    void ChangeCurrentWeapon(AQLWeapon* Weapon);
+    void AQLCharacter::AddToInventory(AActor* Actor);
+    void AQLCharacter::RemoveFromInventory(AActor* Actor);
 
     UPROPERTY(VisibleAnywhere)
     UCameraComponent* QLCameraComponent;
@@ -125,6 +111,7 @@ public:
     // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health pickup component")
 
     void PickUpWeapon(AQLWeapon* Weapon);
+    AQLWeapon* GetCurrentWeapon() const;
 
 protected:
     int DoubleJumpCounter;
@@ -139,4 +126,9 @@ protected:
     int Health;
 
     bool bAllWeaponUnlockable;
+
+    AQLWeapon* CurrentWeapon;
+    AQLWeapon* LastWeapon;
+    TMap<FName, AQLWeapon*> WeaponList;
+    TMap<FString, AActor*> Inventory;
 };

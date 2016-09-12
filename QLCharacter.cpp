@@ -13,27 +13,7 @@
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-QLWeaponManager::QLWeaponManager(AQLCharacter* QLCharacter)
-{
-    this->QLCharacter = QLCharacter;
-
-    // creat all weapon slots
-    WeaponList.Add("GravityGun", nullptr);
-    WeaponList.Add("PortalGun",  nullptr);
-    WeaponList.Add("NeutronAWP", nullptr);
-    CurrentWeapon = nullptr;
-    LastWeapon = nullptr;
-}
-
-//------------------------------------------------------------
-//------------------------------------------------------------
-QLWeaponManager::~QLWeaponManager()
-{
-}
-
-//------------------------------------------------------------
-//------------------------------------------------------------
-void QLWeaponManager::ChangeCurrentWeapon(AQLWeapon* Weapon)
+void AQLCharacter::ChangeCurrentWeapon(AQLWeapon* Weapon)
 {
     // if the target weapon exists
     // note that the current weapon is allowed to be nonexistent
@@ -53,7 +33,7 @@ void QLWeaponManager::ChangeCurrentWeapon(AQLWeapon* Weapon)
 // check if the specified type of weapon (identified by name)
 // is already equipped by the player
 //------------------------------------------------------------
-bool QLWeaponManager::IsEquipped(const FName& Name)
+bool AQLCharacter::IsEquipped(const FName& Name)
 {
     // if the given name exists in the preset list
     if (WeaponList.Contains(Name))
@@ -70,7 +50,7 @@ bool QLWeaponManager::IsEquipped(const FName& Name)
     }
     else
     {
-        QLUtility::QLSay("QLWeaponManager::IsEquipped(): unknown weapon type.");
+        QLUtility::QLSay("AQLCharacter::IsEquipped(): unknown weapon type.");
         return false;
     }
 }
@@ -78,7 +58,7 @@ bool QLWeaponManager::IsEquipped(const FName& Name)
 //------------------------------------------------------------
 // Sets default values
 //------------------------------------------------------------
-AQLCharacter::AQLCharacter() : WeaponManager(this)
+AQLCharacter::AQLCharacter()
 {
     DoubleJumpCounter = 0;
 
@@ -107,6 +87,13 @@ AQLCharacter::AQLCharacter() : WeaponManager(this)
 
     // physics handle
     PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
+
+    // creat all weapon slots
+    WeaponList.Add("GravityGun", nullptr);
+    WeaponList.Add("PortalGun", nullptr);
+    WeaponList.Add("NeutronAWP", nullptr);
+    CurrentWeapon = nullptr;
+    LastWeapon = nullptr;
 }
 
 //------------------------------------------------------------
@@ -276,9 +263,9 @@ void AQLCharacter::UnSprint()
 //------------------------------------------------------------
 void AQLCharacter::Fire()
 {
-    if (WeaponManager.CurrentWeapon)
+    if (CurrentWeapon)
     {
-        WeaponManager.CurrentWeapon->Fire();
+        CurrentWeapon->Fire();
     }
 }
 
@@ -287,9 +274,9 @@ void AQLCharacter::Fire()
 //------------------------------------------------------------
 void AQLCharacter::AltFire()
 {
-    if (WeaponManager.CurrentWeapon)
+    if (CurrentWeapon)
     {
-        WeaponManager.CurrentWeapon->AltFire();
+        CurrentWeapon->AltFire();
     }
 }
 
@@ -298,9 +285,9 @@ void AQLCharacter::AltFire()
 //------------------------------------------------------------
 void AQLCharacter::AltFireReleased()
 {
-    if (WeaponManager.CurrentWeapon)
+    if (CurrentWeapon)
     {
-        WeaponManager.CurrentWeapon->AltFireReleased();
+        CurrentWeapon->AltFireReleased();
     }
 }
 
@@ -308,9 +295,9 @@ void AQLCharacter::AltFireReleased()
 //------------------------------------------------------------
 void AQLCharacter::SwitchToGravityGun()
 {
-    if (WeaponManager.IsEquipped("GravityGun"))
+    if (IsEquipped("GravityGun"))
     {
-        WeaponManager.ChangeCurrentWeapon(WeaponManager.WeaponList["GravityGun"]);
+        ChangeCurrentWeapon(WeaponList["GravityGun"]);
     }
 }
 
@@ -318,9 +305,9 @@ void AQLCharacter::SwitchToGravityGun()
 //------------------------------------------------------------
 void AQLCharacter::SwitchToPortalGun()
 {
-    if (WeaponManager.IsEquipped("PortalGun"))
+    if (IsEquipped("PortalGun"))
     {
-        WeaponManager.ChangeCurrentWeapon(WeaponManager.WeaponList["PortalGun"]);
+        ChangeCurrentWeapon(WeaponList["PortalGun"]);
     }
 }
 
@@ -328,9 +315,9 @@ void AQLCharacter::SwitchToPortalGun()
 //------------------------------------------------------------
 void AQLCharacter::SwitchToNeutronAWP()
 {
-    if (WeaponManager.IsEquipped("NeutronAWP"))
+    if (IsEquipped("NeutronAWP"))
     {
-        WeaponManager.CurrentWeapon = WeaponManager.WeaponList["NeutronAWP"];
+        CurrentWeapon = WeaponList["NeutronAWP"];
     }
     GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString(TEXT("try to switch to neutron awp.")));
 }
@@ -339,7 +326,7 @@ void AQLCharacter::SwitchToNeutronAWP()
 //------------------------------------------------------------
 void AQLCharacter::SwitchToLastWeapon()
 {
-    WeaponManager.ChangeCurrentWeapon(WeaponManager.LastWeapon);
+    ChangeCurrentWeapon(LastWeapon);
 }
 
 //------------------------------------------------------------
@@ -398,24 +385,20 @@ void AQLCharacter::UnlockAllWeapon()
 {
     if (bAllWeaponUnlockable)
     {
-        if (!WeaponManager.IsEquipped("GravityGun"))
+        if (!IsEquipped("GravityGun"))
         {
             PickUpWeapon(GetWorld()->SpawnActor<AQLWeaponGravityGun>(AQLWeaponGravityGun::StaticClass()));
         }
-        if (!WeaponManager.IsEquipped("PortalGun"))
+        if (!IsEquipped("PortalGun"))
         {
             PickUpWeapon(GetWorld()->SpawnActor<AQLWeaponPortalGun>(AQLWeaponPortalGun::StaticClass()));
         }
-        if (!WeaponManager.CurrentWeapon)
+        if (!CurrentWeapon)
         {
-            WeaponManager.CurrentWeapon = WeaponManager.WeaponList["GravityGun"];
+            CurrentWeapon = WeaponList["GravityGun"];
         }
 
         bAllWeaponUnlockable = false;
-    }
-    else
-    {
-        QLUtility::QLSay(WeaponManager.IsEquipped("GravityGun") ? "true" : "false");
     }
 }
 
@@ -427,10 +410,10 @@ void AQLCharacter::PickUpWeapon(AQLWeapon* Weapon)
     if (Weapon)
     {
         // if the player does not have this weapon yet
-        if (!WeaponManager.IsEquipped(Weapon->GetWeaponName()))
+        if (!IsEquipped(Weapon->GetWeaponName()))
         {
-            WeaponManager.WeaponList[Weapon->GetWeaponName()] = Weapon;
-            WeaponManager.ChangeCurrentWeapon(Weapon);
+            WeaponList[Weapon->GetWeaponName()] = Weapon;
+            ChangeCurrentWeapon(Weapon);
 
             // logical attachment
             Weapon->SetWeaponOwner(this);
@@ -439,4 +422,39 @@ void AQLCharacter::PickUpWeapon(AQLWeapon* Weapon)
             Weapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
         }
     }
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+AQLWeapon* AQLCharacter::GetCurrentWeapon() const
+{
+    return CurrentWeapon;
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLCharacter::AddToInventory(AActor* Actor)
+{
+    // if key exists, overwrite the value
+    Inventory.Add(Actor->GetName(), Actor);
+
+    // set logical ownership
+    Actor->SetOwner(this);
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLCharacter::RemoveFromInventory(AActor* Actor)
+{
+    // if key does not exist, throw a warning
+    AActor* Temp;
+    bool bKeyExist = Inventory.RemoveAndCopyValue(Actor->GetName(), Temp);
+
+    if (!bKeyExist)
+    {
+        QLUtility::QLSay(FString("AQLCharacter::RemoveFromInventory(): key does not exist. ") + FString(Actor->GetName()));
+    }
+
+    // unset logical ownership
+    Actor->SetOwner(nullptr);
 }
