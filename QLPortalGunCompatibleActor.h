@@ -17,9 +17,6 @@
 #include "GameFramework/Actor.h"
 #include "QLPortalGunCompatibleActor.generated.h"
 
-// forward declaration
-class AQLWeaponPortalGun;
-
 UCLASS()
 class QL_API AQLPortalGunCompatibleActor : public AActor
 {
@@ -41,12 +38,5 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gravity gun compatible actor")
     UStaticMeshComponent* StaticMeshComponent;
 
-    UFUNCTION()
-    void OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor);
-
-    void SetPortalOwner(AQLWeaponPortalGun* PortalOwner);
-
 protected:
-    AQLPortalGunCompatibleActor* TheOTherPortal;
-    AQLWeaponPortalGun* PortalOwner;
 };

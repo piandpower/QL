@@ -39,10 +39,13 @@ void AQLWeaponPortalGun::AltFire()
 //------------------------------------------------------------
 void AQLWeaponPortalGun::CreatePortal()
 {
-    BluePortal = GetWorld()->SpawnActor<AQLPortalGunCompatibleActor>(AQLPortalGunCompatibleActor::StaticClass(), this->GetActorLocation(), FRotator::ZeroRotator);
+    FVector location = WeaponOwner->QLCameraComponent->GetComponentLocation() + WeaponOwner->QLCameraComponent->GetForwardVector() * 400.0f;
+    BluePortal = GetWorld()->SpawnActor<AQLPortal>(AQLPortal::StaticClass(), location, FRotator::ZeroRotator);
     BluePortal->SetPortalOwner(this);
 
-    QLUtility::QLSay("portal created");
+    QLUtility::QLSayLong(location.ToString());
+    QLUtility::QLSayLong(BluePortal->GetActorLocation().ToString());
+    QLUtility::QLSayLong(this->GetActorLocation().ToString());
 }
 
 //------------------------------------------------------------

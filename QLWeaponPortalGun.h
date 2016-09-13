@@ -11,7 +11,7 @@
 #pragma once
 
 #include "QLUtility.h"
-#include "QLPortalGunCompatibleActor.h"
+#include "QLPortal.h"
 #include "QLWeapon.h"
 #include "QLWeaponPortalGun.generated.h"
 
@@ -30,6 +30,6 @@ public:
 protected:
     bool bBluePortalCreated;
     bool bOrangePortalCreated;
-    AQLPortalGunCompatibleActor* BluePortal;
-    AQLPortalGunCompatibleActor* OrangePortal;
+    AQLPortal* BluePortal;
+    AQLPortal* OrangePortal;
 };
