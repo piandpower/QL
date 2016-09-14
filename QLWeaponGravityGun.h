@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "QLUtility.h"
+#include "QLActor.h"
 #include "QLGravityGunCompatibleActor.h"
 #include "QLWeapon.h"
 #include "QLWeaponGravityGun.generated.h"

@@ -13,8 +13,7 @@
 
 #pragma once
 
-#include "QLUtility.h"
-#include "GameFramework/Actor.h"
+#include "QLActor.h"
 #include "QLGravityGunCompatibleActor.generated.h"
 
 // constant
@@ -23,7 +22,7 @@ const float defaultAngularDamping = 0.5f;
 const float defaultBoxComponentDim = 80.0f;
 
 UCLASS()
-class QL_API AQLGravityGunCompatibleActor : public AActor
+class QL_API AQLGravityGunCompatibleActor : public AQLActor
 {
     GENERATED_BODY()
 

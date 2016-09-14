@@ -2,12 +2,11 @@
 
 #pragma once
 
-#include "QLUtility.h"
-#include "GameFramework/Actor.h"
+#include "QLActor.h"
 #include "QLHealthPickUp.generated.h"
 
 UCLASS()
-class QL_API AQLHealthPickUp : public AActor
+class QL_API AQLHealthPickUp : public AQLActor
 {
     GENERATED_BODY()
 

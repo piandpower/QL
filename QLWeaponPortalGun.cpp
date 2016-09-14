@@ -54,7 +54,7 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
     transform.SetLocation(location);
 
     portal = GetWorld()->SpawnActorDeferred<AQLPortal>(AQLPortal::StaticClass(), transform);
-    portal->SetPortalOwner(this);
+    portal->SetQLOwner(this);
     UGameplayStatics::FinishSpawningActor(portal, transform);
 }
 

@@ -11,7 +11,7 @@ Quarter Life (QL) is a developing first-person adventure game. The underlying en
 The game design of QL is greatly inspired by Half Life 2, Portal 2, Witcher 3, Shadow Warrior, Unreal Tournament, Doom 3.
 
 Game elements currently being implemented include
-+ Gravity gun as in Half life 2
-+ Portal gun as in Portal 2 (to-do)
++ Gravity gun as in Half life 2.
++ Portal gun as in Portal 2, despite technically not a seamless portal as in the original Portal game.
 
 This git repo contains C++ source codes that establish the main game mechanics. The blueprint scripts and game data are not included. The use of blueprint scripts is kept to the minimum.

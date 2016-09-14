@@ -39,7 +39,6 @@ AQLPortal::AQLPortal()
     StaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -zDim));
 
     TheOTherPortal = nullptr;
-    PortalOwner = nullptr;
 
     // built-in dynamic delegate
     this->OnActorBeginOverlap.AddDynamic(this, &AQLPortal::OnOverlapBeginForActor);
@@ -62,35 +61,18 @@ void AQLPortal::Tick( float DeltaTime )
 }
 
 //------------------------------------------------------------
-//------------------------------------------------------------
-void AQLPortal::SetPortalOwner(AQLWeaponPortalGun* PortalOwner)
-{
-    // set logical ownership
-    // so that the portal will know which portal gun is owning it
-    // and can call portal gun's member function
-    this->PortalOwner = PortalOwner;
-}
-
-//------------------------------------------------------------
-//------------------------------------------------------------
-AQLWeaponPortalGun* AQLPortal::GetPortalOwner()
-{
-    return PortalOwner;
-}
-
-//------------------------------------------------------------
-// --- note that when a portal happens to overlap another actor when
-//     spawned, the overlap event seems to be trigger inside of SpawnActor
+// --- When a portal happens to overlap another actor upon
+//     spawn, the overlap event seems to be triggered inside of SpawnActor() method
 //     before the portal owner is manually set, which means at that time
 //     PortalOwner is still nullptr !!!
-//     To guarantee overlap is called after the actor is spawned, use deferred
-//     actor spawn method. See AQLWeaponPortalGun::CreatePortal()
+//     To guarantee overlap is called after the actor is spawned, deferred
+//     actor spawn method is used. See AQLWeaponPortalGun::CreatePortal().
 // --- The portal does not transport an actor if it
 //     is not character but is currently owned by character
-// --- If an actor has 2 components, each supports overlap event,
+// --- If an actor has 2 components, both having overlap event, then
 //     upon creation by SpawnActor(), the 2 components will trigger
 //     their overlap event against each other, resulting in 2
-//     overlap call, in name of the actor itself. So here we always
+//     overlap calls, in name of the actor itself. So here we always only
 //     specify physics/collision in RootComponent and set the children
 //     components to NoCollision and Ignore.
 //------------------------------------------------------------
@@ -107,4 +89,27 @@ void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
 
     //FVector DestLocation = OtherActor->GetActorLocation() + FVector(1000.0f, 1000.0f, 0.0f);
     //OtherActor->TeleportTo(DestLocation, FRotator::ZeroRotator);
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLPortal::SetQLOwner(AActor* QLOwner)
+{
+    Super::SetQLOwner(QLOwner);
+    this->PortalOwner = Cast<AQLWeaponPortalGun>(QLOwner);
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLPortal::UnSetQLOwner()
+{
+    Super::SetQLOwner(nullptr);
+    this->PortalOwner = nullptr;
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+AQLWeaponPortalGun* AQLPortal::GetPortalOwner()
+{
+    return PortalOwner;
 }

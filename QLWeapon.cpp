@@ -24,7 +24,6 @@ AQLWeapon::AQLWeapon()
     bIsFireHeldDown = false;
     bIsAltFireHeldDown = false;
     bIsAltFirePressed = false;
-    WeaponOwner = nullptr;
     CurrentCrosshairTexture = nullptr;
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
@@ -63,26 +62,6 @@ void AQLWeapon::BeginPlay()
 void AQLWeapon::Tick( float DeltaTime )
 {
     Super::Tick( DeltaTime );
-}
-
-//------------------------------------------------------------
-//------------------------------------------------------------
-AQLCharacter* AQLWeapon::GetWeaponOwner()
-{
-    return WeaponOwner;
-}
-
-//------------------------------------------------------------
-//------------------------------------------------------------
-void AQLWeapon::SetWeaponOwner(AQLCharacter* WeaponOwner)
-{
-    // set logical ownership
-    // so that the weapon will know which character is owning it
-    // and can call character's member function
-    this->WeaponOwner = WeaponOwner;
-
-    // set logical ownership
-    WeaponOwner->AddToInventory(this);
 }
 
 //------------------------------------------------------------
@@ -177,4 +156,27 @@ void AQLWeapon::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
     {
         player->PickUpWeapon(this);
     }
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLWeapon::SetQLOwner(AActor* QLOwner)
+{
+    Super::SetQLOwner(QLOwner);
+    this->WeaponOwner = Cast<AQLCharacter>(QLOwner);
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLWeapon::UnSetQLOwner()
+{
+    Super::SetQLOwner(nullptr);
+    this->WeaponOwner = nullptr;
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+AQLCharacter* AQLWeapon::GetWeaponOwner()
+{
+    return WeaponOwner;
 }

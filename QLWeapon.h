@@ -10,16 +10,15 @@
 
 #pragma once
 
-#include "QLUtility.h"
+#include "QLActor.h"
 #include "GameFramework/Character.h"
-#include "GameFramework/Actor.h"
 #include "QLWeapon.generated.h"
 
 // forward declaration
 class AQLCharacter;
 
 UCLASS()
-class QL_API AQLWeapon : public AActor
+class QL_API AQLWeapon : public AQLActor
 {
     GENERATED_BODY()
 public:
@@ -40,9 +39,6 @@ public:
     virtual void AltFireReleased() {};
     virtual void AltFireRepeat() {};
 
-    AQLCharacter* GetWeaponOwner();
-    void SetWeaponOwner(AQLCharacter* WeaponOwner);
-
     void SetCurrentCrosshairTexture(const FName& crosshairTextureName);
     UTexture2D* GetCurrentCrosshairTexture()  const;
     UTexture2D* CreateCrosshairTexture(const TCHAR* texturePath);
@@ -58,6 +54,10 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StaticMeshComponent")
     UStaticMeshComponent* StaticMeshComponent;
+
+    virtual void SetQLOwner(AActor* QLOwner) override;
+    virtual void UnSetQLOwner() override;
+    AQLCharacter* GetWeaponOwner();
 
 protected:
     FName Name;

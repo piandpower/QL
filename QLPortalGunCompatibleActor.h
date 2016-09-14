@@ -13,12 +13,11 @@
 
 #pragma once
 
-#include "QLUtility.h"
-#include "GameFramework/Actor.h"
+#include "QLActor.h"
 #include "QLPortalGunCompatibleActor.generated.h"
 
 UCLASS()
-class QL_API AQLPortalGunCompatibleActor : public AActor
+class QL_API AQLPortalGunCompatibleActor : public AQLActor
 {
     GENERATED_BODY()
 

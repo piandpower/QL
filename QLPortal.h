@@ -10,8 +10,7 @@
 
 #pragma once
 
-#include "QLUtility.h"
-#include "GameFramework/Actor.h"
+#include "QLActor.h"
 #include "QLPortal.generated.h"
 
 // forward declaration
@@ -24,8 +23,9 @@ enum class EPortalType : uint8
     Orange,
 };
 
+// portal owner is the portal gun
 UCLASS()
-class QL_API AQLPortal : public AActor
+class QL_API AQLPortal : public AQLActor
 {
 	GENERATED_BODY()
 
@@ -48,9 +48,10 @@ public:
     UFUNCTION()
     void OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor);
 
-    void SetPortalOwner(AQLWeaponPortalGun* PortalOwner);
+    virtual void SetQLOwner(AActor* QLOwner) override;
+    virtual void UnSetQLOwner() override;
     AQLWeaponPortalGun* GetPortalOwner();
-    AQLWeaponPortalGun* PortalOwner;
 protected:
     AQLPortal* TheOTherPortal;
+    AQLWeaponPortalGun* PortalOwner;
 };

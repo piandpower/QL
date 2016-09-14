@@ -99,6 +99,7 @@ void AQLCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompone
     InputComponent->BindAction("SwitchToNeutronAWP", EInputEvent::IE_Pressed, this, &AQLCharacter::SwitchToNeutronAWP);
     InputComponent->BindAction("SwitchToLastWeapon", EInputEvent::IE_Pressed, this, &AQLCharacter::SwitchToLastWeapon);
     InputComponent->BindAction("Test", EInputEvent::IE_Pressed, this, &AQLCharacter::UnlockAllWeapon);
+    InputComponent->BindAction("Inventory", EInputEvent::IE_Pressed, this, &AQLCharacter::ShowInventory);
 
     // Set up "axis" bindings.
     InputComponent->BindAxis("MoveForward", this, &AQLCharacter::MoveForward);
@@ -376,8 +377,9 @@ void AQLCharacter::PickUpWeapon(AQLWeapon* Weapon)
             WeaponList[Weapon->GetWeaponName()] = Weapon;
             ChangeCurrentWeapon(Weapon);
 
-            // logical attachment
-            Weapon->SetWeaponOwner(this);
+            // set logical ownership
+            Weapon->SetQLOwner(this);
+            AddToInventory(Weapon);
 
             // physical attachment
             Weapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
@@ -396,23 +398,35 @@ AQLWeapon* AQLCharacter::GetCurrentWeapon() const
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLCharacter::AddToInventory(AActor* Actor)
+void AQLCharacter::AddToInventory(AQLActor* QLActor)
 {
     // if key exists, overwrite the value
-    Inventory.Add(Actor->GetName(), Actor);
+    Inventory.Add(QLActor->GetName(), QLActor);
+    QLActor->SetQLOwner(this);
 }
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLCharacter::RemoveFromInventory(AActor* Actor)
+void AQLCharacter::RemoveFromInventory(AQLActor* QLActor)
 {
     // if key does not exist, throw a warning
     AActor* Temp;
-    bool bKeyExist = Inventory.RemoveAndCopyValue(Actor->GetName(), Temp);
+    bool bKeyExist = Inventory.RemoveAndCopyValue(QLActor->GetName(), Temp);
+    QLActor->UnSetQLOwner();
 
     if (!bKeyExist)
     {
-        QLUtility::QLSay(FString("AQLCharacter::RemoveFromInventory(): key does not exist. ") + FString(Actor->GetName()));
+        QLUtility::QLSay(FString("AQLCharacter::RemoveFromInventory(): key does not exist. ") + FString(QLActor->GetName()));
+    }
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLCharacter::ShowInventory()
+{
+    for (auto It = Inventory.CreateConstIterator(); It; ++It)
+    {
+        QLUtility::QLSay(FString("--> character inventory item = ") + It.Value()->GetName() + "     location = " + It.Value()->GetActorLocation().ToString());
     }
 }
 
