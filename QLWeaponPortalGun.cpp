@@ -77,8 +77,7 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
     // the newly spawned portal has top priority
     // previously spawned portal is destroyed
     TSet<AActor*> AActorList;
-    TSubclassOf<AQLPortal> ClassFilter;
-    Portal->GetOverlappingActors(AActorList, ClassFilter);
+    Portal->GetOverlappingActors(AActorList, AQLPortal::StaticClass());
     if (AActorList.Num() > 0)
     {
         for (auto& Item : AActorList)

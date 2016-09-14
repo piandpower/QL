@@ -224,7 +224,7 @@ void AQLPortal::AddToRoll(AActor* Actor)
 //------------------------------------------------------------
 void AQLPortal::RemoveFromRoll(AActor* Actor)
 {
-    // if key does not have to exist
+    // key does not have to exist
     AActor* Temp;
     Roll.RemoveAndCopyValue(Actor->GetName(), Temp);
 }
