@@ -28,7 +28,7 @@ AQLPortal::AQLPortal()
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 
     StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-    const ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Sphere"));
+    const ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Cone"));
     StaticMeshComponent->SetStaticMesh(StaticMeshObj.Object);
     StaticMeshComponent->SetSimulatePhysics(false);
     StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -143,6 +143,7 @@ void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
         FVector NewLocation = Spouse->GetActorLocation();
         FRotator NewRotation = OtherActor->GetActorRotation();
         OtherActor->TeleportTo(NewLocation, NewRotation);
+        GetPortalOwner()->PlayWeaponSound("Teleport");
     }
 }
 
