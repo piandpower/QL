@@ -53,6 +53,7 @@ AQLPortal::AQLPortal()
 
     // built-in dynamic delegate
     this->OnActorBeginOverlap.AddDynamic(this, &AQLPortal::OnOverlapBeginForActor);
+    this->OnActorEndOverlap.AddDynamic(this, &AQLPortal::OnOverlapEndForActor);
 }
 
 //------------------------------------------------------------
@@ -78,28 +79,79 @@ void AQLPortal::Tick( float DeltaTime )
 //     PortalOwner is still nullptr !!!
 //     To guarantee overlap is called after the actor is spawned, deferred
 //     actor spawn method is used. See AQLWeaponPortalGun::CreatePortal().
-// --- The portal does not transport an actor if it
-//     is not character but is currently owned by character
 // --- If an actor has 2 components, both having overlap event, then
 //     upon creation by SpawnActor(), the 2 components will trigger
 //     their overlap event against each other, resulting in 2
 //     overlap calls, in name of the actor itself. So here we always only
 //     specify physics/collision in RootComponent and set the children
 //     components to NoCollision and Ignore.
+// --- Fun fact: Apparently, character getting teleported precedes the attaching actors
+//     triggering the overlap event.
+// --- One critical issue in teleport implementation is repeated
+//     teleport back and forth between 2 portals. In fact, this
+//     directly causes the game to crash (stack overflow maybe?). The solution here
+//     is to use a roll (i.e. register list) to keep track of the overlapping
+//     actors. Specifically, when an actor BEGINS to overlap a portal, the portal adds
+//     that actor to its spouse's roll. After the actor is teleported to the spouse
+//     and ENDS to overlap the spouse, the spouse removes the actor from its own roll.
+//     Teleport upon overlap is only permitted if the actor does not appear in the
+//     overlapped portal's roll.
 //------------------------------------------------------------
 void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor)
 {
-    QLUtility::QLSay(FString("portal say: transport actor = ") + OtherActor->GetName());
+    bool bCanTeleport = false;
+    // if the other portal exists, teleport can be performed
+    if (Spouse)
+    {
+        // if the actor does not in my roll, teleport can be performed
+        if (!IsInMyRoll(OtherActor))
+        {
+            // if the overlapping actor is not a portal
+            AQLPortal* AnotherPortal = Cast<AQLPortal>(OtherActor);
+            if (!AnotherPortal)
+            {
+                // if OtherActor is character, teleport can be performed
+                // this is not a type check, but identity check
+                if (OtherActor == PortalOwner->GetWeaponOwner())
+                {
+                    bCanTeleport = true;
+                }
+                // if OtherActor is not character
+                else
+                {
+                    // if OtherActor is not owned by character, teleport can be performed
+                    // type check
+                    AQLActor* QLOtherActor = Cast<AQLActor>(OtherActor);
+                    if (QLOtherActor)
+                    {
+                        if (QLOtherActor->GetQLOwner() != PortalOwner->GetWeaponOwner())
+                        {
+                            bCanTeleport = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-    // if OtherActor is character
-    // this is not a type check, but identity check
-    //if (OtherActor == PortalOwner->GetWeaponOwner())
-    //{
-    //    info += " --> player.";
-    //}
+    // time to teleport!
+    if (bCanTeleport)
+    {
+        // add actor to spouse's roll
+        Spouse->AddToRoll(OtherActor);
 
-    //FVector DestLocation = OtherActor->GetActorLocation() + FVector(1000.0f, 1000.0f, 0.0f);
-    //OtherActor->TeleportTo(DestLocation, FRotator::ZeroRotator);
+        FVector NewLocation = Spouse->GetActorLocation();
+        FRotator NewRotation = OtherActor->GetActorRotation();
+        OtherActor->TeleportTo(NewLocation, NewRotation);
+    }
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLPortal::OnOverlapEndForActor(AActor* OverlappedActor, AActor* OtherActor)
+{
+    // remove actor from my own roll if any
+    RemoveFromRoll(OtherActor);
 }
 
 //------------------------------------------------------------
@@ -138,14 +190,48 @@ void AQLPortal::SetSpouse(AQLPortal* Spouse)
 
 //------------------------------------------------------------
 //------------------------------------------------------------
+AQLPortal* AQLPortal::GetSpouse()
+{
+    return Spouse;
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
 void AQLPortal::QueryPortal()
 {
-    if (Spouse)
+    if (Roll.Num() > 0)
     {
-        QLUtility::QLSay("portal: with a spouse");
+        for (auto It = Roll.CreateConstIterator(); It; ++It)
+        {
+            QLUtility::QLSayLong("--> roll = " + It.Value()->GetName() + " " + this->GetName());
+        }
     }
     else
     {
-        QLUtility::QLSay("portal: without a spouse");
+        QLUtility::QLSayLong("--> empty roll " + this->GetName());
     }
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLPortal::AddToRoll(AActor* Actor)
+{
+    // if key exists, overwrite the value
+    Roll.Add(Actor->GetName(), Actor);
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLPortal::RemoveFromRoll(AActor* Actor)
+{
+    // if key does not have to exist
+    AActor* Temp;
+    Roll.RemoveAndCopyValue(Actor->GetName(), Temp);
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+bool AQLPortal::IsInMyRoll(AActor* Actor)
+{
+    return Roll.Contains(Actor->GetName());
 }

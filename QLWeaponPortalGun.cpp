@@ -20,6 +20,11 @@ AQLWeaponPortalGun::AQLWeaponPortalGun()
     CrosshairTextureList.Add("BothEmpty", CreateCrosshairTexture(TEXT("/Game/Textures/Crosshair/portal_gun_crosshair_original_empty_processed")));
     SetCurrentCrosshairTexture("BothEmpty");
 
+    // sound
+    //WeaponSoundList.Add("None", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/bottle"), TEXT("SoundWrongComp")));
+    //WeaponSoundList.Add("Hold", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/zoom_in"), TEXT("SoundHoldComp")));
+    WeaponSoundList.Add("Fire", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/portal_created"), TEXT("SoundFireComp")));
+
     BluePortal = nullptr;
     OrangePortal = nullptr;
 }
@@ -107,7 +112,15 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
         OrangePortal = Portal;
     }
 
-    Portal->QueryPortal();
+    // at last, if spouse exists, inform him/her of myself
+    AQLPortal* Spouse = Portal->GetSpouse();
+    if (Spouse)
+    {
+        Spouse->SetSpouse(Portal);
+    }
+
+    // apply sound
+    PlayWeaponSound("Fire");
 }
 
 //------------------------------------------------------------

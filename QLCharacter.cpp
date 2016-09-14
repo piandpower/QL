@@ -426,7 +426,7 @@ void AQLCharacter::ShowInventory()
 {
     for (auto It = Inventory.CreateConstIterator(); It; ++It)
     {
-        QLUtility::QLSay(FString("--> character inventory item = ") + It.Value()->GetName() + "     location = " + It.Value()->GetActorLocation().ToString());
+        QLUtility::QLSayLong(FString("--> character inventory item = ") + It.Value()->GetName() + "     location = " + It.Value()->GetActorLocation().ToString());
     }
 }
 

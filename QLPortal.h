@@ -48,6 +48,9 @@ public:
     UFUNCTION()
     void OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor);
 
+    UFUNCTION()
+    void OnOverlapEndForActor(AActor* OverlappedActor, AActor* OtherActor);
+
     virtual void SetQLOwner(AActor* QLOwner) override;
     virtual void UnSetQLOwner() override;
     AQLWeaponPortalGun* GetPortalOwner();
@@ -56,8 +59,17 @@ public:
     UMaterial* OrangePortalMaterial;
 
     void SetSpouse(AQLPortal* Spouse);
+    AQLPortal* GetSpouse();
+
     void QueryPortal();
+
+    void AddToRoll(AActor* Actor);
+    void RemoveFromRoll(AActor* Actor);
+    bool IsInMyRoll(AActor* Actor);
+
+    bool bEnablePortal;
 protected:
     AQLPortal* Spouse;
     AQLWeaponPortalGun* PortalOwner;
+    TMap<FString, AActor*> Roll;
 };
