@@ -67,7 +67,7 @@ void AQLWeapon::Tick( float DeltaTime )
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-AQLCharacter* AQLWeapon::GetWeaponOwner() const
+AQLCharacter* AQLWeapon::GetWeaponOwner()
 {
     return WeaponOwner;
 }

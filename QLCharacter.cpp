@@ -400,9 +400,6 @@ void AQLCharacter::AddToInventory(AActor* Actor)
 {
     // if key exists, overwrite the value
     Inventory.Add(Actor->GetName(), Actor);
-
-    // set logical ownership
-    Actor->SetOwner(this);
 }
 
 //------------------------------------------------------------
@@ -417,9 +414,6 @@ void AQLCharacter::RemoveFromInventory(AActor* Actor)
     {
         QLUtility::QLSay(FString("AQLCharacter::RemoveFromInventory(): key does not exist. ") + FString(Actor->GetName()));
     }
-
-    // unset logical ownership
-    Actor->SetOwner(nullptr);
 }
 
 //------------------------------------------------------------

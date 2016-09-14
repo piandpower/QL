@@ -25,7 +25,7 @@ public:
     AQLWeaponPortalGun();
     virtual void Fire() override;
     virtual void AltFire() override;
-    void CreatePortal();
+    void CreatePortal(EPortalType PortalType);
     virtual void Tick(float DeltaSeconds) override;
 protected:
     bool bBluePortalCreated;

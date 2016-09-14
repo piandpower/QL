@@ -18,7 +18,7 @@
 AQLPortal::AQLPortal()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = true;
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
     RootComponent = BoxComponent;
@@ -72,30 +72,39 @@ void AQLPortal::SetPortalOwner(AQLWeaponPortalGun* PortalOwner)
 }
 
 //------------------------------------------------------------
-// The portal does not transport an actor when it
-// is not character but is currently owned by character
+//------------------------------------------------------------
+AQLWeaponPortalGun* AQLPortal::GetPortalOwner()
+{
+    return PortalOwner;
+}
+
+//------------------------------------------------------------
+// --- note that when a portal happens to overlap another actor when
+//     spawned, the overlap event seems to be trigger inside of SpawnActor
+//     before the portal owner is manually set, which means at that time
+//     PortalOwner is still nullptr !!!
+//     To guarantee overlap is called after the actor is spawned, use deferred
+//     actor spawn method. See AQLWeaponPortalGun::CreatePortal()
+// --- The portal does not transport an actor if it
+//     is not character but is currently owned by character
+// --- If an actor has 2 components, each supports overlap event,
+//     upon creation by SpawnActor(), the 2 components will trigger
+//     their overlap event against each other, resulting in 2
+//     overlap call, in name of the actor itself. So here we always
+//     specify physics/collision in RootComponent and set the children
+//     components to NoCollision and Ignore.
 //------------------------------------------------------------
 void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor)
 {
-    FString info = FString("portal say: overlapping actor = ") + OtherActor->GetName();
+    QLUtility::QLSay(FString("portal say: transport actor = ") + OtherActor->GetName());
 
-    //// OtherActor is character
-    //if (OtherActor->IsA(this->GetOwner()))
+    // if OtherActor is character
+    // this is not a type check, but identity check
+    //if (OtherActor == PortalOwner->GetWeaponOwner())
     //{
     //    info += " --> player.";
     //}
-    //// OtherActor is not character
-    //{
-    //    // OtherActor's owner is character
-    //    if (OtherActor->GetOwner() == PortalOwner->GetWeaponOwner())
-    //    {
-    //        info += " --> owned by player.";
-    //    }
-    //    else
-    //    {
-    //        info += " --> not owned by player.";
-    //    }
-    //}
 
-    QLUtility::QLSay(info);
+    //FVector DestLocation = OtherActor->GetActorLocation() + FVector(1000.0f, 1000.0f, 0.0f);
+    //OtherActor->TeleportTo(DestLocation, FRotator::ZeroRotator);
 }

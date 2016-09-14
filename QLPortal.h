@@ -17,6 +17,13 @@
 // forward declaration
 class AQLWeaponPortalGun;
 
+UENUM()
+enum class EPortalType : uint8
+{
+    Blue,
+    Orange,
+};
+
 UCLASS()
 class QL_API AQLPortal : public AActor
 {
@@ -42,8 +49,8 @@ public:
     void OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor);
 
     void SetPortalOwner(AQLWeaponPortalGun* PortalOwner);
-
+    AQLWeaponPortalGun* GetPortalOwner();
+    AQLWeaponPortalGun* PortalOwner;
 protected:
     AQLPortal* TheOTherPortal;
-    AQLWeaponPortalGun* PortalOwner;
 };

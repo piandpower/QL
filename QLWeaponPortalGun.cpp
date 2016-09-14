@@ -25,27 +25,37 @@ AQLWeaponPortalGun::AQLWeaponPortalGun()
 //------------------------------------------------------------
 void AQLWeaponPortalGun::Fire()
 {
-    // test: create a portal object
-    CreatePortal();
+    CreatePortal(EPortalType::Blue);
 }
 
 //------------------------------------------------------------
 //------------------------------------------------------------
 void AQLWeaponPortalGun::AltFire()
 {
+    CreatePortal(EPortalType::Orange);
 }
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLWeaponPortalGun::CreatePortal()
+void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
 {
-    FVector location = WeaponOwner->QLCameraComponent->GetComponentLocation() + WeaponOwner->QLCameraComponent->GetForwardVector() * 400.0f;
-    BluePortal = GetWorld()->SpawnActor<AQLPortal>(AQLPortal::StaticClass(), location, FRotator::ZeroRotator);
-    BluePortal->SetPortalOwner(this);
+    AQLPortal* portal;
+    if (PortalType == EPortalType::Blue)
+    {
+        portal = BluePortal;
+    }
+    else if (PortalType == EPortalType::Orange)
+    {
+        portal = OrangePortal;
+    }
 
-    QLUtility::QLSayLong(location.ToString());
-    QLUtility::QLSayLong(BluePortal->GetActorLocation().ToString());
-    QLUtility::QLSayLong(this->GetActorLocation().ToString());
+    FVector location = WeaponOwner->QLCameraComponent->GetComponentLocation() + WeaponOwner->QLCameraComponent->GetForwardVector() * 400.0f;
+    FTransform transform;
+    transform.SetLocation(location);
+
+    portal = GetWorld()->SpawnActorDeferred<AQLPortal>(AQLPortal::StaticClass(), transform);
+    portal->SetPortalOwner(this);
+    UGameplayStatics::FinishSpawningActor(portal, transform);
 }
 
 //------------------------------------------------------------

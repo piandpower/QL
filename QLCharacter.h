@@ -29,8 +29,8 @@ class QL_API AQLCharacter : public ACharacter
 public:
     bool IsEquipped(const FName& Name);
     void ChangeCurrentWeapon(AQLWeapon* Weapon);
-    void AQLCharacter::AddToInventory(AActor* Actor);
-    void AQLCharacter::RemoveFromInventory(AActor* Actor);
+    void AddToInventory(AActor* Actor);
+    void RemoveFromInventory(AActor* Actor);
 
     UPROPERTY(VisibleAnywhere)
     UCameraComponent* QLCameraComponent;

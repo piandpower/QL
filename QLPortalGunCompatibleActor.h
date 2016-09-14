@@ -32,10 +32,10 @@ public:
     // Called every frame
     virtual void Tick( float DeltaSeconds ) override;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gravity gun compatible actor")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Portal gun compatible actor")
     UBoxComponent* BoxComponent;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gravity gun compatible actor")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Portal gun compatible actor")
     UStaticMeshComponent* StaticMeshComponent;
 
 protected:

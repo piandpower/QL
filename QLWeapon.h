@@ -40,7 +40,7 @@ public:
     virtual void AltFireReleased() {};
     virtual void AltFireRepeat() {};
 
-    AQLCharacter* GetWeaponOwner()  const;
+    AQLCharacter* GetWeaponOwner();
     void SetWeaponOwner(AQLCharacter* WeaponOwner);
 
     void SetCurrentCrosshairTexture(const FName& crosshairTextureName);
