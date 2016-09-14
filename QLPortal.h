@@ -54,7 +54,10 @@ public:
 
     UMaterial* BluePortalMaterial;
     UMaterial* OrangePortalMaterial;
+
+    void SetSpouse(AQLPortal* Spouse);
+    void QueryPortal();
 protected:
-    AQLPortal* TheOTherPortal;
+    AQLPortal* Spouse;
     AQLWeaponPortalGun* PortalOwner;
 };

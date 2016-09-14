@@ -49,7 +49,7 @@ AQLPortal::AQLPortal()
         OrangePortalMaterial = OrangePortalMaterialObj.Object;
     }
 
-    TheOTherPortal = nullptr;
+    Spouse = nullptr;
 
     // built-in dynamic delegate
     this->OnActorBeginOverlap.AddDynamic(this, &AQLPortal::OnOverlapBeginForActor);
@@ -123,4 +123,29 @@ void AQLPortal::UnSetQLOwner()
 AQLWeaponPortalGun* AQLPortal::GetPortalOwner()
 {
     return PortalOwner;
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLPortal::SetSpouse(AQLPortal* Spouse)
+{
+    // no self-marriage
+    if (this != Spouse)
+    {
+        this->Spouse = Spouse;
+    }
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLPortal::QueryPortal()
+{
+    if (Spouse)
+    {
+        QLUtility::QLSay("portal: with a spouse");
+    }
+    else
+    {
+        QLUtility::QLSay("portal: without a spouse");
+    }
 }

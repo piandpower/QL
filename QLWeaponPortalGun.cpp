@@ -69,19 +69,8 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
     Portal->SetQLOwner(this);
     UGameplayStatics::FinishSpawningActor(Portal, transform);
 
-    // set portal material
-    if (PortalType == EPortalType::Blue)
-    {
-        Portal->StaticMeshComponent->SetMaterial(0, Portal->BluePortalMaterial);
-        BluePortal = Portal;
-    }
-    else
-    {
-        Portal->StaticMeshComponent->SetMaterial(0, Portal->OrangePortalMaterial);
-        OrangePortal = Portal;
-    }
-
-    // remove overlapped portal if any
+    // the newly spawned portal has top priority
+    // previously spawned portal is destroyed
     TSet<AActor*> AActorList;
     TSubclassOf<AQLPortal> ClassFilter;
     Portal->GetOverlappingActors(AActorList, ClassFilter);
@@ -102,6 +91,23 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
             Item->Destroy();
         }
     }
+
+    // now that a new portal is appropriately created without overlap,
+    // set the new portal's properties
+    if (PortalType == EPortalType::Blue)
+    {
+        Portal->StaticMeshComponent->SetMaterial(0, Portal->BluePortalMaterial);
+        Portal->SetSpouse(OrangePortal);
+        BluePortal = Portal;
+    }
+    else
+    {
+        Portal->StaticMeshComponent->SetMaterial(0, Portal->OrangePortalMaterial);
+        Portal->SetSpouse(BluePortal);
+        OrangePortal = Portal;
+    }
+
+    Portal->QueryPortal();
 }
 
 //------------------------------------------------------------
