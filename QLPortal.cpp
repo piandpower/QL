@@ -38,6 +38,17 @@ AQLPortal::AQLPortal()
     float zDim = StaticMeshComponent->Bounds.BoxExtent.Z; // note: extent refers to half of the side
     StaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -zDim));
 
+    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalMaterialObj(TEXT("/Game/StarterContent/Materials/M_Tech_Hex_Tile_Pulse"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalMaterialObj(TEXT("/Game/StarterContent/Materials/M_Basic_Floor"));
+    if (BluePortalMaterialObj.Succeeded())
+    {
+        BluePortalMaterial = BluePortalMaterialObj.Object;
+    }
+    if (OrangePortalMaterialObj.Succeeded())
+    {
+        OrangePortalMaterial = OrangePortalMaterialObj.Object;
+    }
+
     TheOTherPortal = nullptr;
 
     // built-in dynamic delegate

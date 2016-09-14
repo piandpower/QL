@@ -51,6 +51,9 @@ public:
     virtual void SetQLOwner(AActor* QLOwner) override;
     virtual void UnSetQLOwner() override;
     AQLWeaponPortalGun* GetPortalOwner();
+
+    UMaterial* BluePortalMaterial;
+    UMaterial* OrangePortalMaterial;
 protected:
     AQLPortal* TheOTherPortal;
     AQLWeaponPortalGun* PortalOwner;
