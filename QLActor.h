@@ -34,6 +34,9 @@ public:
     virtual void UnSetQLOwner();
     AActor* GetQLOwner();
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Box component")
+    UBoxComponent* BoxComponent;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Static mesh component")
     UStaticMeshComponent* StaticMeshComponent;
 };

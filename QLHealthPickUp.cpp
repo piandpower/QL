@@ -1,4 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//----------------------------------------
+// Quarter Life
+//
+// MIT license
+//
+//  (\-/)
+// (='.'=)
+// (")-(")o
+//----------------------------------------
 
 #include "QL.h"
 #include "QLHealthPickUp.h"
@@ -19,7 +27,6 @@ AQLHealthPickUp::AQLHealthPickUp()
     BoxComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 
     // built-in dynamic delegate
-    //BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AQLHealthPickUp::OnOverlapBeginForComp);
     this->OnActorBeginOverlap.AddDynamic(this, &AQLHealthPickUp::OnOverlapBeginForActor);
 }
 
@@ -37,12 +44,6 @@ void AQLHealthPickUp::BeginPlay()
 void AQLHealthPickUp::Tick( float DeltaTime )
 {
     Super::Tick( DeltaTime );
-}
-
-//------------------------------------------------------------
-//------------------------------------------------------------
-void AQLHealthPickUp::OnOverlapBeginForComp(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
 }
 
 //------------------------------------------------------------

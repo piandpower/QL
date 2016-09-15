@@ -49,9 +49,6 @@ public:
     UFUNCTION()
     void OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor);
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BoxComponent")
-    UBoxComponent* BoxComponent;
-
     virtual void SetQLOwner(AActor* QLOwner) override;
     virtual void UnSetQLOwner() override;
     AQLCharacter* GetWeaponOwner();

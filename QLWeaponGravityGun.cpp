@@ -68,7 +68,7 @@ void AQLWeaponGravityGun::Fire()
 
                 // apply repulsive force to the component
                 APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(WeaponOwner->GetWorld(), 0);
-                FVector Impulse = repulsiveForceMultFactor * comp->GetMass() * cm->GetActorForwardVector();
+                FVector Impulse = repulsionInstantSpeed * comp->GetMass() * cm->GetActorForwardVector();
                 comp->AddImpulse(Impulse);
 
                 // apply sound
@@ -101,7 +101,7 @@ void AQLWeaponGravityGun::Fire()
                     {
                         // apply repulsive force to the component
                         APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(WeaponOwner->GetWorld(), 0);
-                        FVector Impulse = repulsiveForceMultFactor * comp->GetMass() * cm->GetActorForwardVector();
+                        FVector Impulse = repulsionInstantSpeed * comp->GetMass() * cm->GetActorForwardVector();
                         comp->AddImpulse(Impulse);
 
                         // apply sound
@@ -214,7 +214,7 @@ void AQLWeaponGravityGun::AltFire()
                     {
                         // apply attractive force to the component
                         APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(WeaponOwner->GetWorld(), 0);
-                        FVector Impulse = -attractiveForceMultFactor * comp->GetMass() * cm->GetActorForwardVector();
+                        FVector Impulse = -attractionInstantSpeed * comp->GetMass() * cm->GetActorForwardVector();
                         comp->AddImpulse(Impulse);
                     }
                 }

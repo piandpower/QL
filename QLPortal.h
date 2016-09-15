@@ -39,9 +39,6 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gravity gun compatible actor")
-    UBoxComponent* BoxComponent;
-
     UFUNCTION()
     void OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor);
 

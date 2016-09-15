@@ -30,9 +30,5 @@ public:
 
     // Called every frame
     virtual void Tick( float DeltaSeconds ) override;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Portal gun compatible actor")
-    UBoxComponent* BoxComponent;
-
 protected:
 };

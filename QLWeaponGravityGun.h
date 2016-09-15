@@ -16,9 +16,9 @@
 #include "QLWeaponGravityGun.generated.h"
 
 // constant
-const float attractiveForceMultFactor = 1000.0f;
-const float repulsiveForceMultFactor = 4000.0f;
-const float distanceFromCharacterToActorWhenHold = 300.0f;
+const float attractionInstantSpeed = 1000.0f;
+const float repulsionInstantSpeed = 4000.0f;
+const float distanceFromCharacterToActorWhenHold = 250.0f;
 
 UCLASS()
 class QL_API AQLWeaponGravityGun : public AQLWeapon

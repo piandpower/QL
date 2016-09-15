@@ -35,7 +35,4 @@ public:
 
     // Called every frame
     virtual void Tick( float DeltaSeconds ) override;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gravity gun compatible actor")
-    UBoxComponent* BoxComponent;
 };

@@ -178,10 +178,13 @@ void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
                 if (QLActor->GetQLOwner() != PortalOwner->GetWeaponOwner())
                 {
                     // change velocity
-                    QLActor->StaticMeshComponent->SetPhysicsLinearVelocity(NewVelocity);
-                    QLUtility::QLSayLong("NewDirection = " + NewDirection.ToString());
-                    QLUtility::QLSayLong("NewVelocity = " + NewVelocity.ToString());
-                    QLUtility::QLSayLong("speed = " + FString::SanitizeFloat(Speed));
+                    // SetPhysicsLinearVelocity() can only be applied to the static mesh component
+                    // but in gravity gun compatible actors the static mesh does not have physics/collision
+                    // so instead AddImpulse() is applied here to the box component
+                    // impulse (vector) = mass (scalar) x velocity change (vector)
+                    // ps: AddImpulse(velocity change, NAME_None, false) does not seem to work as expectecd
+                    FVector Impulse = QLActor->BoxComponent->GetMass() * (NewVelocity - Velocity);
+                    QLActor->BoxComponent->AddImpulse(Impulse);
                 }
             }
         }
@@ -247,12 +250,12 @@ void AQLPortal::QueryPortal()
     {
         for (auto It = Roll.CreateConstIterator(); It; ++It)
         {
-            QLUtility::QLSayLong("--> roll = " + It.Value()->GetName() + " " + this->GetName());
+            QLUtility::QLSayLong("--> roll = " + It.Value()->GetName() + ". source = " + this->GetName());
         }
     }
     else
     {
-        QLUtility::QLSayLong("--> empty roll " + this->GetName());
+        QLUtility::QLSayLong("--> empty roll. source = " + this->GetName());
     }
 }
 

@@ -22,6 +22,9 @@ AQLPortalGunCompatibleActor::AQLPortalGunCompatibleActor()
     RootComponent = BoxComponent;
     BoxComponent->InitBoxExtent(FVector(100.0f));
     BoxComponent->SetSimulatePhysics(false);
+    // should use ECollisionEnabled::QueryAndPhysics instead of ECollisionEnabled::QueryOnly
+    // when though SetSimulatePhysics(false)
+    // otherwise this actor will become transparent to gravity gun compatible actor
     BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
     BoxComponent->SetWorldScale3D(FVector(1.0f, 0.2f, 1.0f));
