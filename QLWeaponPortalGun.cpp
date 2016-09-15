@@ -74,14 +74,14 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
             }
 
             // defer-spawn portal
-            FVector location = Hit.ImpactPoint;
-            //FRotator rotation = FMatrix(Hit.Normal).Rotator();
+            // the portal should be located outside the portal gun compatible actor
+            // and these two actors should have a coincident surface
+            FVector location = Hit.ImpactPoint + Hit.Normal * 200.0f;
+            FRotator rotation = Hit.Normal.Rotation();
+            // equivalently: UKismetMathLibrary::MakeRotFromX(Hit.Normal);
             FTransform transform;
             transform.SetLocation(location);
-            //transform.SetRotation(rotation);
-
-            QLUtility::QLSayLong("--> normal = " + Hit.Normal.ToString());
-            QLUtility::QLSayLong("--> pgcActor rot = " + pgcActor->GetActorRotation().ToString());
+            transform.SetRotation(rotation.Quaternion());
 
             AQLPortal* Portal = GetWorld()->SpawnActorDeferred<AQLPortal>(AQLPortal::StaticClass(), transform);
             Portal->SetQLOwner(this);
@@ -115,12 +115,14 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
             {
                 Portal->StaticMeshComponent->SetMaterial(0, Portal->BluePortalMaterial);
                 Portal->SetSpouse(OrangePortal);
+                Portal->SetPortalForwardVector(Hit.Normal);
                 BluePortal = Portal;
             }
             else
             {
                 Portal->StaticMeshComponent->SetMaterial(0, Portal->OrangePortalMaterial);
                 Portal->SetSpouse(BluePortal);
+                Portal->SetPortalForwardVector(Hit.Normal);
                 OrangePortal = Portal;
             }
 

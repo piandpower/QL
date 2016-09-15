@@ -22,7 +22,7 @@ AQLPortalGunCompatibleActor::AQLPortalGunCompatibleActor()
     RootComponent = BoxComponent;
     BoxComponent->InitBoxExtent(FVector(100.0f));
     BoxComponent->SetSimulatePhysics(false);
-    BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
     BoxComponent->SetWorldScale3D(FVector(1.0f, 0.2f, 1.0f));
 

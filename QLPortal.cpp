@@ -22,7 +22,7 @@ AQLPortal::AQLPortal()
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
     RootComponent = BoxComponent;
-    BoxComponent->InitBoxExtent(FVector(100.0f));
+    BoxComponent->InitBoxExtent(FVector(20.0f, 100.0f, 100.0f));
     BoxComponent->SetSimulatePhysics(false);
     BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
@@ -34,7 +34,7 @@ AQLPortal::AQLPortal()
     StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     StaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
     StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
-    StaticMeshComponent->SetWorldScale3D(FVector(2.0f));
+    StaticMeshComponent->SetWorldScale3D(FVector(0.4f, 2.0f, 2.0f));
     float zDim = StaticMeshComponent->Bounds.BoxExtent.Z; // note: extent refers to half of the side
     StaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -zDim));
 
@@ -96,10 +96,15 @@ void AQLPortal::Tick( float DeltaTime )
 //     and ENDS to overlap the spouse, the spouse removes the actor from its own roll.
 //     Teleport upon overlap is only permitted if the actor does not appear in the
 //     overlapped portal's roll.
+// --- There is an annoying limitation: AActor only has velocity getter, not setter.
 //------------------------------------------------------------
 void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor)
 {
     bool bCanTeleport = false;
+    AQLPortal* AnotherPortal = Cast<AQLPortal>(OtherActor);
+    AQLCharacter* QLCharacter = Cast<AQLCharacter>(OtherActor);
+    AQLActor* QLActor = Cast<AQLActor>(OtherActor);
+
     // if the other portal exists, teleport can be performed
     if (Spouse)
     {
@@ -107,24 +112,20 @@ void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
         if (!IsInMyRoll(OtherActor))
         {
             // if the overlapping actor is not a portal
-            AQLPortal* AnotherPortal = Cast<AQLPortal>(OtherActor);
             if (!AnotherPortal)
             {
                 // if OtherActor is character, teleport can be performed
-                // this is not a type check, but identity check
-                if (OtherActor == PortalOwner->GetWeaponOwner())
+                if (QLCharacter)
                 {
                     bCanTeleport = true;
                 }
-                // if OtherActor is not character
                 else
                 {
-                    // if OtherActor is not owned by character, teleport can be performed
-                    // type check
-                    AQLActor* QLOtherActor = Cast<AQLActor>(OtherActor);
-                    if (QLOtherActor)
+                    // if OtherActor is AQLActor, teleport can be performed
+                    if (QLActor)
                     {
-                        if (QLOtherActor->GetQLOwner() != PortalOwner->GetWeaponOwner())
+                        // if OtherActor is not owned by character, teleport can be performed
+                        if (QLActor->GetQLOwner() != PortalOwner->GetWeaponOwner())
                         {
                             bCanTeleport = true;
                         }
@@ -140,9 +141,51 @@ void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
         // add actor to spouse's roll
         Spouse->AddToRoll(OtherActor);
 
+        // update actor phase space
+        FVector NewDirection = Spouse->GetPortalForwardVector();
+        FVector Velocity = OtherActor->GetVelocity();
+        float Speed = Velocity.Size();
+        FVector NewVelocity = NewDirection * Speed;
+
+        QLUtility::QLSayLong("NewDirection = " + NewDirection.ToString());
+        QLUtility::QLSayLong("NewVelocity = " + NewVelocity.ToString());
+        QLUtility::QLSayLong("speed = " + FString::SanitizeFloat(Speed));
+
         FVector NewLocation = Spouse->GetActorLocation();
-        FRotator NewRotation = OtherActor->GetActorRotation();
-        OtherActor->TeleportTo(NewLocation, NewRotation);
+        FRotator NewRotation = NewDirection.Rotation();
+        FRotator NewRotationYawOnly = FRotator(0.0f, NewRotation.Yaw, 0.0f);
+        // note: NewDirection.Rotation(); is eqvuivalent to UKismetMathLibrary::MakeRotFromX(NewDirection);
+        // but the latter requires #include "Kismet/KismetMathLibrary.h"
+
+        // teleport
+        OtherActor->TeleportTo(NewLocation, NewRotationYawOnly);
+
+        // if OtherActor is character, teleport can be performed
+        if (QLCharacter)
+        {
+            // change velocity
+            QLCharacter->GetMovementComponent()->Velocity = NewVelocity;
+
+            // change controller direction
+            QLCharacter->GetController()->SetControlRotation(NewRotation);
+        }
+        else
+        {
+            // if OtherActor is AQLActor, teleport can be performed
+            if (QLActor)
+            {
+                // if OtherActor is not owned by character, teleport can be performed
+                if (QLActor->GetQLOwner() != PortalOwner->GetWeaponOwner())
+                {
+                    // change velocity
+                    QLActor->StaticMeshComponent->SetPhysicsLinearVelocity(NewVelocity);
+                    QLUtility::QLSayLong("NewDirection = " + NewDirection.ToString());
+                    QLUtility::QLSayLong("NewVelocity = " + NewVelocity.ToString());
+                    QLUtility::QLSayLong("speed = " + FString::SanitizeFloat(Speed));
+                }
+            }
+        }
+
         GetPortalOwner()->PlayWeaponSound("Teleport");
     }
 }
@@ -235,4 +278,18 @@ void AQLPortal::RemoveFromRoll(AActor* Actor)
 bool AQLPortal::IsInMyRoll(AActor* Actor)
 {
     return Roll.Contains(Actor->GetName());
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLPortal::SetPortalForwardVector(const FVector& PortalForwardVector)
+{
+    this->PortalForwardVector.Set(PortalForwardVector.X, PortalForwardVector.Y, PortalForwardVector.Z);
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+FVector& AQLPortal::GetPortalForwardVector()
+{
+    return PortalForwardVector;
 }

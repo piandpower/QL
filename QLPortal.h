@@ -42,9 +42,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gravity gun compatible actor")
     UBoxComponent* BoxComponent;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gravity gun compatible actor")
-    UStaticMeshComponent* StaticMeshComponent;
-
     UFUNCTION()
     void OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherActor);
 
@@ -67,9 +64,13 @@ public:
     void RemoveFromRoll(AActor* Actor);
     bool IsInMyRoll(AActor* Actor);
 
+    void SetPortalForwardVector(const FVector& PortalForwardVector);
+    FVector& GetPortalForwardVector();
+
     bool bEnablePortal;
 protected:
     AQLPortal* Spouse;
     AQLWeaponPortalGun* PortalOwner;
     TMap<FString, AActor*> Roll;
+    FVector PortalForwardVector;
 };

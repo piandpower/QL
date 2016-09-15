@@ -52,9 +52,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BoxComponent")
     UBoxComponent* BoxComponent;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StaticMeshComponent")
-    UStaticMeshComponent* StaticMeshComponent;
-
     virtual void SetQLOwner(AActor* QLOwner) override;
     virtual void UnSetQLOwner() override;
     AQLCharacter* GetWeaponOwner();

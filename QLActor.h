@@ -33,4 +33,7 @@ public:
     virtual void SetQLOwner(AActor* QLOwner);
     virtual void UnSetQLOwner();
     AActor* GetQLOwner();
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Static mesh component")
+    UStaticMeshComponent* StaticMeshComponent;
 };
