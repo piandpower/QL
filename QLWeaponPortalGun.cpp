@@ -76,7 +76,7 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
             // defer-spawn portal
             // the portal should be located outside the portal gun compatible actor
             // and these two actors should have a coincident surface
-            FVector location = Hit.ImpactPoint + Hit.Normal * 200.0f;
+            FVector location = Hit.ImpactPoint;
             FRotator rotation = Hit.Normal.Rotation();
             // equivalently: UKismetMathLibrary::MakeRotFromX(Hit.Normal);
             FTransform transform;
@@ -85,6 +85,9 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
 
             AQLPortal* Portal = GetWorld()->SpawnActorDeferred<AQLPortal>(AQLPortal::StaticClass(), transform);
             Portal->SetQLOwner(this);
+            // Move the portal a little bit
+            location += Portal->BoxComponent->GetUnscaledBoxExtent().X * Hit.Normal;
+            Portal->SetActorLocation(location);
             UGameplayStatics::FinishSpawningActor(Portal, transform);
 
             // the newly spawned portal has top priority

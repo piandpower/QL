@@ -33,16 +33,16 @@ AQLWeapon::AQLWeapon()
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
     RootComponent = BoxComponent;
 
-    StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-    const ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Cone"));
-    StaticMeshComponent->SetStaticMesh(StaticMeshObj.Object);
-    StaticMeshComponent->SetSimulatePhysics(false);
-    StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    StaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-    StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
-    StaticMeshComponent->SetWorldScale3D(FVector(1.0f));
-    float zDim = StaticMeshComponent->Bounds.BoxExtent.Z; // note: extent refers to half of the side
-    StaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -zDim));
+    //StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+    //const ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Cone"));
+    //StaticMeshComponent->SetStaticMesh(StaticMeshObj.Object);
+    //StaticMeshComponent->SetSimulatePhysics(false);
+    //StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    //StaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+    //StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    //StaticMeshComponent->SetWorldScale3D(FVector(1.0f));
+    //float zDim = StaticMeshComponent->Bounds.BoxExtent.Z; // note: extent refers to half of the side
+    //StaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -zDim));
 
     // built-in dynamic delegate
     this->OnActorBeginOverlap.AddDynamic(this, &AQLWeapon::OnOverlapBeginForActor);

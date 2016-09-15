@@ -17,7 +17,7 @@
 //------------------------------------------------------------
 AQLPortal::AQLPortal()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
@@ -61,7 +61,7 @@ AQLPortal::AQLPortal()
 //------------------------------------------------------------
 void AQLPortal::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 }
 
 //------------------------------------------------------------
@@ -69,7 +69,7 @@ void AQLPortal::BeginPlay()
 //------------------------------------------------------------
 void AQLPortal::Tick( float DeltaTime )
 {
-	Super::Tick( DeltaTime );
+    Super::Tick( DeltaTime );
 }
 
 //------------------------------------------------------------
@@ -146,10 +146,6 @@ void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
         FVector Velocity = OtherActor->GetVelocity();
         float Speed = Velocity.Size();
         FVector NewVelocity = NewDirection * Speed;
-
-        QLUtility::QLSayLong("NewDirection = " + NewDirection.ToString());
-        QLUtility::QLSayLong("NewVelocity = " + NewVelocity.ToString());
-        QLUtility::QLSayLong("speed = " + FString::SanitizeFloat(Speed));
 
         FVector NewLocation = Spouse->GetActorLocation();
         FRotator NewRotation = NewDirection.Rotation();
