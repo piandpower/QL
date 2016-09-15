@@ -27,7 +27,7 @@ AQLPortalGunCompatibleActor::AQLPortalGunCompatibleActor()
     // otherwise this actor will become transparent to gravity gun compatible actor
     BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-    BoxComponent->SetWorldScale3D(FVector(1.0f, 0.2f, 1.0f));
+    BoxComponent->SetWorldScale3D(FVector(0.2f, 1.0f, 1.0f));
 
     StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
     const ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Cube"));
@@ -38,7 +38,7 @@ AQLPortalGunCompatibleActor::AQLPortalGunCompatibleActor()
     StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
     float zDim = StaticMeshComponent->Bounds.BoxExtent.Z; // note: extent refers to half of the side
     StaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -2.0f * zDim));
-    StaticMeshComponent->SetWorldScale3D(FVector(2.0f, 0.4f, 2.0f));
+    StaticMeshComponent->SetWorldScale3D(FVector(0.4f, 2.0f, 2.0f));
 }
 
 //------------------------------------------------------------

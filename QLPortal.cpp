@@ -34,12 +34,30 @@ AQLPortal::AQLPortal()
     StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     StaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
     StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
-    StaticMeshComponent->SetWorldScale3D(FVector(0.4f, 2.0f, 2.0f));
+    StaticMeshComponent->SetWorldScale3D(FVector(0.4f, 0.4f, 2.0f));
     float zDim = StaticMeshComponent->Bounds.BoxExtent.Z; // note: extent refers to half of the side
     StaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -zDim));
 
-    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalMaterialObj(TEXT("/Game/StarterContent/Materials/M_Tech_Hex_Tile_Pulse"));
-    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalMaterialObj(TEXT("/Game/StarterContent/Materials/M_Basic_Floor"));
+    SecondStaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SecondStaticMeshComponent"));
+    const ConstructorHelpers::FObjectFinder<UStaticMesh> SecondStaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Cone"));
+    SecondStaticMeshComponent->SetStaticMesh(SecondStaticMeshObj.Object);
+    SecondStaticMeshComponent->SetSimulatePhysics(false);
+    SecondStaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    SecondStaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+    SecondStaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    SecondStaticMeshComponent->SetWorldScale3D(FVector(0.4f, 0.4f, 2.0f));
+    zDim = SecondStaticMeshComponent->Bounds.BoxExtent.Z; // note: extent refers to half of the side
+    SecondStaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -zDim));
+    SecondStaticMeshComponent->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
+
+    //DEBUG
+    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalMaterialObj(TEXT("/Game/Materials/Debug/QL_MatDebugType1"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalMaterialObj(TEXT("/Game/Materials/Debug/QL_MatDebugType2"));
+    StaticMeshComponent->SetMaterial(0, BluePortalMaterialObj.Object);
+    SecondStaticMeshComponent->SetMaterial(0, OrangePortalMaterialObj.Object);
+
+    //static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalMaterialObj(TEXT("/Game/StarterContent/Materials/M_Tech_Hex_Tile_Pulse"));
+    //static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalMaterialObj(TEXT("/Game/StarterContent/Materials/M_Basic_Floor"));
     if (BluePortalMaterialObj.Succeeded())
     {
         BluePortalMaterial = BluePortalMaterialObj.Object;

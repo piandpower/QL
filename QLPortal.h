@@ -70,4 +70,6 @@ protected:
     AQLWeaponPortalGun* PortalOwner;
     TMap<FString, AActor*> Roll;
     FVector PortalForwardVector;
+
+    UStaticMeshComponent* SecondStaticMeshComponent;
 };

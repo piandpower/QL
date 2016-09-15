@@ -77,8 +77,7 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
             // the portal should be located outside the portal gun compatible actor
             // and these two actors should have a coincident surface
             FVector location = Hit.ImpactPoint;
-            FRotator rotation = Hit.Normal.Rotation();
-            // equivalently: UKismetMathLibrary::MakeRotFromX(Hit.Normal);
+            FRotator rotation = UKismetMathLibrary::MakeRotFromXZ(Hit.Normal, pgcActor->GetActorUpVector());
             FTransform transform;
             transform.SetLocation(location);
             transform.SetRotation(rotation.Quaternion());
@@ -116,14 +115,16 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
             // set the new portal's properties
             if (PortalType == EPortalType::Blue)
             {
-                Portal->StaticMeshComponent->SetMaterial(0, Portal->BluePortalMaterial);
+                //DEBUG
+                //Portal->StaticMeshComponent->SetMaterial(0, Portal->BluePortalMaterial);
                 Portal->SetSpouse(OrangePortal);
                 Portal->SetPortalForwardVector(Hit.Normal);
                 BluePortal = Portal;
             }
             else
             {
-                Portal->StaticMeshComponent->SetMaterial(0, Portal->OrangePortalMaterial);
+                //DEBUG
+                //Portal->StaticMeshComponent->SetMaterial(0, Portal->OrangePortalMaterial);
                 Portal->SetSpouse(BluePortal);
                 Portal->SetPortalForwardVector(Hit.Normal);
                 OrangePortal = Portal;

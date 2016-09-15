@@ -12,6 +12,7 @@
 
 #include "QLUtility.h"
 #include "GameFramework/Actor.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "QLActor.generated.h"
 
 UCLASS()

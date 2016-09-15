@@ -257,46 +257,50 @@ void AQLWeaponGravityGun::AltFireRepeat()
 //------------------------------------------------------------
 void AQLWeaponGravityGun::Tick(float DeltaSeconds)
 {
-    if (bIsAltFirePressed)
+    // if the gravity gun has been owned by character
+    if (GetWeaponOwner())
     {
-        RunningTimeAltFirePressed += DeltaSeconds;
-        if (RunningTimeAltFirePressed >= FixedIntervalAltFirePressed)
+        if (bIsAltFirePressed)
         {
-            bIsAltFireHeldDown = true;
-            RunningTimeAltFirePressed = 0.0f;
+            RunningTimeAltFirePressed += DeltaSeconds;
+            if (RunningTimeAltFirePressed >= FixedIntervalAltFirePressed)
+            {
+                bIsAltFireHeldDown = true;
+                RunningTimeAltFirePressed = 0.0f;
+            }
         }
-    }
 
-    if (bIsAltFireHeldDown)
-    {
-        // If AltFireRepeat() is called for every tick, the attracted object will gain
-        // momentum in a riduculous rapid fashion. As a workaround, AltFireRepeat() is
-        // called every FixedInterval.
-        RunningTimeAltFireHeldDown += DeltaSeconds;
-        if (RunningTimeAltFireHeldDown >= FixedIntervalAltFireHeldDown)
+        if (bIsAltFireHeldDown)
         {
-            AltFireRepeat();
-            RunningTimeAltFireHeldDown = 0.0f;
+            // If AltFireRepeat() is called for every tick, the attracted object will gain
+            // momentum in a riduculous rapid fashion. As a workaround, AltFireRepeat() is
+            // called every FixedInterval.
+            RunningTimeAltFireHeldDown += DeltaSeconds;
+            if (RunningTimeAltFireHeldDown >= FixedIntervalAltFireHeldDown)
+            {
+                AltFireRepeat();
+                RunningTimeAltFireHeldDown = 0.0f;
+            }
         }
-    }
 
-    if (bIsGravityGunCompatibleActorHeld)
-    {
-        if (ggcActor)
+        if (bIsGravityGunCompatibleActorHeld)
         {
-            // note:
-            // --> ggcActor->SetActorLocation(newLocation);
-            //     ggcActor->SetActorRotation(newRotation);
-            //     will force actor to be in front of the character, in which case
-            //     the actor may be embedded into the ground when the character is looking down
-            // --> the actor may deviate from the camera center when rotating it fast.
-            //     this is because full physics simulation is still enabled and the actor cannot be
-            //     moved instantly with the camera.
-            APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
-            FVector newLocation = cm->GetCameraLocation() + cm->GetActorForwardVector() * distanceFromCharacterToActorWhenHold;
-            FRotator newRotation = cm->GetCameraRotation() + DeltaRotation;
-            WeaponOwner->PhysicsHandle->SetTargetLocation(newLocation);
-            WeaponOwner->PhysicsHandle->SetTargetRotation(newRotation);
+            if (ggcActor)
+            {
+                // note:
+                // --> ggcActor->SetActorLocation(newLocation);
+                //     ggcActor->SetActorRotation(newRotation);
+                //     will force actor to be in front of the character, in which case
+                //     the actor may be embedded into the ground when the character is looking down
+                // --> the actor may deviate from the camera center when rotating it fast.
+                //     this is because full physics simulation is still enabled and the actor cannot be
+                //     moved instantly with the camera.
+                APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
+                FVector newLocation = cm->GetCameraLocation() + cm->GetActorForwardVector() * distanceFromCharacterToActorWhenHold;
+                FRotator newRotation = cm->GetCameraRotation() + DeltaRotation;
+                WeaponOwner->PhysicsHandle->SetTargetLocation(newLocation);
+                WeaponOwner->PhysicsHandle->SetTargetRotation(newRotation);
+            }
         }
     }
 }
