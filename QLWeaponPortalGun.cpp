@@ -55,7 +55,7 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
         AQLPortalGunCompatibleActor* pgcActor = Cast<AQLPortalGunCompatibleActor>(Hit.GetActor());
         if (pgcActor)
         {
-            // remove portal of the same color
+            // remove portal of the same color that is generated elsewhere
             if (PortalType == EPortalType::Blue)
             {
                 if (BluePortal)
@@ -90,7 +90,7 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
             UGameplayStatics::FinishSpawningActor(Portal, transform);
 
             // the newly spawned portal has top priority
-            // previously spawned portal is destroyed
+            // previously spawned portal is now destroyed
             TSet<AActor*> AActorList;
             Portal->GetOverlappingActors(AActorList, AQLPortal::StaticClass());
             if (AActorList.Num() > 0)
@@ -118,7 +118,6 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
                 //DEBUG
                 //Portal->StaticMeshComponent->SetMaterial(0, Portal->BluePortalMaterial);
                 Portal->SetSpouse(OrangePortal);
-                Portal->SetPortalForwardVector(Hit.Normal);
                 BluePortal = Portal;
             }
             else
@@ -126,11 +125,10 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
                 //DEBUG
                 //Portal->StaticMeshComponent->SetMaterial(0, Portal->OrangePortalMaterial);
                 Portal->SetSpouse(BluePortal);
-                Portal->SetPortalForwardVector(Hit.Normal);
                 OrangePortal = Portal;
             }
 
-            // at last, if spouse exists, inform him/her of myself
+            // if spouse exists, inform him/her of myself
             AQLPortal* Spouse = Portal->GetSpouse();
             if (Spouse)
             {

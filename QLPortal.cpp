@@ -19,6 +19,7 @@ AQLPortal::AQLPortal()
 {
     // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
+    Spouse = nullptr;
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
     RootComponent = BoxComponent;
@@ -28,36 +29,36 @@ AQLPortal::AQLPortal()
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 
     StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-    const ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Cone"));
+    const ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Cube"));
     StaticMeshComponent->SetStaticMesh(StaticMeshObj.Object);
     StaticMeshComponent->SetSimulatePhysics(false);
     StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     StaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
     StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
-    StaticMeshComponent->SetWorldScale3D(FVector(0.4f, 0.4f, 2.0f));
+    StaticMeshComponent->SetWorldScale3D(FVector(0.4f, 2.0f, 2.0f));
     float zDim = StaticMeshComponent->Bounds.BoxExtent.Z; // note: extent refers to half of the side
     StaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -zDim));
 
-    SecondStaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SecondStaticMeshComponent"));
-    const ConstructorHelpers::FObjectFinder<UStaticMesh> SecondStaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Cone"));
-    SecondStaticMeshComponent->SetStaticMesh(SecondStaticMeshObj.Object);
-    SecondStaticMeshComponent->SetSimulatePhysics(false);
-    SecondStaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    SecondStaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-    SecondStaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
-    SecondStaticMeshComponent->SetWorldScale3D(FVector(0.4f, 0.4f, 2.0f));
-    zDim = SecondStaticMeshComponent->Bounds.BoxExtent.Z; // note: extent refers to half of the side
-    SecondStaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -zDim));
-    SecondStaticMeshComponent->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
+    //SecondStaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SecondStaticMeshComponent"));
+    //const ConstructorHelpers::FObjectFinder<UStaticMesh> SecondStaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Cone"));
+    //SecondStaticMeshComponent->SetStaticMesh(SecondStaticMeshObj.Object);
+    //SecondStaticMeshComponent->SetSimulatePhysics(false);
+    //SecondStaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    //SecondStaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+    //SecondStaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    //SecondStaticMeshComponent->SetWorldScale3D(FVector(0.4f, 0.4f, 2.0f));
+    //zDim = SecondStaticMeshComponent->Bounds.BoxExtent.Z; // note: extent refers to half of the side
+    //SecondStaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -zDim));
+    //SecondStaticMeshComponent->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
 
     //DEBUG
-    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalMaterialObj(TEXT("/Game/Materials/Debug/QL_MatDebugType1"));
-    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalMaterialObj(TEXT("/Game/Materials/Debug/QL_MatDebugType2"));
-    StaticMeshComponent->SetMaterial(0, BluePortalMaterialObj.Object);
-    SecondStaticMeshComponent->SetMaterial(0, OrangePortalMaterialObj.Object);
+    //static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalMaterialObj(TEXT("/Game/Materials/Debug/QL_MatDebugType1"));
+    //static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalMaterialObj(TEXT("/Game/Materials/Debug/QL_MatDebugType2"));
+    //StaticMeshComponent->SetMaterial(0, BluePortalMaterialObj.Object);
+    //SecondStaticMeshComponent->SetMaterial(0, OrangePortalMaterialObj.Object);
 
-    //static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalMaterialObj(TEXT("/Game/StarterContent/Materials/M_Tech_Hex_Tile_Pulse"));
-    //static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalMaterialObj(TEXT("/Game/StarterContent/Materials/M_Basic_Floor"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalMaterialObj(TEXT("/Game/StarterContent/Materials/M_Tech_Hex_Tile_Pulse"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalMaterialObj(TEXT("/Game/StarterContent/Materials/M_Basic_Floor"));
     if (BluePortalMaterialObj.Succeeded())
     {
         BluePortalMaterial = BluePortalMaterialObj.Object;
@@ -67,7 +68,15 @@ AQLPortal::AQLPortal()
         OrangePortalMaterial = OrangePortalMaterialObj.Object;
     }
 
-    Spouse = nullptr;
+    // set up camera, texture at compile time
+    PortalCamera = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("PortalCamera"));
+    PortalCamera->bCaptureEveryFrame = true;
+    PortalCamera->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    PortalRenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("PortalRenderTarget"));
+    PortalRenderTarget->InitAutoFormat(1024, 1024);
+    PortalRenderTarget->AddressX = TA_Wrap;
+    PortalRenderTarget->AddressY = TA_Wrap;
+    PortalCamera->TextureTarget = PortalRenderTarget;
 
     // built-in dynamic delegate
     this->OnActorBeginOverlap.AddDynamic(this, &AQLPortal::OnOverlapBeginForActor);
@@ -80,6 +89,13 @@ AQLPortal::AQLPortal()
 void AQLPortal::BeginPlay()
 {
     Super::BeginPlay();
+
+    // set up camera, texture, material at runtime
+    PortalCamera->UpdateContent();
+    //PortalDynamicMaterial = UMaterialInstanceDynamic::Create(BluePortalMaterial, NULL);
+    PortalDynamicMaterial = StaticMeshComponent->CreateAndSetMaterialInstanceDynamic(0);
+    PortalDynamicMaterial->SetTextureParameterValue("PortalTexture", PortalRenderTarget);
+    StaticMeshComponent->SetMaterial(0, PortalDynamicMaterial);
 }
 
 //------------------------------------------------------------
@@ -88,6 +104,10 @@ void AQLPortal::BeginPlay()
 void AQLPortal::Tick( float DeltaTime )
 {
     Super::Tick( DeltaTime );
+    if (PortalRenderTarget->TextureReference.IsInitialized())
+    {
+        PortalDynamicMaterial->SetTextureParameterValue("PortalTexture", PortalRenderTarget);
+    }
 }
 
 //------------------------------------------------------------
@@ -160,7 +180,7 @@ void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
         Spouse->AddToRoll(OtherActor);
 
         // update actor phase space
-        FVector NewDirection = Spouse->GetPortalForwardVector();
+        FVector NewDirection = Spouse->GetActorForwardVector();
         FVector Velocity = OtherActor->GetVelocity();
         float Speed = Velocity.Size();
         FVector NewVelocity = NewDirection * Speed;
@@ -295,18 +315,4 @@ void AQLPortal::RemoveFromRoll(AActor* Actor)
 bool AQLPortal::IsInMyRoll(AActor* Actor)
 {
     return Roll.Contains(Actor->GetName());
-}
-
-//------------------------------------------------------------
-//------------------------------------------------------------
-void AQLPortal::SetPortalForwardVector(const FVector& PortalForwardVector)
-{
-    this->PortalForwardVector.Set(PortalForwardVector.X, PortalForwardVector.Y, PortalForwardVector.Z);
-}
-
-//------------------------------------------------------------
-//------------------------------------------------------------
-FVector& AQLPortal::GetPortalForwardVector()
-{
-    return PortalForwardVector;
 }

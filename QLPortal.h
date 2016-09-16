@@ -49,27 +49,24 @@ public:
     virtual void UnSetQLOwner() override;
     AQLWeaponPortalGun* GetPortalOwner();
 
-    UMaterial* BluePortalMaterial;
-    UMaterial* OrangePortalMaterial;
-
     void SetSpouse(AQLPortal* Spouse);
     AQLPortal* GetSpouse();
-
     void QueryPortal();
-
     void AddToRoll(AActor* Actor);
     void RemoveFromRoll(AActor* Actor);
     bool IsInMyRoll(AActor* Actor);
 
-    void SetPortalForwardVector(const FVector& PortalForwardVector);
-    FVector& GetPortalForwardVector();
+    UMaterial* BluePortalMaterial;
+    UMaterial* OrangePortalMaterial;
 
-    bool bEnablePortal;
+    //UStaticMeshComponent* SecondStaticMeshComponent;
+    USceneCaptureComponent2D* PortalCamera;
+    UTextureRenderTarget2D* PortalRenderTarget;
+    UMaterialInstanceDynamic* PortalDynamicMaterial;
+    UMaterialInterface* PortalMaterialInterface;
+
 protected:
     AQLPortal* Spouse;
     AQLWeaponPortalGun* PortalOwner;
     TMap<FString, AActor*> Roll;
-    FVector PortalForwardVector;
-
-    UStaticMeshComponent* SecondStaticMeshComponent;
 };
