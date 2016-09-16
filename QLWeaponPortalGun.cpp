@@ -21,9 +21,8 @@ AQLWeaponPortalGun::AQLWeaponPortalGun()
     SetCurrentCrosshairTexture("BothEmpty");
 
     // sound
-    WeaponSoundList.Add("None", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/bottle"), TEXT("SoundNoneComp")));
-    WeaponSoundList.Add("Fire", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/portal_created"), TEXT("SoundFireComp")));
-    WeaponSoundList.Add("Teleport", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/teleport"), TEXT("SoundTeleportComp")));
+    SoundList.Add("None", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/bottle"), TEXT("SoundNoneComp")));
+    SoundList.Add("Fire", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/portal_created"), TEXT("SoundFireComp")));
 
     BluePortal = nullptr;
     OrangePortal = nullptr;
@@ -136,13 +135,13 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
             }
 
             // apply sound
-            PlayWeaponSound("Fire");
+            PlaySound("Fire", Hit.ImpactPoint);
         }
     }
     else
     {
         // apply sound
-        PlayWeaponSound("None");
+        PlaySound("None");
     }
 }
 

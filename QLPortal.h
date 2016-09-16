@@ -60,10 +60,17 @@ public:
     UMaterial* OrangePortalMaterial;
 
     //UStaticMeshComponent* SecondStaticMeshComponent;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PortalCamera")
     USceneCaptureComponent2D* PortalCamera;
+
     UTextureRenderTarget2D* PortalRenderTarget;
     UMaterialInstanceDynamic* PortalDynamicMaterial;
     UMaterialInterface* PortalMaterialInterface;
+    UTexture* PortalTexture;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PortalCameraSphere")
+    UStaticMeshComponent* PortalCameraSphere;   // DEBUG
 
 protected:
     AQLPortal* Spouse;

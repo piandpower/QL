@@ -105,41 +105,6 @@ UTexture2D* AQLWeapon::CreateCrosshairTexture(const TCHAR* texturePath)
 }
 
 //------------------------------------------------------------
-// note: ConstructorHelpers::FObjectFinder<T> and
-// CreateDefaultSubobject<T> can only be used inside ctor!!!
-//------------------------------------------------------------
-UAudioComponent* AQLWeapon::CreateWeaponSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName)
-{
-    ConstructorHelpers::FObjectFinder<USoundWave> soundWave(soundPath);
-    UAudioComponent* soundComp = CreateDefaultSubobject<UAudioComponent>(soundName);
-
-    bool success = false;
-    if (soundWave.Object->IsValidLowLevel() && soundComp)
-    {
-        soundComp->SetSound(soundWave.Object);
-        soundComp->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
-        soundComp->SetRelativeLocation(FVector(0.0f));
-        soundComp->bAutoActivate = false;
-        success = true;
-    }
-
-    if (!success)
-    {
-        QLUtility::QLSay(TEXT("AQLWeapon::CreateWeaponSoundComponent() failed."));
-        soundComp = nullptr;
-    }
-
-    return soundComp;
-}
-
-//------------------------------------------------------------
-//------------------------------------------------------------
-void AQLWeapon::PlayWeaponSound(const FName& soundName)
-{
-    QLUtility::PlaySound(WeaponSoundList, soundName);
-}
-
-//------------------------------------------------------------
 //------------------------------------------------------------
 const FName& AQLWeapon::GetWeaponName() const
 {

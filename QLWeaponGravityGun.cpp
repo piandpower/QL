@@ -29,9 +29,9 @@ AQLWeaponGravityGun::AQLWeaponGravityGun()
     SetCurrentCrosshairTexture("Regular");
 
     // sound
-    WeaponSoundList.Add("None", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/bottle"), TEXT("SoundNongComp")));
-    WeaponSoundList.Add("Hold", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/zoom_in"), TEXT("SoundHoldComp")));
-    WeaponSoundList.Add("Fire", CreateWeaponSoundComponent(RootComponent, TEXT("/Game/Sounds/gravity_gun_fire"), TEXT("SoundFireComp")));
+    SoundList.Add("None", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/bottle"), TEXT("SoundNongComp")));
+    SoundList.Add("Hold", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/zoom_in"), TEXT("SoundHoldComp")));
+    SoundList.Add("Fire", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/gravity_gun_fire"), TEXT("SoundFireComp")));
 }
 
 //------------------------------------------------------------
@@ -72,7 +72,7 @@ void AQLWeaponGravityGun::Fire()
                 comp->AddImpulse(Impulse);
 
                 // apply sound
-                PlayWeaponSound("Fire");
+                PlaySound("Fire");
             }
         }
     }
@@ -105,7 +105,7 @@ void AQLWeaponGravityGun::Fire()
                         comp->AddImpulse(Impulse);
 
                         // apply sound
-                        PlayWeaponSound("Fire");
+                        PlaySound("Fire");
                     }
                 }
             }
@@ -205,7 +205,7 @@ void AQLWeaponGravityGun::AltFire()
                         comp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 
                         // apply sound
-                        PlayWeaponSound("Hold");
+                        PlaySound("Hold");
 
                         // consequently player then holds the actor for every tick
                         // refer to Tick()
@@ -223,13 +223,13 @@ void AQLWeaponGravityGun::AltFire()
             else
             {
                 // apply sound
-                PlayWeaponSound("None");
+                PlaySound("None");
             }
         }
         else
         {
             // apply sound
-            PlayWeaponSound("None");
+            PlaySound("None");
         }
     }
 }

@@ -18,7 +18,7 @@
 
 // constant
 const int maxNumWeapon = 10;
-const float rayTraceRange = 10000.0f;
+const float rayTraceRange = 100000.0f;
 const float nextToPlayerThreshold = 400.0f;
 
 UCLASS()
@@ -33,7 +33,7 @@ public:
     void RemoveFromInventory(AQLActor* QLActor);
     void ShowInventory();
 
-    UPROPERTY(VisibleAnywhere)
+    //AQLActor QLActorComp;
     UCameraComponent* QLCameraComponent;
     UPhysicsHandleComponent* PhysicsHandle;
 
@@ -113,9 +113,12 @@ public:
 
     void PickUpWeapon(AQLWeapon* Weapon);
     AQLWeapon* GetCurrentWeapon() const;
+    TMap<FName, UAudioComponent*> SoundList;
+    UAudioComponent* CreateSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName);
 
-    UAudioComponent* CreateCharacterSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName);
-    void PlayCharacterSound(const FName& soundName);
+    void PlaySound(const FName& soundName);
+    void PlaySound2D(const FName& soundName);
+    void PlaySoundAttenuated(const FName& soundName);
 protected:
     int DoubleJumpCounter;
 
@@ -134,5 +137,4 @@ protected:
     AQLWeapon* LastWeapon;
     TMap<FName, AQLWeapon*> WeaponList;
     TMap<FString, AActor*> Inventory;
-    TMap<FName, UAudioComponent*> CharacterSoundList;
 };

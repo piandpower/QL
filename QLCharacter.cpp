@@ -53,8 +53,9 @@ AQLCharacter::AQLCharacter()
     LastWeapon = nullptr;
 
     // sound
-    CharacterSoundList.Add("EquipWeapon", CreateCharacterSoundComponent(RootComponent, TEXT("/Game/Sounds/medshot4_from_hl2"), TEXT("SoundEquipWeaponComp")));
-    CharacterSoundList.Add("SwitchWeapon", CreateCharacterSoundComponent(RootComponent, TEXT("/Game/Sounds/swords_collide"), TEXT("SoundSwitchWeaponComp")));
+    SoundList.Add("EquipWeapon", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/medshot4_from_hl2"), TEXT("SoundEquipWeaponComp")));
+    SoundList.Add("SwitchWeapon", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/swords_collide"), TEXT("SoundSwitchWeaponComp")));
+    SoundList.Add("DoubleJump", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/quake_jump"), TEXT("SoundDoubleJumpComp")));
 }
 
 //------------------------------------------------------------
@@ -138,6 +139,8 @@ void AQLCharacter::StartJump()
     {
         // perform double jump
         LaunchCharacter({0 , 0, GetCharacterMovement()->JumpZVelocity}, false, true);
+
+        PlaySound("DoubleJump");
     }
 
     ++DoubleJumpCounter;
@@ -384,7 +387,7 @@ void AQLCharacter::PickUpWeapon(AQLWeapon* Weapon)
             // physical attachment
             Weapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
 
-            PlayCharacterSound("EquipWeapon");
+            PlaySound("EquipWeapon");
         }
     }
 }
@@ -431,41 +434,6 @@ void AQLCharacter::ShowInventory()
 }
 
 //------------------------------------------------------------
-// note: ConstructorHelpers::FObjectFinder<T> and
-// CreateDefaultSubobject<T> can only be used inside ctor!!!
-//------------------------------------------------------------
-UAudioComponent* AQLCharacter::CreateCharacterSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName)
-{
-    ConstructorHelpers::FObjectFinder<USoundWave> soundWave(soundPath);
-    UAudioComponent* soundComp = CreateDefaultSubobject<UAudioComponent>(soundName);
-
-    bool success = false;
-    if (soundWave.Object->IsValidLowLevel() && soundComp)
-    {
-        soundComp->SetSound(soundWave.Object);
-        soundComp->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
-        soundComp->SetRelativeLocation(FVector(0.0f));
-        soundComp->bAutoActivate = false;
-        success = true;
-    }
-
-    if (!success)
-    {
-        QLUtility::QLSay(TEXT("AQLCharacter::CreateWeaponSoundComponent() failed."));
-        soundComp = nullptr;
-    }
-
-    return soundComp;
-}
-
-//------------------------------------------------------------
-//------------------------------------------------------------
-void AQLCharacter::PlayCharacterSound(const FName& soundName)
-{
-    QLUtility::PlaySound(CharacterSoundList, soundName);
-}
-
-//------------------------------------------------------------
 //------------------------------------------------------------
 void AQLCharacter::ChangeCurrentWeapon(AQLWeapon* Weapon)
 {
@@ -480,7 +448,7 @@ void AQLCharacter::ChangeCurrentWeapon(AQLWeapon* Weapon)
             CurrentWeapon = Weapon;
             QLUtility::QLSay(FString(TEXT("switch to ")) + Weapon->GetWeaponName().ToString());
 
-            PlayCharacterSound("SwitchWeapon");
+            PlaySound("SwitchWeapon");
         }
     }
 }
@@ -509,4 +477,53 @@ bool AQLCharacter::IsEquipped(const FName& Name)
         QLUtility::QLSay("AQLCharacter::IsEquipped(): unknown weapon type.");
         return false;
     }
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLCharacter::PlaySound(const FName& soundName)
+{
+    QLUtility::PlaySound(SoundList, soundName);
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLCharacter::PlaySound2D(const FName& soundName)
+{
+    QLUtility::PlaySound2D(SoundList, soundName);
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLCharacter::PlaySoundAttenuated(const FName& soundName)
+{
+    QLUtility::PlaySoundAttenuated(SoundList, soundName);
+}
+
+//------------------------------------------------------------
+// note: ConstructorHelpers::FObjectFinder<T> and
+// CreateDefaultSubobject<T> can only be used inside ctor!!!
+//------------------------------------------------------------
+UAudioComponent* AQLCharacter::CreateSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName)
+{
+    ConstructorHelpers::FObjectFinder<USoundWave> soundWave(soundPath);
+    UAudioComponent* soundComp = CreateDefaultSubobject<UAudioComponent>(soundName);
+
+    bool success = false;
+    if (soundWave.Object->IsValidLowLevel() && soundComp)
+    {
+        soundComp->SetSound(soundWave.Object);
+        soundComp->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+        soundComp->SetRelativeLocation(FVector(0.0f));
+        soundComp->bAutoActivate = false;
+        success = true;
+    }
+
+    if (!success)
+    {
+        QLUtility::QLSay(TEXT("AQLActor::CreateSoundComponent() failed."));
+        soundComp = nullptr;
+    }
+
+    return soundComp;
 }

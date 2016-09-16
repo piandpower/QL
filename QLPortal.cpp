@@ -21,6 +21,9 @@ AQLPortal::AQLPortal()
     PrimaryActorTick.bCanEverTick = true;
     Spouse = nullptr;
 
+    // sound
+    SoundList.Add("Teleport", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/teleport"), TEXT("SoundTeleportComp")));
+
     BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
     RootComponent = BoxComponent;
     BoxComponent->InitBoxExtent(FVector(20.0f, 100.0f, 100.0f));
@@ -72,15 +75,33 @@ AQLPortal::AQLPortal()
     PortalCamera = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("PortalCamera"));
     PortalCamera->bCaptureEveryFrame = true;
     PortalCamera->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    PortalCamera->SetRelativeLocation(FVector(100.0f, 0.0f, 0.0f));
     PortalRenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("PortalRenderTarget"));
     PortalRenderTarget->InitAutoFormat(1024, 1024);
     PortalRenderTarget->AddressX = TA_Wrap;
     PortalRenderTarget->AddressY = TA_Wrap;
     PortalCamera->TextureTarget = PortalRenderTarget;
 
+    PortalCameraSphere = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PortalCameraSphere"));
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> TempObj(TEXT("/Game/StarterContent/Shapes/Shape_Cone"));
+    PortalCameraSphere->SetStaticMesh(TempObj.Object);
+    PortalCameraSphere->SetSimulatePhysics(false);
+    PortalCameraSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    PortalCameraSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+    PortalCameraSphere->AttachToComponent(PortalCamera, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    PortalCameraSphere->SetWorldScale3D(FVector(0.2f, 0.2f, 1.0f));
+    PortalCameraSphere->SetRelativeLocation(FVector(0.0f, 0.0f, 20.0f));
+    PortalCameraSphere->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
+
     // built-in dynamic delegate
     this->OnActorBeginOverlap.AddDynamic(this, &AQLPortal::OnOverlapBeginForActor);
     this->OnActorEndOverlap.AddDynamic(this, &AQLPortal::OnOverlapEndForActor);
+
+    static ConstructorHelpers::FObjectFinder<UTexture> PortalTextureObj(TEXT("/Game/Textures/T_Brick_Clay_Beveled_D"));
+
+    PortalTexture = PortalTextureObj.Object;
+
+    //PortalTexture = PortalRenderTarget;
 }
 
 //------------------------------------------------------------
@@ -92,9 +113,9 @@ void AQLPortal::BeginPlay()
 
     // set up camera, texture, material at runtime
     PortalCamera->UpdateContent();
+    PortalDynamicMaterial = StaticMeshComponent->CreateDynamicMaterialInstance(0);
     //PortalDynamicMaterial = UMaterialInstanceDynamic::Create(BluePortalMaterial, NULL);
-    PortalDynamicMaterial = StaticMeshComponent->CreateAndSetMaterialInstanceDynamic(0);
-    PortalDynamicMaterial->SetTextureParameterValue("PortalTexture", PortalRenderTarget);
+    PortalDynamicMaterial->SetTextureParameterValue("PortalTexture", PortalTexture);
     StaticMeshComponent->SetMaterial(0, PortalDynamicMaterial);
 }
 
@@ -104,10 +125,11 @@ void AQLPortal::BeginPlay()
 void AQLPortal::Tick( float DeltaTime )
 {
     Super::Tick( DeltaTime );
-    if (PortalRenderTarget->TextureReference.IsInitialized())
-    {
-        PortalDynamicMaterial->SetTextureParameterValue("PortalTexture", PortalRenderTarget);
-    }
+    //if (PortalRenderTarget->TextureReference.IsInitialized())
+    //{
+    //    //PortalDynamicMaterial->SetTextureParameterValue("PortalTexture", PortalRenderTarget);
+    //    StaticMeshComponent->SetMaterial(0, PortalDynamicMaterial);
+    //}
 }
 
 //------------------------------------------------------------
@@ -146,7 +168,7 @@ void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
     // if the other portal exists, teleport can be performed
     if (Spouse)
     {
-        // if the actor does not in my roll, teleport can be performed
+        // if the actor is not currently appear in my roll, teleport can be performed
         if (!IsInMyRoll(OtherActor))
         {
             // if the overlapping actor is not a portal
@@ -223,7 +245,7 @@ void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
             }
         }
 
-        GetPortalOwner()->PlayWeaponSound("Teleport");
+        PlaySound("Teleport");
     }
 }
 
