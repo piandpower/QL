@@ -16,22 +16,10 @@ namespace QLUtility
     void QLSayLong(const FString& string);
     void QLSay(const FString& string, const float time);
 
-    //------------------------------------------------------------
-    // play sound
-    // (1) at component's location
-    // (2) with given attenuation setting
-    //------------------------------------------------------------
-    void PlaySound(TMap<FName, UAudioComponent*>& SoundList,
-                   const FName& SoundName,
-                   USoundAttenuation* SoundAttenuation);
-
-    //------------------------------------------------------------
-    // play sound
-    // (1) at given location
-    // (2) with given attenuation setting
-    //------------------------------------------------------------
-    void PlaySound(TMap<FName, UAudioComponent*>& SoundList,
-                   const FName& SoundName,
-                   const FVector& Location,
-                   USoundAttenuation* SoundAttenuation);
+    void PlaySoundComponent(TMap<FName, UAudioComponent*>& SoundComponentList, const FName& SoundName);
+    void PlaySoundFireAndForget(UObject* World,
+        TMap<FName, USoundWave*>& SoundWaveList,
+        const FName& SoundName,
+        const FVector& Location,
+        USoundAttenuation* SoundAttenuation);
 }

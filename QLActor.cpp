@@ -67,23 +67,20 @@ AActor* AQLActor::GetQLOwner()
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLActor::PlaySound(const FName& SoundName)
+void AQLActor::PlaySoundComponent(const FName& SoundName)
 {
-    QLUtility::PlaySound(SoundList, SoundName, SoundNoAttenuation);
+    QLUtility::PlaySoundComponent(SoundComponentList, SoundName);
 }
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLActor::PlaySound(const FName& SoundName, const FVector& Location)
+void AQLActor::PlaySoundFireAndForget(const FName& SoundName, const FVector& Location)
 {
-    QLUtility::PlaySound(SoundList, SoundName, SoundNoAttenuation);
-}
-
-//------------------------------------------------------------
-//------------------------------------------------------------
-void AQLActor::PlaySound2D(const FName& SoundName)
-{
-    QLUtility::PlaySound(SoundList, SoundName, SoundNoAttenuation);
+    QLUtility::PlaySoundFireAndForget(this->GetWorld(),
+        FireAndForgetSoundWaveList,
+        SoundName,
+        Location,
+        SoundAttenuation);
 }
 
 //------------------------------------------------------------
@@ -96,12 +93,13 @@ UAudioComponent* AQLActor::CreateSoundComponent(USceneComponent*& RootComponent,
     UAudioComponent* soundComp = CreateDefaultSubobject<UAudioComponent>(soundName);
 
     bool success = false;
-    if (soundWave.Object->IsValidLowLevel() && soundComp)
+    if (soundWave.Succeeded() && soundComp)
     {
         soundComp->SetSound(soundWave.Object);
         soundComp->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
         soundComp->SetRelativeLocation(FVector(0.0f));
         soundComp->bAutoActivate = false;
+        soundComp->AdjustAttenuation(SoundAttenuation->Attenuation);
         success = true;
     }
 
@@ -112,4 +110,21 @@ UAudioComponent* AQLActor::CreateSoundComponent(USceneComponent*& RootComponent,
     }
 
     return soundComp;
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+USoundWave* AQLActor::CreateFireAndForgetSoundWave(const TCHAR* SoundPath, const TCHAR* SoundName)
+{
+    ConstructorHelpers::FObjectFinder<USoundWave> SoundWaveObj(SoundPath);
+
+    if (SoundWaveObj.Succeeded())
+    {
+        return SoundWaveObj.Object;
+    }
+    else
+    {
+        QLUtility::QLSay(TEXT("CreateFireAndForgetSoundWave() failed."));
+        return nullptr;
+    }
 }

@@ -35,35 +35,17 @@ namespace QLUtility
     }
 
     //------------------------------------------------------------
-    // FIXME: play sound at location crashes using gravity gun may the game
     //------------------------------------------------------------
-    void PlaySound(TMap<FName, UAudioComponent*>& SoundList,
-                   const FName& SoundName,
-                   USoundAttenuation* SoundAttenuation)
+    void PlaySoundComponent(TMap<FName, UAudioComponent*>& SoundComponentList, const FName& SoundName)
     {
-        if (SoundList.Contains(SoundName))
+        if (SoundComponentList.Contains(SoundName))
         {
-            UAudioComponent* soundComp = SoundList[SoundName];
+            UAudioComponent* soundComp = SoundComponentList[SoundName];
 
             // allow sound pile-up
             if (soundComp)
             {
-                // FIXME: PLAY SOUND AT LOCATION WHEN USING GRAVITY GUN SOMETIMES
-                // CRASHES THE GAME.
-                //QLUtility::QLSay(soundComp->GetComponentLocation().ToString());
-                //UGameplayStatics::PlaySoundAtLocation(soundComp->GetWorld(),
-                //    soundComp->Sound,
-                //    soundComp->GetComponentLocation(),
-                //    FRotator::ZeroRotator,
-                //    1.0f,
-                //    1.0f,
-                //    0.0f,
-                //    SoundAttenuation);
-                UGameplayStatics::PlaySound2D(soundComp->GetWorld(),
-                    soundComp->Sound,
-                    1.0f,
-                    1.0f,
-                    0.0f);
+                soundComp->Play();
             }
         }
         else
@@ -73,31 +55,33 @@ namespace QLUtility
     }
 
     //------------------------------------------------------------
+    // FIXME: play sound at location using gravity gun may crash the game
     //------------------------------------------------------------
-    void PlaySound(TMap<FName, UAudioComponent*>& SoundList,
-                   const FName& SoundName,
-                   const FVector& Location,
-                   USoundAttenuation* SoundAttenuation)
+    void PlaySoundFireAndForget(UObject* World,
+                                TMap<FName, USoundWave*>& SoundWaveList,
+                                const FName& SoundName,
+                                const FVector& Location,
+                                USoundAttenuation* SoundAttenuation)
     {
-        if (SoundList.Contains(SoundName))
+        if (SoundWaveList.Contains(SoundName))
         {
-            UAudioComponent* soundComp = SoundList[SoundName];
+            USoundWave* SoundWave = SoundWaveList[SoundName];
 
             // allow sound pile-up
-            if (soundComp)
+            if (SoundWave)
             {
-                // FIXME: PLAY SOUND AT LOCATION WHEN USING GRAVITY GUN SOMETIMES
-                // CRASHES THE GAME.
-                //UGameplayStatics::PlaySoundAtLocation(soundComp->GetWorld(),
-                //    soundComp->Sound,
+                // FIXME: ATTENUATION CAUSES THE GAME TO CRASH RANDOMLY
+                //UGameplayStatics::PlaySoundAtLocation(World,
+                //    SoundWave,
                 //    Location,
                 //    FRotator::ZeroRotator,
                 //    1.0f,
                 //    1.0f,
                 //    0.0f,
                 //    SoundAttenuation);
-                UGameplayStatics::PlaySound2D(soundComp->GetWorld(),
-                    soundComp->Sound,
+
+                UGameplayStatics::PlaySound2D(World,
+                    SoundWave,
                     1.0f,
                     1.0f,
                     0.0f);

@@ -28,20 +28,8 @@ public:
     virtual void UnSetQLOwner();
     AActor* GetQLOwner();
 
-    //------------------------------------------------------------
-    // play attenuated sound at component's location
-    //------------------------------------------------------------
-    void PlaySound(const FName& SoundName);
-
-    //------------------------------------------------------------
-    // play attenuated sound at given location
-    //------------------------------------------------------------
-    void PlaySound(const FName& SoundName, const FVector& Location);
-
-    //------------------------------------------------------------
-    // play non-attenuated sound at component's location
-    //------------------------------------------------------------
-    void PlaySound2D(const FName& SoundName);
+    void PlaySoundComponent(const FName& SoundName);
+    void PlaySoundFireAndForget(const FName& SoundName, const FVector& Location);
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Box component")
     UBoxComponent* BoxComponent;
@@ -52,6 +40,8 @@ protected:
     AActor* QLOwner;
     USoundAttenuation* SoundNoAttenuation;
     USoundAttenuation* SoundAttenuation;
-    TMap<FName, UAudioComponent*> SoundList;
+    TMap<FName, UAudioComponent*> SoundComponentList;
+    TMap<FName, USoundWave*> FireAndForgetSoundWaveList;
     UAudioComponent* CreateSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName);
+    USoundWave* CreateFireAndForgetSoundWave(const TCHAR* SoundPath, const TCHAR* SoundName);
 };

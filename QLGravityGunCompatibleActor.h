@@ -35,4 +35,12 @@ public:
 
     // Called every frame
     virtual void Tick( float DeltaSeconds ) override;
+
+    UFUNCTION()
+    void OnComponentHitQL(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+protected:
+    float RunningTimeOnHit;
+    float FixedIntervalOnHit;
+    bool bTriggerOnHit;
 };

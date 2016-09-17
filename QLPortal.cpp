@@ -22,7 +22,7 @@ AQLPortal::AQLPortal()
     Spouse = nullptr;
 
     // sound
-    SoundList.Add("Teleport", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/teleport"), TEXT("SoundTeleportComp")));
+    FireAndForgetSoundWaveList.Add("Teleport", CreateFireAndForgetSoundWave(TEXT("/Game/Sounds/teleport"), TEXT("SoundTeleportFireAndForget")));
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
     RootComponent = BoxComponent;
@@ -245,10 +245,7 @@ void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
             }
         }
 
-        // FIXME: sound not attenuated correctly
-        //PlaySound("Teleport");
-
-        PlaySound2D("Teleport");
+        PlaySoundFireAndForget("Teleport", this->GetActorLocation());
     }
 }
 

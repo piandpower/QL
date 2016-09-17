@@ -110,21 +110,9 @@ public:
     void PickUpWeapon(AQLWeapon* Weapon);
     AQLWeapon* GetCurrentWeapon() const;
     UAudioComponent* CreateSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName);
-
-    //------------------------------------------------------------
-    // play attenuated sound at component's location
-    //------------------------------------------------------------
-    void PlaySound(const FName& SoundName);
-
-    //------------------------------------------------------------
-    // play attenuated sound at given location
-    //------------------------------------------------------------
-    void PlaySound(const FName& SoundName, const FVector& Location);
-
-    //------------------------------------------------------------
-    // play non-attenuated sound at component's location
-    //------------------------------------------------------------
-    void PlaySound2D(const FName& SoundName);
+    USoundWave* CreateFireAndForgetSoundWave(const TCHAR* SoundPath, const TCHAR* SoundName);
+    void PlaySoundComponent(const FName& SoundName);
+    void PlaySoundFireAndForget(const FName& SoundName, const FVector& Location);
 
     UPhysicsHandleComponent* PhysicsHandle;
 
@@ -144,6 +132,7 @@ protected:
     TMap<FString, AActor*> Inventory;
     USoundAttenuation* SoundNoAttenuation;
     USoundAttenuation* SoundAttenuation;
-    TMap<FName, UAudioComponent*> SoundList;
+    TMap<FName, UAudioComponent*> SoundComponentList;
+    TMap<FName, USoundWave*> FireAndForgetSoundWaveList;
     UCameraComponent* QLCameraComponent;
 };
