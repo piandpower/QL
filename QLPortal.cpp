@@ -245,7 +245,10 @@ void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
             }
         }
 
-        PlaySound("Teleport");
+        // FIXME: sound not attenuated correctly
+        //PlaySound("Teleport");
+
+        PlaySound2D("Teleport");
     }
 }
 

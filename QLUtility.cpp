@@ -36,14 +36,9 @@ namespace QLUtility
 
     //------------------------------------------------------------
     //------------------------------------------------------------
-    void PlaySound(TMap<FName, UAudioComponent*>& SoundList, const FName& SoundName)
-    {
-        PlaySound2D(SoundList, SoundName);
-    }
-
-    //------------------------------------------------------------
-    //------------------------------------------------------------
-    void PlaySound(TMap<FName, UAudioComponent*>& SoundList, const FName& SoundName, const FAttenuationSettings& AttenuationSettings)
+    void PlaySound(TMap<FName, UAudioComponent*>& SoundList,
+                   const FName& SoundName,
+                   const FAttenuationSettings& AttenuationSettings)
     {
         if (SoundList.Contains(SoundName))
         {
@@ -94,24 +89,5 @@ namespace QLUtility
         {
             QLUtility::QLSay("sound not found.");
         }
-    }
-
-    //------------------------------------------------------------
-    //------------------------------------------------------------
-    void PlaySound2D(TMap<FName, UAudioComponent*>& SoundList, const FName& SoundName)
-    {
-        FAttenuationSettings AttenuationSettings;
-        AttenuationSettings.bAttenuate = false;
-        PlaySound(SoundList, SoundName, AttenuationSettings);
-    }
-
-    //------------------------------------------------------------
-    //------------------------------------------------------------
-    void PlaySoundAttenuated(TMap<FName, UAudioComponent*>& SoundList, const FName& SoundName)
-    {
-        FAttenuationSettings AttenuationSettings;
-        AttenuationSettings.bAttenuate = true;
-        AttenuationSettings.DistanceAlgorithm = ESoundDistanceModel::ATTENUATION_Logarithmic;
-        PlaySound(SoundList, SoundName, AttenuationSettings);
     }
 }

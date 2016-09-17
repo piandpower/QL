@@ -25,7 +25,7 @@ AQLActor::AQLActor()
 
     SoundAttenuation = CreateDefaultSubobject<USoundAttenuation>(TEXT("SoundAttenuation"));
     SoundAttenuation->Attenuation.bAttenuate = true;
-    SoundAttenuation->Attenuation.DistanceAlgorithm = ESoundDistanceModel::ATTENUATION_Linear;
+    SoundAttenuation->Attenuation.DistanceAlgorithm = ESoundDistanceModel::ATTENUATION_LogReverse;
 }
 
 //------------------------------------------------------------
@@ -67,23 +67,23 @@ AActor* AQLActor::GetQLOwner()
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLActor::PlaySound(const FName& soundName)
+void AQLActor::PlaySound(const FName& SoundName)
 {
-    QLUtility::PlaySound(SoundList, soundName);
+    QLUtility::PlaySound(SoundList, SoundName, SoundAttenuation->Attenuation);
 }
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLActor::PlaySound(const FName& soundName, const FVector& Location)
+void AQLActor::PlaySound(const FName& SoundName, const FVector& Location)
 {
-    QLUtility::PlaySound(SoundList, soundName, Location, SoundAttenuation);
+    QLUtility::PlaySound(SoundList, SoundName, Location, SoundAttenuation);
 }
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLActor::PlaySound2D(const FName& soundName)
+void AQLActor::PlaySound2D(const FName& SoundName)
 {
-    QLUtility::PlaySound2D(SoundList, soundName);
+    QLUtility::PlaySound(SoundList, SoundName, SoundNoAttenuation->Attenuation);
 }
 
 //------------------------------------------------------------

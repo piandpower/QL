@@ -18,36 +18,40 @@
 UCLASS()
 class QL_API AQLActor : public AActor
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
-	AQLActor();
-
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	// Called every frame
-	virtual void Tick( float DeltaSeconds ) override;
-
-    AActor* QLOwner;
+    AQLActor();
+    virtual void BeginPlay() override;
+    virtual void Tick( float DeltaSeconds ) override;
     virtual void SetQLOwner(AActor* QLOwner);
     virtual void UnSetQLOwner();
     AActor* GetQLOwner();
-    USoundAttenuation* SoundNoAttenuation;
-    USoundAttenuation* SoundAttenuation;
+
+    //------------------------------------------------------------
+    // play attenuated sound at component's location
+    //------------------------------------------------------------
+    void PlaySound(const FName& SoundName);
+
+    //------------------------------------------------------------
+    // play attenuated sound at given location
+    //------------------------------------------------------------
+    void PlaySound(const FName& SoundName, const FVector& Location);
+
+    //------------------------------------------------------------
+    // play non-attenuated sound at component's location
+    //------------------------------------------------------------
+    void PlaySound2D(const FName& SoundName);
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Box component")
     UBoxComponent* BoxComponent;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Static mesh component")
     UStaticMeshComponent* StaticMeshComponent;
-
-    void PlaySound(const FName& soundName);
-    void PlaySound(const FName& soundName, const FVector& Location);
-    void PlaySound2D(const FName& soundName);
-
 protected:
+    AActor* QLOwner;
+    USoundAttenuation* SoundNoAttenuation;
+    USoundAttenuation* SoundAttenuation;
     TMap<FName, UAudioComponent*> SoundList;
     UAudioComponent* CreateSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName);
 };

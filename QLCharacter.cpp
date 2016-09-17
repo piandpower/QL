@@ -56,6 +56,13 @@ AQLCharacter::AQLCharacter()
     SoundList.Add("EquipWeapon", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/medshot4_from_hl2"), TEXT("SoundEquipWeaponComp")));
     SoundList.Add("SwitchWeapon", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/swords_collide"), TEXT("SoundSwitchWeaponComp")));
     SoundList.Add("DoubleJump", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/quake_jump"), TEXT("SoundDoubleJumpComp")));
+
+    SoundNoAttenuation = CreateDefaultSubobject<USoundAttenuation>(TEXT("SoundNoAttenuation"));
+    SoundNoAttenuation->Attenuation.bAttenuate = false;
+
+    SoundAttenuation = CreateDefaultSubobject<USoundAttenuation>(TEXT("SoundAttenuation"));
+    SoundAttenuation->Attenuation.bAttenuate = true;
+    SoundAttenuation->Attenuation.DistanceAlgorithm = ESoundDistanceModel::ATTENUATION_Linear;
 }
 
 //------------------------------------------------------------
@@ -481,23 +488,23 @@ bool AQLCharacter::IsEquipped(const FName& Name)
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLCharacter::PlaySound(const FName& soundName)
+void AQLCharacter::PlaySound(const FName& SoundName)
 {
-    QLUtility::PlaySound(SoundList, soundName);
+    QLUtility::PlaySound(SoundList, SoundName, SoundAttenuation->Attenuation);
 }
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLCharacter::PlaySound2D(const FName& soundName)
+void AQLCharacter::PlaySound(const FName& SoundName, const FVector& Location)
 {
-    QLUtility::PlaySound2D(SoundList, soundName);
+    QLUtility::PlaySound(SoundList, SoundName, Location, SoundAttenuation);
 }
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLCharacter::PlaySoundAttenuated(const FName& soundName)
+void AQLCharacter::PlaySound2D(const FName& SoundName)
 {
-    QLUtility::PlaySoundAttenuated(SoundList, soundName);
+    QLUtility::PlaySound(SoundList, SoundName, SoundNoAttenuation->Attenuation);
 }
 
 //------------------------------------------------------------

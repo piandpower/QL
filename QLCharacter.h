@@ -33,10 +33,6 @@ public:
     void RemoveFromInventory(AQLActor* QLActor);
     void ShowInventory();
 
-    //AQLActor QLActorComp;
-    UCameraComponent* QLCameraComponent;
-    UPhysicsHandleComponent* PhysicsHandle;
-
     AQLCharacter();
     ~AQLCharacter();
 
@@ -109,32 +105,43 @@ public:
     UFUNCTION()
     void SwitchToLastWeapon();
 
-    // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health pickup component")
-
     void PickUpWeapon(AQLWeapon* Weapon);
     AQLWeapon* GetCurrentWeapon() const;
-    TMap<FName, UAudioComponent*> SoundList;
     UAudioComponent* CreateSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName);
 
-    void PlaySound(const FName& soundName);
-    void PlaySound2D(const FName& soundName);
-    void PlaySoundAttenuated(const FName& soundName);
+    //------------------------------------------------------------
+    // play attenuated sound at component's location
+    //------------------------------------------------------------
+    void PlaySound(const FName& SoundName);
+
+    //------------------------------------------------------------
+    // play attenuated sound at given location
+    //------------------------------------------------------------
+    void PlaySound(const FName& SoundName, const FVector& Location);
+
+    //------------------------------------------------------------
+    // play non-attenuated sound at component's location
+    //------------------------------------------------------------
+    void PlaySound2D(const FName& SoundName);
+
+    UPhysicsHandleComponent* PhysicsHandle;
+
 protected:
     int DoubleJumpCounter;
 
     // bool bHaveSprintAbility; // whether player has gained the ability
     bool bIsSprinting; // whether player is sprinting
     bool bWantToSprint; // player wants to spring
-
     float MaxWalkSpeed;
     float MaxWalkSpeedCrouched;
-
     int Health;
-
     bool bAllWeaponUnlockable;
-
     AQLWeapon* CurrentWeapon;
     AQLWeapon* LastWeapon;
     TMap<FName, AQLWeapon*> WeaponList;
     TMap<FString, AActor*> Inventory;
+    USoundAttenuation* SoundNoAttenuation;
+    USoundAttenuation* SoundAttenuation;
+    TMap<FName, UAudioComponent*> SoundList;
+    UCameraComponent* QLCameraComponent;
 };
