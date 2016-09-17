@@ -490,7 +490,7 @@ bool AQLCharacter::IsEquipped(const FName& Name)
 //------------------------------------------------------------
 void AQLCharacter::PlaySound(const FName& SoundName)
 {
-    QLUtility::PlaySound(SoundList, SoundName, SoundAttenuation->Attenuation);
+    QLUtility::PlaySound(SoundList, SoundName, SoundAttenuation);
 }
 
 //------------------------------------------------------------
@@ -504,7 +504,7 @@ void AQLCharacter::PlaySound(const FName& SoundName, const FVector& Location)
 //------------------------------------------------------------
 void AQLCharacter::PlaySound2D(const FName& SoundName)
 {
-    QLUtility::PlaySound(SoundList, SoundName, SoundNoAttenuation->Attenuation);
+    QLUtility::PlaySound(SoundList, SoundName, SoundNoAttenuation);
 }
 
 //------------------------------------------------------------

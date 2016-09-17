@@ -135,7 +135,7 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
             }
 
             // apply sound
-            PlaySound("Fire", Hit.ImpactPoint);
+            PlaySound("Fire");
         }
     }
     else

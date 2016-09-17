@@ -69,21 +69,21 @@ AActor* AQLActor::GetQLOwner()
 //------------------------------------------------------------
 void AQLActor::PlaySound(const FName& SoundName)
 {
-    QLUtility::PlaySound(SoundList, SoundName, SoundAttenuation->Attenuation);
+    QLUtility::PlaySound(SoundList, SoundName, SoundNoAttenuation);
 }
 
 //------------------------------------------------------------
 //------------------------------------------------------------
 void AQLActor::PlaySound(const FName& SoundName, const FVector& Location)
 {
-    QLUtility::PlaySound(SoundList, SoundName, Location, SoundAttenuation);
+    QLUtility::PlaySound(SoundList, SoundName, SoundNoAttenuation);
 }
 
 //------------------------------------------------------------
 //------------------------------------------------------------
 void AQLActor::PlaySound2D(const FName& SoundName)
 {
-    QLUtility::PlaySound(SoundList, SoundName, SoundNoAttenuation->Attenuation);
+    QLUtility::PlaySound(SoundList, SoundName, SoundNoAttenuation);
 }
 
 //------------------------------------------------------------

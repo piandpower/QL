@@ -23,7 +23,7 @@ namespace QLUtility
     //------------------------------------------------------------
     void PlaySound(TMap<FName, UAudioComponent*>& SoundList,
                    const FName& SoundName,
-                   const FAttenuationSettings& AttenuationSettings);
+                   USoundAttenuation* SoundAttenuation);
 
     //------------------------------------------------------------
     // play sound

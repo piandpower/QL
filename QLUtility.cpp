@@ -35,24 +35,35 @@ namespace QLUtility
     }
 
     //------------------------------------------------------------
+    // FIXME: play sound at location crashes using gravity gun may the game
     //------------------------------------------------------------
     void PlaySound(TMap<FName, UAudioComponent*>& SoundList,
                    const FName& SoundName,
-                   const FAttenuationSettings& AttenuationSettings)
+                   USoundAttenuation* SoundAttenuation)
     {
         if (SoundList.Contains(SoundName))
         {
             UAudioComponent* soundComp = SoundList[SoundName];
 
-            // does not allow sound pile-up
-            // c++ standard: evaluation order from left to right
-            //if (soundComp && !soundComp->IsPlaying())
-
             // allow sound pile-up
             if (soundComp)
             {
-                soundComp->AdjustAttenuation(AttenuationSettings);
-                soundComp->Play();
+                // FIXME: PLAY SOUND AT LOCATION WHEN USING GRAVITY GUN SOMETIMES
+                // CRASHES THE GAME.
+                //QLUtility::QLSay(soundComp->GetComponentLocation().ToString());
+                //UGameplayStatics::PlaySoundAtLocation(soundComp->GetWorld(),
+                //    soundComp->Sound,
+                //    soundComp->GetComponentLocation(),
+                //    FRotator::ZeroRotator,
+                //    1.0f,
+                //    1.0f,
+                //    0.0f,
+                //    SoundAttenuation);
+                UGameplayStatics::PlaySound2D(soundComp->GetWorld(),
+                    soundComp->Sound,
+                    1.0f,
+                    1.0f,
+                    0.0f);
             }
         }
         else
@@ -75,14 +86,21 @@ namespace QLUtility
             // allow sound pile-up
             if (soundComp)
             {
-                UGameplayStatics::PlaySoundAtLocation(soundComp->GetWorld(),
+                // FIXME: PLAY SOUND AT LOCATION WHEN USING GRAVITY GUN SOMETIMES
+                // CRASHES THE GAME.
+                //UGameplayStatics::PlaySoundAtLocation(soundComp->GetWorld(),
+                //    soundComp->Sound,
+                //    Location,
+                //    FRotator::ZeroRotator,
+                //    1.0f,
+                //    1.0f,
+                //    0.0f,
+                //    SoundAttenuation);
+                UGameplayStatics::PlaySound2D(soundComp->GetWorld(),
                     soundComp->Sound,
-                    Location,
-                    FRotator::ZeroRotator,
                     1.0f,
                     1.0f,
-                    0.0f,
-                    SoundAttenuation);
+                    0.0f);
             }
         }
         else
