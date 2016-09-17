@@ -267,31 +267,43 @@ void AQLCharacter::AltFireReleased()
 //------------------------------------------------------------
 void AQLCharacter::SwitchToGravityGun()
 {
-    if (IsEquipped("GravityGun"))
-    {
-        ChangeCurrentWeapon(WeaponList["GravityGun"]);
-    }
+    SwitchToWeapon("GravityGun");
 }
 
 //------------------------------------------------------------
 //------------------------------------------------------------
 void AQLCharacter::SwitchToPortalGun()
 {
-    if (IsEquipped("PortalGun"))
-    {
-        ChangeCurrentWeapon(WeaponList["PortalGun"]);
-    }
+    SwitchToWeapon("PortalGun");
 }
 
 //------------------------------------------------------------
 //------------------------------------------------------------
 void AQLCharacter::SwitchToNeutronAWP()
 {
-    if (IsEquipped("NeutronAWP"))
+    SwitchToWeapon("NeutronAWP");
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLCharacter::SwitchToWeapon(const FName& Name)
+{
+    // check if the selected weapon is equipped
+    if (IsEquipped(Name))
     {
-        CurrentWeapon = WeaponList["NeutronAWP"];
+        AQLWeapon* SelectedWeapon = WeaponList[Name];
+        // first, unset all other equipped weapon except the selected weapon
+        for (auto It = WeaponList.CreateIterator(); It; ++It)
+        {
+            if (It.Value() && It.Value() != SelectedWeapon)
+            {
+                It.Value()->ResetWeapon();
+            }
+        }
+
+        // second, switch to the selected weapon
+        ChangeCurrentWeapon(SelectedWeapon);
     }
-    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString(TEXT("try to switch to neutron awp.")));
 }
 
 //------------------------------------------------------------
@@ -436,7 +448,7 @@ void AQLCharacter::ShowInventory()
 {
     for (auto It = Inventory.CreateConstIterator(); It; ++It)
     {
-        QLUtility::QLSayLong(FString("--> character inventory item = ") + It.Value()->GetName() + "     location = " + It.Value()->GetActorLocation().ToString());
+        QLUtility::QLSay(FString("--> character inventory item = ") + It.Value()->GetName() + "     location = " + It.Value()->GetActorLocation().ToString());
     }
 }
 
@@ -453,7 +465,6 @@ void AQLCharacter::ChangeCurrentWeapon(AQLWeapon* Weapon)
         {
             LastWeapon = CurrentWeapon;
             CurrentWeapon = Weapon;
-            QLUtility::QLSay(FString(TEXT("switch to ")) + Weapon->GetWeaponName().ToString());
 
             PlaySound("SwitchWeapon");
         }

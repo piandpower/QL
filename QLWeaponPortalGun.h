@@ -28,6 +28,7 @@ public:
     virtual void AltFire() override;
     void CreatePortal(EPortalType PortalType);
     virtual void Tick(float DeltaSeconds) override;
+    virtual void ResetWeapon() override;
 protected:
     bool bBluePortalCreated;
     bool bOrangePortalCreated;

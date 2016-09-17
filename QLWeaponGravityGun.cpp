@@ -62,6 +62,8 @@ void AQLWeaponGravityGun::Fire()
 
                 // physical handle releases the component
                 WeaponOwner->PhysicsHandle->ReleaseComponent();
+                // avoid comp stuck in sleep mode when at rest
+                comp->WakeRigidBody();
 
                 // unset logical ownership
                 WeaponOwner->RemoveFromInventory(ggcActor);
@@ -154,6 +156,8 @@ void AQLWeaponGravityGun::AltFire()
 
                     // physical handle releases the component
                     WeaponOwner->PhysicsHandle->ReleaseComponent();
+                    // avoid comp stuck in sleep mode when at rest
+                    comp->WakeRigidBody();
 
                     // unset logical ownership
                     WeaponOwner->RemoveFromInventory(ggcActor);
@@ -302,5 +306,45 @@ void AQLWeaponGravityGun::Tick(float DeltaSeconds)
                 WeaponOwner->PhysicsHandle->SetTargetRotation(newRotation);
             }
         }
+    }
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLWeaponGravityGun::ResetWeapon()
+{
+    // if the weapon is being owned
+    if (WeaponOwner)
+    {
+        // if ggcActor exists and it is being held
+        if (ggcActor && bIsGravityGunCompatibleActorHeld)
+        {
+            UBoxComponent* comp = ggcActor->BoxComponent;
+
+            // by design, the gravity gun compatible actor must have a component
+            // here the component is checked for the sake of safety
+            if (comp)
+            {
+                // reenable collision between character and component
+                // enum members are shown in engine source code: EngineTypes.h
+                comp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+
+                // physical handle releases the component
+                WeaponOwner->PhysicsHandle->ReleaseComponent();
+                // avoid comp stuck in sleep mode when at rest
+                comp->WakeRigidBody();
+
+                // unset logical ownership
+                WeaponOwner->RemoveFromInventory(ggcActor);
+            }
+        }
+
+        bIsGravityGunCompatibleActorHeld = false;
+        bIsAltFireHeldDown = false;
+        RunningTimeAltFirePressed = 0.0f;
+        FixedIntervalAltFirePressed = 0.2f;
+        RunningTimeAltFireHeldDown = 0.0f;
+        FixedIntervalAltFireHeldDown = 0.2f;
+        ggcActor = nullptr;
     }
 }

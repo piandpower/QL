@@ -150,3 +150,9 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
 void AQLWeaponPortalGun::Tick(float DeltaSeconds)
 {
 }
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLWeaponPortalGun::ResetWeapon()
+{
+}

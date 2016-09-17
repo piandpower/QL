@@ -105,6 +105,8 @@ public:
     UFUNCTION()
     void SwitchToLastWeapon();
 
+    void SwitchToWeapon(const FName& Name);
+
     void PickUpWeapon(AQLWeapon* Weapon);
     AQLWeapon* GetCurrentWeapon() const;
     UAudioComponent* CreateSoundComponent(USceneComponent*& RootComponent, const TCHAR* soundPath, const TCHAR* soundName);

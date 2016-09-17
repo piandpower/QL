@@ -50,6 +50,7 @@ public:
     virtual void SetQLOwner(AActor* QLOwner) override;
     virtual void UnSetQLOwner() override;
     AQLCharacter* GetWeaponOwner();
+    virtual void ResetWeapon() {};
 
 protected:
     FName Name;

@@ -31,6 +31,7 @@ public:
     virtual void AltFireReleased() override;
     virtual void AltFireRepeat() override;
     virtual void Tick(float DeltaSeconds) override;
+    virtual void ResetWeapon() override;
 protected:
     bool bIsGravityGunCompatibleActorHeld;
     float RunningTimeAltFirePressed;
