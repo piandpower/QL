@@ -69,4 +69,6 @@ protected:
     UTextureRenderTarget2D* PortalRenderTarget;
     UMaterialInstanceDynamic* PortalDynamicMaterial;
     USceneCaptureComponent2D* PortalCamera;
+    UBoxComponent* PortalCameraComp;
+    UStaticMeshComponent* HelperStaticMeshComponent;
 };

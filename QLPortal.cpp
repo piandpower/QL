@@ -26,7 +26,7 @@ AQLPortal::AQLPortal()
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
     RootComponent = BoxComponent;
-    BoxComponent->InitBoxExtent(FVector(20.0f, 100.0f, 200.0f));
+    BoxComponent->InitBoxExtent(FVector(20.0f, 100.0f, 100.0f));
     BoxComponent->SetSimulatePhysics(false);
     BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
@@ -38,9 +38,28 @@ AQLPortal::AQLPortal()
     StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     StaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
     StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
-    StaticMeshComponent->SetWorldScale3D(FVector(0.4f, 2.0f, 4.0f));
+    StaticMeshComponent->SetWorldScale3D(FVector(0.4f, 2.0f, 2.0f));
     float zDim = StaticMeshComponent->Bounds.BoxExtent.Z; // note: extent refers to half of the side
     StaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -zDim));
+
+    PortalCameraComp = CreateDefaultSubobject<UBoxComponent>(TEXT("PortalCameraComp"));
+    PortalCameraComp->InitBoxExtent(FVector(1.0f, 1.0f, 1.0f));
+    PortalCameraComp->SetSimulatePhysics(false);
+    PortalCameraComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    PortalCameraComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+    PortalCameraComp->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    PortalCameraComp->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+
+    HelperStaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HelperStaticMeshComponent"));
+    const ConstructorHelpers::FObjectFinder<UStaticMesh> HelperStaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Cone"));
+    HelperStaticMeshComponent->SetStaticMesh(HelperStaticMeshObj.Object);
+    HelperStaticMeshComponent->SetSimulatePhysics(false);
+    HelperStaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    HelperStaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+    HelperStaticMeshComponent->AttachToComponent(PortalCameraComp, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    HelperStaticMeshComponent->SetWorldScale3D(FVector(0.4f, 0.4f, 2.0f));
+    HelperStaticMeshComponent->SetRelativeLocation(FVector(100.0f, 0.0f, 100.0f));
+    HelperStaticMeshComponent->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
 
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // In order for scene capture and material instance dynamic
@@ -63,7 +82,8 @@ AQLPortal::AQLPortal()
 
     // set up camera, texture at compile time
     PortalCamera = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("PortalCamera"));
-    PortalCamera->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    PortalCamera->AttachToComponent(PortalCameraComp, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    PortalCamera->bCaptureEveryFrame = true;
 
     PortalRenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("PortalRenderTarget"));
     PortalRenderTarget->InitAutoFormat(1024, 1024);
@@ -86,9 +106,22 @@ void AQLPortal::BeginPlay()
 //------------------------------------------------------------
 // Called every frame
 //------------------------------------------------------------
-void AQLPortal::Tick( float DeltaTime )
+void AQLPortal::Tick(float DeltaTime)
 {
-    Super::Tick( DeltaTime );
+    Super::Tick(DeltaTime);
+
+    if (Spouse)
+    {
+        // set up myself: use spouse's camera to feed my material
+        APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(GetPortalOwner()->GetWeaponOwner()->GetWorld(), 0);
+        FVector vx = cm->GetCameraLocation() - this->GetActorLocation();
+        FVector vz = GetPortalOwner()->GetWeaponOwner()->GetActorUpVector();
+        FRotator PlayerPortalRotation = UKismetMathLibrary::MakeRotFromXZ(vx, vz);
+        FRotator DeltaRotation = PlayerPortalRotation - this->RootComponent->GetComponentRotation();
+        DeltaRotation.Normalize();
+        FRotator NewRotation = Spouse->GetActorRotation() + DeltaRotation;
+        Spouse->PortalCameraComp->SetWorldRotation(NewRotation);
+    }
 }
 
 //------------------------------------------------------------
@@ -316,19 +349,15 @@ void AQLPortal::SetPortal(EPortalType PortalType, AQLPortal* Spouse)
 
         // set up myself: use spouse's camera to feed my material
         Spouse->PortalCamera->TextureTarget = PortalRenderTarget;
-        Spouse->PortalCamera->bCaptureEveryFrame = true;
         Spouse->PortalCamera->UpdateContent();
         PortalDynamicMaterial = StaticMeshComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, PortalMaterial);
         PortalDynamicMaterial->SetTextureParameterValue("PortalTexture", PortalRenderTarget);
-        StaticMeshComponent->SetMaterial(0, PortalDynamicMaterial);
 
         // set up my spouse: use my camera to feed my spouse's material
         PortalCamera->TextureTarget = Spouse->PortalRenderTarget;
-        PortalCamera->bCaptureEveryFrame = true;
         PortalCamera->UpdateContent();
         Spouse->PortalDynamicMaterial = Spouse->StaticMeshComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, PortalMaterial);
         Spouse->PortalDynamicMaterial->SetTextureParameterValue("PortalTexture", Spouse->PortalRenderTarget);
-        Spouse->StaticMeshComponent->SetMaterial(0, Spouse->PortalDynamicMaterial);
     }
 }
 
