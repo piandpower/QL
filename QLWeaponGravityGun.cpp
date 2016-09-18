@@ -302,6 +302,7 @@ void AQLWeaponGravityGun::Tick(float DeltaSeconds)
                 APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
                 FVector newLocation = cm->GetCameraLocation() + cm->GetActorForwardVector() * distanceFromCharacterToActorWhenHold;
                 FRotator newRotation = cm->GetCameraRotation() + DeltaRotation;
+                newRotation.Normalize();
                 WeaponOwner->PhysicsHandle->SetTargetLocation(newLocation);
                 WeaponOwner->PhysicsHandle->SetTargetRotation(newRotation);
             }
