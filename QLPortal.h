@@ -56,24 +56,17 @@ public:
     void RemoveFromRoll(AActor* Actor);
     bool IsInMyRoll(AActor* Actor);
 
-    UMaterial* BluePortalMaterial;
-    UMaterial* OrangePortalMaterial;
-
-    //UStaticMeshComponent* SecondStaticMeshComponent;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PortalCamera")
-    USceneCaptureComponent2D* PortalCamera;
-
-    UTextureRenderTarget2D* PortalRenderTarget;
-    UMaterialInstanceDynamic* PortalDynamicMaterial;
-    UMaterialInterface* PortalMaterialInterface;
-    UTexture* PortalTexture;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PortalCameraSphere")
-    UStaticMeshComponent* PortalCameraSphere;   // DEBUG
+    void SetPortal(EPortalType PortalType, AQLPortal* Spouse);
+    void UnsetPortal();
 
 protected:
+    EPortalType PortalType;
     AQLPortal* Spouse;
     AQLWeaponPortalGun* PortalOwner;
     TMap<FString, AActor*> Roll;
+    UMaterial* BluePortalMaterial;
+    UMaterial* OrangePortalMaterial;
+    UTextureRenderTarget2D* PortalRenderTarget;
+    UMaterialInstanceDynamic* PortalDynamicMaterial;
+    USceneCaptureComponent2D* PortalCamera;
 };

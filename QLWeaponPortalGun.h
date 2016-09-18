@@ -29,6 +29,7 @@ public:
     void CreatePortal(EPortalType PortalType);
     virtual void Tick(float DeltaSeconds) override;
     virtual void ResetWeapon() override;
+    void QueryPortal();
 protected:
     bool bBluePortalCreated;
     bool bOrangePortalCreated;

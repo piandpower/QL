@@ -98,12 +98,12 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
                 {
                     if (Item == BluePortal)
                     {
-                        // reset blue portal
+                        BluePortal->UnsetPortal();
                         BluePortal = nullptr;
                     }
                     else
                     {
-                        // reset orange portal
+                        OrangePortal->UnsetPortal();
                         OrangePortal = nullptr;
                     }
                     Item->Destroy();
@@ -112,26 +112,16 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
 
             // now that a new portal is appropriately created without overlap,
             // set the new portal's properties
+            // esp, set spouse and set spouse's spouse
             if (PortalType == EPortalType::Blue)
             {
-                //DEBUG
-                //Portal->StaticMeshComponent->SetMaterial(0, Portal->BluePortalMaterial);
-                Portal->SetSpouse(OrangePortal);
+                Portal->SetPortal(EPortalType::Blue, OrangePortal);
                 BluePortal = Portal;
             }
             else
             {
-                //DEBUG
-                //Portal->StaticMeshComponent->SetMaterial(0, Portal->OrangePortalMaterial);
-                Portal->SetSpouse(BluePortal);
+                Portal->SetPortal(EPortalType::Orange, BluePortal);
                 OrangePortal = Portal;
-            }
-
-            // if spouse exists, inform him/her of myself
-            AQLPortal* Spouse = Portal->GetSpouse();
-            if (Spouse)
-            {
-                Spouse->SetSpouse(Portal);
             }
 
             // apply sound
@@ -143,6 +133,8 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
         // apply sound
         PlaySoundComponent("None");
     }
+
+    QueryPortal();
 }
 
 //------------------------------------------------------------
@@ -155,4 +147,13 @@ void AQLWeaponPortalGun::Tick(float DeltaSeconds)
 //------------------------------------------------------------
 void AQLWeaponPortalGun::ResetWeapon()
 {
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLWeaponPortalGun::QueryPortal()
+{
+    FString BluePortalStatus = BluePortal ? "blue portal on" : "blue portal off";
+    FString OrangePortalStatus = OrangePortal ? "orange portal on" : "orange portal off";
+    QLUtility::QLSay(BluePortalStatus + "     " + OrangePortalStatus);
 }
