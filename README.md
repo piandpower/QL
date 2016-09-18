@@ -6,9 +6,7 @@ kingcrimsontianyu@gmail.com
 
 ------
 
-Quarter Life (QL) is a developing first-person adventure game. The underlying engine is Unreal (version 4.12.5).
-
-The game design of QL is greatly inspired by Half Life 2, Portal 2, Witcher 3, Shadow Warrior, Unreal Tournament, Doom 3.
+Quarter Life (QL) --- a personal side project of mine --- is a developing first-person adventure game. The underlying engine is Unreal (version 4.12.5). My inspiration comes from Half Life 2, Portal 2, Witcher 3, Shadow Warrior, Unreal Tournament, Doom 3.
 
 Game elements currently being implemented include
 + Gravity gun as in Half life 2.
