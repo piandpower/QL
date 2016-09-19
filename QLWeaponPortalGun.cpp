@@ -134,8 +134,6 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
         // apply sound
         PlaySoundComponent("None");
     }
-
-    QueryPortal();
 }
 
 //------------------------------------------------------------

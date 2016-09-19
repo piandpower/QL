@@ -51,19 +51,19 @@ AQLPortal::AQLPortal()
     PortalCameraComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     PortalCameraComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
     PortalCameraComp->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
-    PortalCameraComp->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+    PortalCameraComp->SetRelativeLocation(FVector(-xDim + 0.2f, 0.0f, 0.0f));
 
     // debugging purpose
-    HelperStaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HelperStaticMeshComponent"));
-    const ConstructorHelpers::FObjectFinder<UStaticMesh> HelperStaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Cone"));
-    HelperStaticMeshComponent->SetStaticMesh(HelperStaticMeshObj.Object);
-    HelperStaticMeshComponent->SetSimulatePhysics(false);
-    HelperStaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    HelperStaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-    HelperStaticMeshComponent->AttachToComponent(PortalCameraComp, FAttachmentTransformRules::SnapToTargetIncludingScale);
-    HelperStaticMeshComponent->SetWorldScale3D(FVector(0.4f, 0.4f, 2.0f));
-    HelperStaticMeshComponent->SetRelativeLocation(FVector(100.0f, 0.0f, 100.0f));
-    HelperStaticMeshComponent->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
+    //HelperStaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HelperStaticMeshComponent"));
+    //const ConstructorHelpers::FObjectFinder<UStaticMesh> HelperStaticMeshObj(TEXT("/Game/StarterContent/Shapes/Shape_Cone"));
+    //HelperStaticMeshComponent->SetStaticMesh(HelperStaticMeshObj.Object);
+    //HelperStaticMeshComponent->SetSimulatePhysics(false);
+    //HelperStaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    //HelperStaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+    //HelperStaticMeshComponent->AttachToComponent(PortalCameraComp, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    //HelperStaticMeshComponent->SetWorldScale3D(FVector(0.4f, 0.4f, 2.0f));
+    //HelperStaticMeshComponent->SetRelativeLocation(FVector(100.0f, 0.0f, 100.0f));
+    //HelperStaticMeshComponent->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
 
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // In order for scene capture and material instance dynamic
@@ -73,8 +73,19 @@ AQLPortal::AQLPortal()
     // --- set the name of the texture sample as PortalTexture
     // --- set the texture sample's texture to render target
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalMaterialObj(TEXT("/Game/Materials/Portal/BP_SceneCaptureMat"));
-    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalMaterialObj(TEXT("/Game/Materials/Portal/BP_SceneCaptureMat"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalDefaultMaterialObj(TEXT("/Game/Materials/Portal/BP_BluePortalDefaultMat"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalDefaultMaterialObj(TEXT("/Game/Materials/Portal/BP_OrangePortalDefaultMat"));
+    if (BluePortalDefaultMaterialObj.Succeeded())
+    {
+        BluePortalDefaultMaterial = BluePortalDefaultMaterialObj.Object;
+    }
+    if (OrangePortalDefaultMaterialObj.Succeeded())
+    {
+        OrangePortalDefaultMaterial = OrangePortalDefaultMaterialObj.Object;
+    }
+
+    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalMaterialObj(TEXT("/Game/Materials/Portal/BP_BluePortalMat"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalMaterialObj(TEXT("/Game/Materials/Portal/BP_OrangePortalMat"));
     if (BluePortalMaterialObj.Succeeded())
     {
         BluePortalMaterial = BluePortalMaterialObj.Object;
@@ -88,6 +99,7 @@ AQLPortal::AQLPortal()
     PortalCamera = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("PortalCamera"));
     PortalCamera->AttachToComponent(PortalCameraComp, FAttachmentTransformRules::SnapToTargetIncludingScale);
     PortalCamera->bCaptureEveryFrame = true;
+    PortalCamera->TextureTarget = nullptr;
 
     PortalRenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("PortalRenderTarget"));
     PortalRenderTarget->InitAutoFormat(1024, 1280);
@@ -362,11 +374,20 @@ void AQLPortal::SetPortal(EPortalType PortalType, AQLPortal* Spouse)
         PortalDynamicMaterial = StaticMeshComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, PortalMaterial);
         PortalDynamicMaterial->SetTextureParameterValue("PortalTexture", PortalRenderTarget);
 
-        // set up my spouse: use my camera to feed my spouse's material
-        PortalCamera->TextureTarget = Spouse->PortalRenderTarget;
-        PortalCamera->UpdateContent();
-        Spouse->PortalDynamicMaterial = Spouse->StaticMeshComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, PortalMaterial);
-        Spouse->PortalDynamicMaterial->SetTextureParameterValue("PortalTexture", Spouse->PortalRenderTarget);
+        // help set up my spouse if she/he is not set up yet
+        if (!PortalCamera->TextureTarget)
+        {
+            UMaterial* SpousePortalMaterial = (PortalType == EPortalType::Blue) ? OrangePortalMaterial : BluePortalMaterial;
+            PortalCamera->TextureTarget = Spouse->PortalRenderTarget;
+            PortalCamera->UpdateContent();
+            Spouse->PortalDynamicMaterial = Spouse->StaticMeshComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, SpousePortalMaterial);
+            Spouse->PortalDynamicMaterial->SetTextureParameterValue("PortalTexture", Spouse->PortalRenderTarget);
+        }
+    }
+    else
+    {
+        UMaterial* PortalMaterial = (PortalType == EPortalType::Blue) ? BluePortalDefaultMaterial : OrangePortalDefaultMaterial;
+        PortalDynamicMaterial = StaticMeshComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, PortalMaterial);
     }
 }
 
@@ -376,7 +397,15 @@ void AQLPortal::UnsetPortal()
 {
     if (Spouse)
     {
+        UMaterial* SpousePortalMaterial = (PortalType == EPortalType::Blue) ? OrangePortalMaterial : BluePortalMaterial;
+        Spouse->PortalDynamicMaterial = Spouse->StaticMeshComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, SpousePortalMaterial);
+        Spouse->PortalDynamicMaterial->SetTextureParameterValue("PortalTexture", Spouse->PortalRenderTarget);
         Spouse->SetSpouse(nullptr);
+    }
+    else
+    {
+        UMaterial* PortalMaterial = (PortalType == EPortalType::Blue) ? BluePortalDefaultMaterial : OrangePortalDefaultMaterial;
+        PortalDynamicMaterial = StaticMeshComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, PortalMaterial);
     }
 
     SetSpouse(nullptr);

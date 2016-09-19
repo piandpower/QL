@@ -64,8 +64,18 @@ protected:
     AQLPortal* Spouse;
     AQLWeaponPortalGun* PortalOwner;
     TMap<FString, AActor*> Roll;
+
+    //------------------------------------------------------------
+    // four preset materials are imported at ctor
+    // --- 2 x default material: filled single-color ellipse
+    // --- 2 x material: hollow single-color ellipse, to be filled by
+    //     the render target at runtime
+    //------------------------------------------------------------
     UMaterial* BluePortalMaterial;
     UMaterial* OrangePortalMaterial;
+    UMaterial* BluePortalDefaultMaterial;
+    UMaterial* OrangePortalDefaultMaterial;
+
     UTextureRenderTarget2D* PortalRenderTarget;
     UMaterialInstanceDynamic* PortalDynamicMaterial;
     USceneCaptureComponent2D* PortalCamera;
