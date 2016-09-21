@@ -24,7 +24,6 @@ AQLWeapon::AQLWeapon()
     bIsFireHeldDown = false;
     bIsAltFireHeldDown = false;
     bIsAltFirePressed = false;
-    CurrentCrosshairTexture = nullptr;
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
     BoxComponent->InitBoxExtent(FVector(10.0f));
@@ -66,7 +65,7 @@ void AQLWeapon::Tick( float DeltaTime )
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLWeapon::SetCurrentCrosshairTexture(const FName& crosshairTextureName)
+void AQLWeapon::InitializeCurrentCrosshairTexture(const FName& crosshairTextureName)
 {
     UTexture2D** valuePtr = CrosshairTextureList.Find(crosshairTextureName);
     if (valuePtr)
@@ -74,16 +73,9 @@ void AQLWeapon::SetCurrentCrosshairTexture(const FName& crosshairTextureName)
         UTexture2D* crosshairTexture = *valuePtr;
         if (crosshairTexture)
         {
-            CurrentCrosshairTexture = crosshairTexture;
+            CurrentCrosshairTextureList.Add(crosshairTexture);
         }
     }
-}
-
-//------------------------------------------------------------
-//------------------------------------------------------------
-UTexture2D* AQLWeapon::GetCurrentCrosshairTexture() const
-{
-    return CurrentCrosshairTexture;
 }
 
 //------------------------------------------------------------

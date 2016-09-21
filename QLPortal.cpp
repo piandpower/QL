@@ -73,8 +73,8 @@ AQLPortal::AQLPortal()
     // --- set the name of the texture sample as PortalTexture
     // --- set the texture sample's texture to render target
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalDefaultMaterialObj(TEXT("/Game/Materials/Portal/BP_BluePortalDefaultMat"));
-    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalDefaultMaterialObj(TEXT("/Game/Materials/Portal/BP_OrangePortalDefaultMat"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalDefaultMaterialObj(TEXT("/Game/Materials/Portal/BP_BluePortalInActiveMat"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalDefaultMaterialObj(TEXT("/Game/Materials/Portal/BP_OrangePortalInActiveMat"));
     if (BluePortalDefaultMaterialObj.Succeeded())
     {
         BluePortalDefaultMaterial = BluePortalDefaultMaterialObj.Object;
@@ -84,8 +84,8 @@ AQLPortal::AQLPortal()
         OrangePortalDefaultMaterial = OrangePortalDefaultMaterialObj.Object;
     }
 
-    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalMaterialObj(TEXT("/Game/Materials/Portal/BP_BluePortalMat"));
-    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalMaterialObj(TEXT("/Game/Materials/Portal/BP_OrangePortalMat"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalMaterialObj(TEXT("/Game/Materials/Portal/BP_BluePortalActiveMat"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalMaterialObj(TEXT("/Game/Materials/Portal/BP_OrangePortalActiveMat"));
     if (BluePortalMaterialObj.Succeeded())
     {
         BluePortalMaterial = BluePortalMaterialObj.Object;
@@ -258,7 +258,7 @@ void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
             }
         }
 
-        PlaySoundFireAndForget("Teleport", this->GetActorLocation());
+        //PlaySoundFireAndForget("Teleport", this->GetActorLocation());
     }
 }
 
@@ -358,6 +358,16 @@ void AQLPortal::SetPortal(EPortalType PortalType, AQLPortal* Spouse)
 {
     this->PortalType = PortalType;
 
+    // set up crosshair
+    if (PortalType == EPortalType::Blue && PortalOwner)
+    {
+        PortalOwner->CurrentCrosshairTextureList[0] = PortalOwner->CrosshairTextureList["BlueFilled"];
+    }
+    else if (PortalType == EPortalType::Orange && PortalOwner)
+    {
+        PortalOwner->CurrentCrosshairTextureList[1] = PortalOwner->CrosshairTextureList["OrangeFilled"];
+    }
+
     // tell myself that I have a wife (existent or non-existent)
     SetSpouse(Spouse);
 
@@ -368,7 +378,7 @@ void AQLPortal::SetPortal(EPortalType PortalType, AQLPortal* Spouse)
 
         UMaterial* PortalMaterial = (PortalType == EPortalType::Blue) ? BluePortalMaterial : OrangePortalMaterial;
 
-        // set up myself: use spouse's camera to feed my material
+         // set up myself: use spouse's camera to feed my material
         Spouse->PortalCamera->TextureTarget = PortalRenderTarget;
         Spouse->PortalCamera->UpdateContent();
         PortalDynamicMaterial = StaticMeshComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, PortalMaterial);
@@ -395,6 +405,16 @@ void AQLPortal::SetPortal(EPortalType PortalType, AQLPortal* Spouse)
 //------------------------------------------------------------
 void AQLPortal::UnsetPortal()
 {
+    // set up crosshair
+    if (PortalType == EPortalType::Blue && PortalOwner)
+    {
+        PortalOwner->CurrentCrosshairTextureList[0] = PortalOwner->CrosshairTextureList["BlueEmpty"];
+    }
+    else if (PortalType == EPortalType::Orange && PortalOwner)
+    {
+        PortalOwner->CurrentCrosshairTextureList[1] = PortalOwner->CrosshairTextureList["OrangeEmpty"];
+    }
+
     if (Spouse)
     {
         UMaterial* SpousePortalMaterial = (PortalType == EPortalType::Blue) ? OrangePortalMaterial : BluePortalMaterial;

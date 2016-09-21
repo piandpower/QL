@@ -17,15 +17,40 @@
 AQLWeaponPortalGun::AQLWeaponPortalGun()
 {
     Name = "PortalGun";
-    CrosshairTextureList.Add("BothEmpty", CreateCrosshairTexture(TEXT("/Game/Textures/Crosshair/portal_gun_crosshair_original_empty_processed")));
-    SetCurrentCrosshairTexture("BothEmpty");
+    CrosshairTextureList.Add("BlueEmpty", CreateCrosshairTexture(TEXT("/Game/Textures/Crosshair/portal_gun_crosshair_blue_empty_processed")));
+    CrosshairTextureList.Add("BlueFilled", CreateCrosshairTexture(TEXT("/Game/Textures/Crosshair/portal_gun_crosshair_blue_filled_processed")));
+    CrosshairTextureList.Add("OrangeEmpty", CreateCrosshairTexture(TEXT("/Game/Textures/Crosshair/portal_gun_crosshair_orange_empty_processed")));
+    CrosshairTextureList.Add("OrangeFilled", CreateCrosshairTexture(TEXT("/Game/Textures/Crosshair/portal_gun_crosshair_orange_filled_processed")));
+
+    InitializeCurrentCrosshairTexture("BlueEmpty");
+    InitializeCurrentCrosshairTexture("OrangeEmpty");
 
     // sound
     SoundComponentList.Add("None", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/bottle"), TEXT("SoundNoneComp")));
     SoundComponentList.Add("Fire", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/portal_created"), TEXT("SoundFireComp")));
+    SoundComponentList.Add("Zoom", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/zoom_in"), TEXT("SoundZoomComp")));
 
     BluePortal = nullptr;
     OrangePortal = nullptr;
+
+    // zoom
+    static ConstructorHelpers::FObjectFinder<UCurveFloat> FCurveObj(TEXT("/Game/Blueprints/BP_ZoomCurve"));
+    if (FCurveObj.Object)
+    {
+        FCurve = FCurveObj.Object;
+    }
+    ZoomTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("ZoomTimeline"));
+    ZoomTimelineInterpFunction.BindUFunction(this, FName{TEXT("ZoomCallback")});
+    bZoomIn = false;
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLWeaponPortalGun::PostInitializeComponents()
+{
+    Super::PostInitializeComponents();
+
+    ZoomTimeline->AddInterpFloat(FCurve, ZoomTimelineInterpFunction, FName{ TEXT("Zoom") });
 }
 
 //------------------------------------------------------------
@@ -59,6 +84,7 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
             {
                 if (BluePortal)
                 {
+                    BluePortal->UnsetPortal();
                     BluePortal->Destroy();
                     BluePortal = nullptr;
                 }
@@ -67,6 +93,7 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
             {
                 if (OrangePortal)
                 {
+                    OrangePortal->UnsetPortal();
                     OrangePortal->Destroy();
                     OrangePortal = nullptr;
                 }
@@ -155,4 +182,33 @@ void AQLWeaponPortalGun::QueryPortal()
     FString BluePortalStatus = BluePortal ? "blue portal on" : "blue portal off";
     FString OrangePortalStatus = OrangePortal ? "orange portal on" : "orange portal off";
     QLUtility::QLSay(BluePortalStatus + "     " + OrangePortalStatus);
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLWeaponPortalGun::Zoom()
+{
+    PlaySoundComponent("Zoom");
+
+    if (bZoomIn)
+    {
+        ZoomTimeline->Reverse();
+        bZoomIn = false;
+    }
+    else
+    {
+        ZoomTimeline->Play();
+        bZoomIn = true;
+    }
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLWeaponPortalGun::ZoomCallback(float Val)
+{
+    if (WeaponOwner)
+    {
+        APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(WeaponOwner->GetWorld(), 0);
+        cm->SetFOV(Val);
+    }
 }

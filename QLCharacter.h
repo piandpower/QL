@@ -32,6 +32,7 @@ public:
     void AddToInventory(AQLActor* QLActor);
     void RemoveFromInventory(AQLActor* QLActor);
     void ShowInventory();
+    void Zoom();
 
     AQLCharacter();
     ~AQLCharacter();
@@ -46,6 +47,7 @@ public:
     virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
     virtual void Landed(const FHitResult& Hit) override;
+    virtual void Falling() override;
 
     FHitResult RayTraceFromCharacterPOV();
     bool IsObjectNextToCharacter(AQLGravityGunCompatibleActor* ggcActor);
@@ -117,7 +119,7 @@ public:
     UPhysicsHandleComponent* PhysicsHandle;
 
 protected:
-    int DoubleJumpCounter;
+    bool bCanDoubleJump;
 
     // bool bHaveSprintAbility; // whether player has gained the ability
     bool bIsSprinting; // whether player is sprinting

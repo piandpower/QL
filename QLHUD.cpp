@@ -38,20 +38,23 @@ void AQLHUD::DrawWeaponCrosshairIfAny()
         // if owning pawn's weapon exists
         if (CurrentWeapon)
         {
-            UTexture2D* CrosshairTexture = CurrentWeapon->GetCurrentCrosshairTexture();
+            CrosshairTextureList = CurrentWeapon->CurrentCrosshairTextureList;
             // if owning pawn's weapon' crosshair exists
-            if (CrosshairTexture)
+            if (CrosshairTextureList.Num())
             {
-                // Find the center of our canvas.
-                FVector2D Center(Canvas->ClipX * 0.5f, Canvas->ClipY * 0.5f);
+                for (int32 i = 0; i < CrosshairTextureList.Num(); ++i)
+                {
+                    // Find the center of our canvas.
+                    FVector2D Center(Canvas->ClipX * 0.5f, Canvas->ClipY * 0.5f);
 
-                // Offset by half of the texture's dimensions so that the center of the texture aligns with the center of the Canvas.
-                FVector2D CrossHairDrawPosition(Center.X - (CrosshairTexture->GetSurfaceWidth() * 0.5f), Center.Y - (CrosshairTexture->GetSurfaceHeight() * 0.5f));
+                    // Offset by half of the texture's dimensions so that the center of the texture aligns with the center of the Canvas.
+                    FVector2D CrossHairDrawPosition(Center.X - (CrosshairTextureList[i]->GetSurfaceWidth() * 0.5f), Center.Y - (CrosshairTextureList[i]->GetSurfaceHeight() * 0.5f));
 
-                // Draw the crosshair at the centerpoint.
-                FCanvasTileItem TileItem(CrossHairDrawPosition, CrosshairTexture->Resource, FLinearColor::White);
-                TileItem.BlendMode = SE_BLEND_Translucent;
-                Canvas->DrawItem(TileItem);
+                    // Draw the crosshair at the centerpoint.
+                    FCanvasTileItem TileItem(CrossHairDrawPosition, CrosshairTextureList[i]->Resource, FLinearColor::White);
+                    TileItem.BlendMode = SE_BLEND_Translucent;
+                    Canvas->DrawItem(TileItem);
+                }
             }
         }
     }

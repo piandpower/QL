@@ -16,7 +16,7 @@
 //------------------------------------------------------------
 AQLCharacter::AQLCharacter()
 {
-    DoubleJumpCounter = 0;
+    bCanDoubleJump = false;
 
     bIsSprinting = false;
     bWantToSprint = false;
@@ -106,6 +106,7 @@ void AQLCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompone
     InputComponent->BindAction("SwitchToLastWeapon", EInputEvent::IE_Pressed, this, &AQLCharacter::SwitchToLastWeapon);
     InputComponent->BindAction("Test", EInputEvent::IE_Pressed, this, &AQLCharacter::UnlockAllWeapon);
     InputComponent->BindAction("Inventory", EInputEvent::IE_Pressed, this, &AQLCharacter::ShowInventory);
+    InputComponent->BindAction("Zoom", EInputEvent::IE_Pressed, this, &AQLCharacter::Zoom);
 
     // Set up "axis" bindings.
     InputComponent->BindAxis("MoveForward", this, &AQLCharacter::MoveForward);
@@ -136,19 +137,22 @@ void AQLCharacter::MoveRight(float Value)
 //------------------------------------------------------------
 void AQLCharacter::StartJump()
 {
-    if (0 == DoubleJumpCounter)
-    {
-        bPressedJump = true;
-    }
-    else if (1 == DoubleJumpCounter)
+    // determine whether to do regular jump or double-jump
+
+    // if double-jump is allowed, do it
+    if (bCanDoubleJump)
     {
         // perform double jump
         LaunchCharacter({0 , 0, GetCharacterMovement()->JumpZVelocity}, false, true);
 
         PlaySoundComponent("DoubleJump");
     }
+    else
+    {
+        bPressedJump = true;
+    }
 
-    ++DoubleJumpCounter;
+    bCanDoubleJump = false;
 }
 
 //------------------------------------------------------------
@@ -162,7 +166,14 @@ void AQLCharacter::StopJump()
 //------------------------------------------------------------
 void AQLCharacter::Landed(const FHitResult& Hit)
 {
-    DoubleJumpCounter = 0;
+    bCanDoubleJump = false;
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLCharacter::Falling()
+{
+    bCanDoubleJump = true;
 }
 
 //------------------------------------------------------------
@@ -447,6 +458,16 @@ void AQLCharacter::ShowInventory()
     for (auto It = Inventory.CreateConstIterator(); It; ++It)
     {
         QLUtility::QLSay(FString("--> character inventory item = ") + It.Value()->GetName() + "     location = " + It.Value()->GetActorLocation().ToString());
+    }
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLCharacter::Zoom()
+{
+    if (CurrentWeapon)
+    {
+        CurrentWeapon->Zoom();
     }
 }
 

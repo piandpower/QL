@@ -26,4 +26,5 @@ public:
     void DrawWeaponCrosshairIfAny();
 
 protected:
+    TArray<UTexture2D*> CrosshairTextureList;
 };

@@ -30,9 +30,23 @@ public:
     virtual void Tick(float DeltaSeconds) override;
     virtual void ResetWeapon() override;
     void QueryPortal();
+    void Zoom() override;
+    void PostInitializeComponents();
+
+    UPROPERTY()
+    UTimelineComponent* ZoomTimeline;
+
+    UPROPERTY()
+    UCurveFloat* FCurve;
+
+    FOnTimelineFloat ZoomTimelineInterpFunction{};
+
+    UFUNCTION()
+    void ZoomCallback(float Val);
 protected:
     bool bBluePortalCreated;
     bool bOrangePortalCreated;
     AQLPortal* BluePortal;
     AQLPortal* OrangePortal;
+    bool bZoomIn;
 };

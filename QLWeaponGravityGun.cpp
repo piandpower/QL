@@ -26,7 +26,7 @@ AQLWeaponGravityGun::AQLWeaponGravityGun()
     ggcActor = nullptr;
 
     CrosshairTextureList.Add("Regular", CreateCrosshairTexture(TEXT("/Game/Textures/Crosshair/gravity_gun_crosshair")));
-    SetCurrentCrosshairTexture("Regular");
+    InitializeCurrentCrosshairTexture("Regular");
 
     // sound
     SoundComponentList.Add("None", CreateSoundComponent(RootComponent, TEXT("/Game/Sounds/bottle"), TEXT("SoundNongComp")));
