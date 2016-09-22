@@ -48,5 +48,5 @@ protected:
     bool bOrangePortalCreated;
     AQLPortal* BluePortal;
     AQLPortal* OrangePortal;
-    bool bZoomIn;
+    bool bCanZoomIn;
 };

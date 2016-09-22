@@ -41,7 +41,7 @@ AQLWeaponPortalGun::AQLWeaponPortalGun()
     }
     ZoomTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("ZoomTimeline"));
     ZoomTimelineInterpFunction.BindUFunction(this, FName{TEXT("ZoomCallback")});
-    bZoomIn = false;
+    bCanZoomIn = true;
 }
 
 //------------------------------------------------------------
@@ -155,6 +155,11 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
             // apply sound
             PlaySoundComponent("Fire");
         }
+        else
+        {
+            // apply sound
+            PlaySoundComponent("None");
+        }
     }
     else
     {
@@ -190,15 +195,15 @@ void AQLWeaponPortalGun::Zoom()
 {
     PlaySoundComponent("Zoom");
 
-    if (bZoomIn)
+    if (bCanZoomIn)
     {
-        ZoomTimeline->Reverse();
-        bZoomIn = false;
+        ZoomTimeline->Play();
+        bCanZoomIn = false;
     }
     else
     {
-        ZoomTimeline->Play();
-        bZoomIn = true;
+        ZoomTimeline->Reverse();
+        bCanZoomIn = true;
     }
 }
 
