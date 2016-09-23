@@ -34,7 +34,7 @@ AQLWeaponPortalGun::AQLWeaponPortalGun()
     OrangePortal = nullptr;
 
     // zoom
-    static ConstructorHelpers::FObjectFinder<UCurveFloat> FCurveObj(TEXT("/Game/Blueprints/BP_ZoomCurve"));
+    static ConstructorHelpers::FObjectFinder<UCurveFloat> FCurveObj(TEXT("/Game/Blueprints/C_QLZoomCurve"));
     if (FCurveObj.Object)
     {
         FCurve = FCurveObj.Object;
@@ -104,9 +104,7 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
             // and these two actors should have an almost coincident surface
             FVector location = Hit.ImpactPoint;
             FRotator rotation = UKismetMathLibrary::MakeRotFromXZ(Hit.Normal, pgcActor->GetActorUpVector());
-            FTransform transform;
-            transform.SetLocation(location);
-            transform.SetRotation(rotation.Quaternion());
+            FTransform transform(FRotator::ZeroRotator);
 
             AQLPortal* Portal = GetWorld()->SpawnActorDeferred<AQLPortal>(AQLPortal::StaticClass(), transform);
             Portal->SetQLOwner(this);
@@ -114,6 +112,7 @@ void AQLWeaponPortalGun::CreatePortal(EPortalType PortalType)
             // to allow decal display
             location += (Portal->BoxComponent->GetUnscaledBoxExtent().X - 0.05f) * Hit.Normal;
             Portal->SetActorLocation(location);
+            Portal->SetActorRotation(rotation);
             UGameplayStatics::FinishSpawningActor(Portal, transform);
 
             // the newly spawned portal has top priority

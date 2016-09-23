@@ -17,6 +17,7 @@
 AQLCharacter::AQLCharacter()
 {
     bCanDoubleJump = false;
+    bIsFalling = true;
 
     bIsSprinting = false;
     bWantToSprint = false;
@@ -104,7 +105,7 @@ void AQLCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompone
     InputComponent->BindAction("SwitchToPortalGun", EInputEvent::IE_Pressed, this, &AQLCharacter::SwitchToPortalGun);
     InputComponent->BindAction("SwitchToNeutronAWP", EInputEvent::IE_Pressed, this, &AQLCharacter::SwitchToNeutronAWP);
     InputComponent->BindAction("SwitchToLastWeapon", EInputEvent::IE_Pressed, this, &AQLCharacter::SwitchToLastWeapon);
-    InputComponent->BindAction("Test", EInputEvent::IE_Pressed, this, &AQLCharacter::UnlockAllWeapon);
+    InputComponent->BindAction("Test", EInputEvent::IE_Pressed, this, &AQLCharacter::Test);
     InputComponent->BindAction("Inventory", EInputEvent::IE_Pressed, this, &AQLCharacter::ShowInventory);
     InputComponent->BindAction("Zoom", EInputEvent::IE_Pressed, this, &AQLCharacter::Zoom);
 
@@ -167,6 +168,7 @@ void AQLCharacter::StopJump()
 void AQLCharacter::Landed(const FHitResult& Hit)
 {
     bCanDoubleJump = false;
+    bIsFalling = false;
 }
 
 //------------------------------------------------------------
@@ -174,6 +176,7 @@ void AQLCharacter::Landed(const FHitResult& Hit)
 void AQLCharacter::Falling()
 {
     bCanDoubleJump = true;
+    bIsFalling = true;
 }
 
 //------------------------------------------------------------
@@ -210,10 +213,11 @@ void AQLCharacter::ToggleSprint()
 
 //------------------------------------------------------------
 // only true when the player wants to sprint and is not sprinting
+// and is not falling
 //------------------------------------------------------------
 bool AQLCharacter::CanSprint() const
 {
-    if (bWantToSprint == true && bIsSprinting == false)
+    if (bWantToSprint == true && bIsSprinting == false && bIsFalling == false)
     {
         return true;
     }
@@ -578,4 +582,32 @@ USoundWave* AQLCharacter::CreateFireAndForgetSoundWave(const TCHAR* SoundPath, c
         QLUtility::QLSay(TEXT("CreateFireAndForgetSoundWave() failed."));
         return nullptr;
     }
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLCharacter::Test()
+{
+    //QLUtility::QLSayLong("act rot = " + this->GetActorRotation().ToString()
+    //    + "     loc = " + this->GetActorLocation().ToString()
+    //    + "     forward = " + this->GetActorForwardVector().ToString());
+
+    //QLUtility::QLSayLong("capsule rot = " + GetCapsuleComponent()->GetComponentRotation().ToString()
+    //    + "     loc = " + GetCapsuleComponent()->GetComponentLocation().ToString()
+    //    + "     forward = " + GetCapsuleComponent()->GetForwardVector().ToString());
+
+    //QLUtility::QLSayLong("controller rot = " + GetController()->GetControlRotation().ToString()
+    //    + "     forward = " + GetController()->GetActorForwardVector().ToString());
+    //APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
+
+    //QLUtility::QLSayLong("camera rot = " + cm->GetCameraRotation().ToString()
+    //    + "     loc = " + cm->GetCameraLocation().ToString()
+    //    + "     forward = " + cm->GetActorForwardVector().ToString());
+
+    //FVector Location;
+    //FRotator Rotation;
+    //GetController()->GetPlayerViewPoint(Location, Rotation);
+    //QLUtility::QLSayLong("player view rot = " + Rotation.ToString() + "     loc = " + Location.ToString());
+
+    UnlockAllWeapon();
 }

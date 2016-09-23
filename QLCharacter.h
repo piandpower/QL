@@ -11,6 +11,7 @@
 #pragma once
 
 #include "QLUtility.h"
+#include "QLDebugHelper.h"
 #include "QLWeaponGravityGun.h"
 #include "QLWeaponPortalGun.h"
 #include "GameFramework/Character.h"
@@ -116,9 +117,11 @@ public:
     void PlaySoundComponent(const FName& SoundName);
     void PlaySoundFireAndForget(const FName& SoundName, const FVector& Location);
 
+    void Test();
     UPhysicsHandleComponent* PhysicsHandle;
 
 protected:
+    bool bIsFalling;
     bool bCanDoubleJump;
 
     // bool bHaveSprintAbility; // whether player has gained the ability

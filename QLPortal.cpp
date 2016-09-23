@@ -26,7 +26,7 @@ AQLPortal::AQLPortal()
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
     RootComponent = BoxComponent;
-    BoxComponent->InitBoxExtent(FVector(20.0f, 120.0f, 150.0f));
+    BoxComponent->InitBoxExtent(FVector(50.0f, 120.0f, 150.0f));
     BoxComponent->SetSimulatePhysics(false);
     BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
@@ -73,8 +73,8 @@ AQLPortal::AQLPortal()
     // --- set the name of the texture sample as PortalTexture
     // --- set the texture sample's texture to render target
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalDefaultMaterialObj(TEXT("/Game/Materials/Portal/BP_BluePortalInActiveMat"));
-    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalDefaultMaterialObj(TEXT("/Game/Materials/Portal/BP_OrangePortalInActiveMat"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalDefaultMaterialObj(TEXT("/Game/Materials/Portal/M_QLBluePortalInActive"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalDefaultMaterialObj(TEXT("/Game/Materials/Portal/M_QLOrangePortalInActive"));
     if (BluePortalDefaultMaterialObj.Succeeded())
     {
         BluePortalDefaultMaterial = BluePortalDefaultMaterialObj.Object;
@@ -84,8 +84,8 @@ AQLPortal::AQLPortal()
         OrangePortalDefaultMaterial = OrangePortalDefaultMaterialObj.Object;
     }
 
-    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalMaterialObj(TEXT("/Game/Materials/Portal/BP_BluePortalActiveMat"));
-    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalMaterialObj(TEXT("/Game/Materials/Portal/BP_OrangePortalActiveMat"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> BluePortalMaterialObj(TEXT("/Game/Materials/Portal/M_QLBluePortalActive"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> OrangePortalMaterialObj(TEXT("/Game/Materials/Portal/M_QLOrangePortalActive"));
     if (BluePortalMaterialObj.Succeeded())
     {
         BluePortalMaterial = BluePortalMaterialObj.Object;
@@ -215,28 +215,79 @@ void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
         Spouse->AddToRoll(OtherActor);
 
         // update actor phase space
-        FVector NewDirection = Spouse->GetActorForwardVector();
+        // step 0: get portal delta rotation
+        FRotator PortalRotation = this->GetActorRotation();
+        FRotator PortalRotationInverse = this->GetActorRotation().GetInverse();
+        FRotator PortalNewRotation = Spouse->GetActorRotation();
+
+        // step 1: change velocity rotation
         FVector Velocity = OtherActor->GetVelocity();
         float Speed = Velocity.Size();
-        FVector NewVelocity = NewDirection * Speed;
+        Velocity = PortalRotationInverse.RotateVector(Velocity);
+        Velocity.X = -Velocity.X;
+        Velocity.Y = -Velocity.Y;
+        FVector NewVelocity = PortalNewRotation.RotateVector(Velocity);
 
-        FVector NewLocation = Spouse->GetActorLocation();
-        FRotator NewRotation = NewDirection.Rotation();
-        FRotator NewRotationYawOnly = FRotator(0.0f, NewRotation.Yaw, 0.0f);
-        // note: NewDirection.Rotation(); is eqvuivalent to UKismetMathLibrary::MakeRotFromX(NewDirection);
-        // but the latter requires #include "Kismet/KismetMathLibrary.h"
+        // step 2: change actor rotation
+        FVector ActorDirection = OtherActor->GetActorForwardVector();
+        ActorDirection = PortalRotationInverse.RotateVector(ActorDirection);
+        ActorDirection.X = -ActorDirection.X;
+        ActorDirection.Y = -ActorDirection.Y;
+        FVector NewActorDirection = PortalNewRotation.RotateVector(ActorDirection);
+        FRotator NewActorRotation = UKismetMathLibrary::MakeRotFromXZ(NewActorDirection, OtherActor->GetActorUpVector());
 
-        // teleport
-        OtherActor->TeleportTo(NewLocation, NewRotationYawOnly);
+        // step 3: change location
+        // --> Here NewLocation cannot be set to Spouse->GetActorLocation(), in which case
+        //     the actor overlap the portal upon transport and the engine automatically budge
+        //     the actor but the actor's NewVelocity becomes 0. The character by default
+        //     has a half height of 88 (including two radii) and a radius of 34.
+        //     The character should be spawned at least 88 away from the portal in order to retain velocity.
+        //     To prettify the teleport result, if the portal resides on a nearly vertical wall, the character
+        //     is spawned 34 away from the portal.
+        // --> If the portal thickness does not cover the distance between actor and portal after teleport,
+        //     end overlap event cannot be triggered. So the portal must be made thick, 50 in here.
+        FVector BudgeDir = Spouse->GetActorForwardVector();
+        BudgeDir.Normalize();
+        FVector Origin;
+        FVector Bounds;
+        OtherActor->GetActorBounds(true, Origin, Bounds);
+        FVector NewLocation = Spouse->GetActorLocation() + BudgeDir * (Bounds.GetMax() + 1.0f);
 
         // if OtherActor is character, teleport can be performed
         if (QLCharacter)
         {
-            // change velocity
-            QLCharacter->GetMovementComponent()->Velocity = NewVelocity;
+            // step 2 cont'd: change actor rotation
+            FRotator NewActorRotationYawOnly = FRotator(0.0f, NewActorRotation.Yaw, 0.0f);
 
-            // change controller direction
-            QLCharacter->GetController()->SetControlRotation(NewRotation);
+            // step 3 cont'd: change location
+            // reduce budge distance if portal is spawned on a (nearly) vertical wall
+            FVector SpouseDir = Spouse->GetActorUpVector();
+            SpouseDir.Normalize();
+            if (FGenericPlatformMath::Abs(SpouseDir.Z - 1.0f) < 0.1)
+            {
+                NewLocation = Spouse->GetActorLocation() + BudgeDir * (QLCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius() + 1.0f);
+            }
+
+            // step 4: change controller/camera direction
+            FVector CameraForwardDirection = QLCharacter->GetController()->GetActorForwardVector();
+            CameraForwardDirection = PortalRotationInverse.RotateVector(CameraForwardDirection);
+            CameraForwardDirection.X = -CameraForwardDirection.X;
+            CameraForwardDirection.Y = -CameraForwardDirection.Y;
+            FVector NewCameraForwardDirection = PortalNewRotation.RotateVector(CameraForwardDirection);
+
+            FVector CameraUpDirection = QLCharacter->GetController()->GetActorUpVector();
+            CameraUpDirection = PortalRotationInverse.RotateVector(CameraUpDirection);
+            CameraUpDirection.X = -CameraUpDirection.X;
+            CameraUpDirection.Y = -CameraUpDirection.Y;
+            FVector NewCameraUpDirection = PortalNewRotation.RotateVector(CameraUpDirection);
+
+            FRotator NewCameraRotation = UKismetMathLibrary::MakeRotFromXZ(NewCameraForwardDirection, NewCameraUpDirection);
+            FRotator NewCameraRotationYawPitchOnly = FRotator(NewCameraRotation.Pitch, NewCameraRotation.Yaw, 0.0f);
+
+            // teleport
+            QLCharacter->TeleportTo(NewLocation, NewActorRotationYawOnly);
+            QLCharacter->GetController()->SetControlRotation(NewCameraRotationYawPitchOnly);
+            QLCharacter->GetMovementComponent()->Velocity = NewVelocity;
         }
         else
         {
@@ -246,13 +297,17 @@ void AQLPortal::OnOverlapBeginForActor(AActor* OverlappedActor, AActor* OtherAct
                 // if OtherActor is not owned by character, teleport can be performed
                 if (QLActor->GetQLOwner() != PortalOwner->GetWeaponOwner())
                 {
-                    // change velocity
+                    // step 1 cont'd: change velocity
                     // SetPhysicsLinearVelocity() can only be applied to the static mesh component
                     // but in gravity gun compatible actors the static mesh does not have physics/collision
                     // so instead AddImpulse() is applied here to the box component
                     // impulse (vector) = mass (scalar) x velocity change (vector)
                     // ps: AddImpulse(velocity change, NAME_None, false) does not seem to work as expectecd
                     FVector Impulse = QLActor->BoxComponent->GetMass() * (NewVelocity - Velocity);
+
+                    // teleport
+                    QLActor->TeleportTo(NewLocation, NewActorRotation);
+
                     QLActor->BoxComponent->AddImpulse(Impulse);
                 }
             }
@@ -342,7 +397,7 @@ void AQLPortal::RemoveFromRoll(AActor* Actor)
 {
     // key does not have to exist
     AActor* Temp;
-    Roll.RemoveAndCopyValue(Actor->GetName(), Temp);
+    bool found = Roll.RemoveAndCopyValue(Actor->GetName(), Temp);
 }
 
 //------------------------------------------------------------
