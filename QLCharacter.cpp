@@ -39,7 +39,7 @@ AQLCharacter::AQLCharacter()
     // camera
     // note pawn has a member var: BaseEyeHeight
     QLCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-    QLCameraComponent->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+    QLCameraComponent->SetupAttachment(GetCapsuleComponent());
     QLCameraComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight));
     QLCameraComponent->bUsePawnControlRotation = true;
 
@@ -551,7 +551,7 @@ UAudioComponent* AQLCharacter::CreateSoundComponent(USceneComponent*& RootCompon
     if (soundWave.Object->IsValidLowLevel() && soundComp)
     {
         soundComp->SetSound(soundWave.Object);
-        soundComp->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+        soundComp->SetupAttachment(RootComponent);
         soundComp->SetRelativeLocation(FVector(0.0f));
         soundComp->bAutoActivate = false;
         soundComp->AdjustAttenuation(SoundAttenuation->Attenuation);

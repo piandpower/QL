@@ -30,7 +30,7 @@ AQLDebugHelper::AQLDebugHelper()
     XAxis->SetSimulatePhysics(false);
     XAxis->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     XAxis->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-    XAxis->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    XAxis->SetupAttachment(RootComponent);
     XAxis->SetWorldScale3D(FVector(0.2f, 0.2f, 1.0f));
     XAxis->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
     XAxis->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
@@ -41,7 +41,7 @@ AQLDebugHelper::AQLDebugHelper()
         XAxis->SetMaterial(0, XAxiMaterial);
     }
     XAxisLabel = CreateDefaultSubobject<UTextRenderComponent>(TEXT("XAxisLabel"));
-    XAxisLabel->AttachToComponent(XAxis, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    XAxisLabel->SetupAttachment(XAxis);
     XAxisLabel->SetWorldScale3D(FVector(1.0f, 1.0f, 1.0f));
     XAxisLabel->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
     XAxisLabel->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
@@ -54,7 +54,7 @@ AQLDebugHelper::AQLDebugHelper()
     YAxis->SetSimulatePhysics(false);
     YAxis->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     YAxis->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-    YAxis->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    YAxis->SetupAttachment(RootComponent);
     YAxis->SetWorldScale3D(FVector(0.2f, 0.2f, 1.0f));
     YAxis->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
     YAxis->SetRelativeRotation(FRotator(0.0f, 0.0f, 90.0f));
@@ -65,7 +65,7 @@ AQLDebugHelper::AQLDebugHelper()
         YAxis->SetMaterial(0, XAxiMaterial);
     }
     YAxisLabel = CreateDefaultSubobject<UTextRenderComponent>(TEXT("YAxisLabel"));
-    YAxisLabel->AttachToComponent(YAxis, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    YAxisLabel->SetupAttachment(YAxis);
     YAxisLabel->SetWorldScale3D(FVector(1.0f, 1.0f, 1.0f));
     YAxisLabel->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
     YAxisLabel->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
@@ -78,7 +78,7 @@ AQLDebugHelper::AQLDebugHelper()
     ZAxis->SetSimulatePhysics(false);
     ZAxis->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     ZAxis->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-    ZAxis->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    ZAxis->SetupAttachment(RootComponent);
     ZAxis->SetWorldScale3D(FVector(0.1f, 0.1f, 0.5f));
     ZAxis->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
     ZAxis->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
@@ -89,7 +89,7 @@ AQLDebugHelper::AQLDebugHelper()
         ZAxis->SetMaterial(0, XAxiMaterial);
     }
     ZAxisLabel = CreateDefaultSubobject<UTextRenderComponent>(TEXT("ZAxisLabel"));
-    ZAxisLabel->AttachToComponent(ZAxis, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    ZAxisLabel->SetupAttachment(ZAxis);
     ZAxisLabel->SetWorldScale3D(FVector(1.0f, 1.0f, 1.0f));
     ZAxisLabel->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
     ZAxisLabel->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));

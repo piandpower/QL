@@ -37,7 +37,7 @@ AQLPortal::AQLPortal()
     StaticMeshComponent->SetSimulatePhysics(false);
     StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     StaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-    StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    StaticMeshComponent->SetupAttachment(RootComponent);
     StaticMeshComponent->SetWorldScale3D(FVector(0.01f, 2.4f, 3.0f));
     float xDim = BoxComponent->Bounds.BoxExtent.X; // note: extent refers to half of the side
     float zDim = StaticMeshComponent->Bounds.BoxExtent.Z; // note: extent refers to half of the side
@@ -50,7 +50,7 @@ AQLPortal::AQLPortal()
     PortalCameraComp->SetSimulatePhysics(false);
     PortalCameraComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     PortalCameraComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-    PortalCameraComp->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    PortalCameraComp->SetupAttachment(RootComponent);
     PortalCameraComp->SetRelativeLocation(FVector(-xDim + 0.2f, 0.0f, 0.0f));
 
     // debugging purpose
@@ -60,7 +60,7 @@ AQLPortal::AQLPortal()
     //HelperStaticMeshComponent->SetSimulatePhysics(false);
     //HelperStaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     //HelperStaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-    //HelperStaticMeshComponent->AttachToComponent(PortalCameraComp, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    //HelperStaticMeshComponent->SetupAttachment(PortalCameraComp);
     //HelperStaticMeshComponent->SetWorldScale3D(FVector(0.4f, 0.4f, 2.0f));
     //HelperStaticMeshComponent->SetRelativeLocation(FVector(100.0f, 0.0f, 100.0f));
     //HelperStaticMeshComponent->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
@@ -97,12 +97,12 @@ AQLPortal::AQLPortal()
 
     // set up camera, texture at compile time
     PortalCamera = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("PortalCamera"));
-    PortalCamera->AttachToComponent(PortalCameraComp, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    PortalCamera->SetupAttachment(PortalCameraComp);
     PortalCamera->bCaptureEveryFrame = true;
     PortalCamera->TextureTarget = nullptr;
 
     PortalRenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("PortalRenderTarget"));
-    PortalRenderTarget->InitAutoFormat(1024, 1280);
+    PortalRenderTarget->InitAutoFormat(512, 640);
     PortalRenderTarget->AddressX = TextureAddress::TA_Wrap;
     PortalRenderTarget->AddressY = TextureAddress::TA_Wrap;
 

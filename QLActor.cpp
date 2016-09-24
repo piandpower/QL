@@ -96,7 +96,7 @@ UAudioComponent* AQLActor::CreateSoundComponent(USceneComponent*& RootComponent,
     if (soundWave.Succeeded() && soundComp)
     {
         soundComp->SetSound(soundWave.Object);
-        soundComp->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+        soundComp->SetupAttachment(RootComponent);
         soundComp->SetRelativeLocation(FVector(0.0f));
         soundComp->bAutoActivate = false;
         soundComp->AdjustAttenuation(SoundAttenuation->Attenuation);

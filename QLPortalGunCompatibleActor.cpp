@@ -35,7 +35,7 @@ AQLPortalGunCompatibleActor::AQLPortalGunCompatibleActor()
     StaticMeshComponent->SetSimulatePhysics(false);
     StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     StaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-    StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    StaticMeshComponent->SetupAttachment(RootComponent);
     float zDim = StaticMeshComponent->Bounds.BoxExtent.Z; // note: extent refers to half of the side
     StaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -2.0f * zDim));
     StaticMeshComponent->SetWorldScale3D(FVector(0.4f, 2.0f, 2.0f));

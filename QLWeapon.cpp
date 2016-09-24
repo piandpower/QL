@@ -38,7 +38,7 @@ AQLWeapon::AQLWeapon()
     //StaticMeshComponent->SetSimulatePhysics(false);
     //StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     //StaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-    //StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    //StaticMeshComponent->SetupAttachment(RootComponent);
     //StaticMeshComponent->SetWorldScale3D(FVector(1.0f));
     //float zDim = StaticMeshComponent->Bounds.BoxExtent.Z; // note: extent refers to half of the side
     //StaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -zDim));
