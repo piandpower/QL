@@ -130,17 +130,14 @@ void AQLPortal::Tick(float DeltaTime)
     {
         // set up myself: use spouse's camera to feed my material
         APlayerCameraManager* cm = UGameplayStatics::GetPlayerCameraManager(GetPortalOwner()->GetWeaponOwner()->GetWorld(), 0);
-        FVector vec = cm->GetCameraLocation() - this->GetActorLocation();
-        FRotator F = this->GetActorRotation();
-        FRotator Finverse = F.GetInverse();
-        vec = Finverse.RotateVector(vec);
-        vec.Z = -vec.Z;
-        vec = F.RotateVector(vec);
-        FRotator PlayerPortalRotation = UKismetMathLibrary::MakeRotFromX(vec);
-        FRotator DeltaRotation = PlayerPortalRotation - this->RootComponent->GetComponentRotation();
-        DeltaRotation.Normalize();
-        FRotator NewRotation = Spouse->GetActorRotation() + DeltaRotation;
-        NewRotation.Normalize();
+        FVector CameraForward = this->GetActorLocation() - cm->GetCameraLocation();
+        FRotator Inv = this->GetActorRotation().GetInverse();
+        CameraForward = Inv.RotateVector(CameraForward);
+        CameraForward.X = -CameraForward.X;
+        CameraForward.Y = -CameraForward.Y;
+        CameraForward = Spouse->GetActorRotation().RotateVector(CameraForward);
+
+        FRotator NewRotation = UKismetMathLibrary::MakeRotFromXZ(CameraForward, Spouse->GetActorUpVector());
         Spouse->PortalCameraComp->SetWorldRotation(NewRotation);
     }
 }
