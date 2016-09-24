@@ -140,4 +140,5 @@ protected:
     TMap<FName, UAudioComponent*> SoundComponentList;
     TMap<FName, USoundWave*> FireAndForgetSoundWaveList;
     UCameraComponent* QLCameraComponent;
+    AQLDebugHelper* DebugHelper;
 };

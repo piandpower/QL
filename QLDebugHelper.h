@@ -20,7 +20,7 @@
 //
 // add to BeginPlay()
 // DebugHelper = GetWorld()->SpawnActor<AQLDebugHelper>(AQLDebugHelper::StaticClass());
-// DebugHelper->SetupAttachment(GetCapsuleComponent());
+// DebugHelper->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 // DebugHelper->SetActorRelativeLocation(FVector(100.0f, 0.0f, 0.0f));
 //
 // add to Tick()
