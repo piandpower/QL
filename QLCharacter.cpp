@@ -17,7 +17,7 @@
 AQLCharacter::AQLCharacter()
 {
     bCanDoubleJump = false;
-    bIsFalling = true;
+    bIsFalling = false;
 
     bIsSprinting = false;
     bWantToSprint = false;
