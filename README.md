@@ -21,4 +21,4 @@ This git repo contains C++ source codes that establish the main game mechanics. 
 ## Clip
 
 ### Portal gun
-<a href="https://youtu.be/lUrp0nI-xsI" target="_blank"><img src="http://i3.ytimg.com/vi/lUrp0nI-xsI/hqdefault.jpg" width="480" height="360" border="10" /></a>
+<a href="https://youtu.be/X8Xr5iMmvNs" target="_blank"><img src="http://i3.ytimg.com/vi/X8Xr5iMmvNs/hqdefault.jpg" width="480" height="360" border="10" /></a>
