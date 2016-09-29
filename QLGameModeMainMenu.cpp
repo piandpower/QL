@@ -9,11 +9,13 @@
 //----------------------------------------
 
 #include "QL.h"
-#include "QLGameMode.h"
+#include "QLGameModeMainMenu.h"
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void AQLGameMode::StartPlay()
+AQLGameModeMainMenu::AQLGameModeMainMenu()
 {
-    Super::StartPlay();
+    DefaultPawnClass = AQLCameraPawn::StaticClass();
+    PlayerControllerClass = AQLPlayerController::StaticClass();
+    HUDClass = AQLHUD::StaticClass();
 }

@@ -11,12 +11,14 @@
 #pragma once
 
 #include "QLUtility.h"
-#include "GameFramework/GameMode.h"
-#include "QLGameMode.generated.h"
+#include "GameFramework/PlayerController.h"
+#include "QLPlayerController.generated.h"
 
 UCLASS()
-class QL_API AQLGameMode : public AGameMode
+class QL_API AQLPlayerController : public APlayerController
 {
     GENERATED_BODY()
-    virtual void StartPlay() override;
+
+public:
+    AQLPlayerController();
 };
