@@ -10,6 +10,14 @@
 
 #pragma once
 
+// for UUserWidget
+#include "Runtime/UMG/Public/UMG.h"
+#include "Runtime/UMG/Public/UMGStyle.h"
+#include "Runtime/UMG/Public/Slate/SObjectWidget.h"
+#include "Runtime/UMG/Public/IUMGModule.h"
+#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
+
+#include "QLPauseMenuWidget.h"
 #include "QLUtility.h"
 #include "GameFramework/PlayerController.h"
 #include "QLPlayerController.generated.h"
@@ -21,4 +29,19 @@ class QL_API AQLPlayerController : public APlayerController
 
 public:
     AQLPlayerController();
+    virtual void SetupInputComponent() override;
+
+    // Sets jump flag when key is pressed.
+    UFUNCTION()
+    void Pause();
+
+    // reference UMG asset in the editor
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PauseMenuWidget")
+    TSubclassOf<UUserWidget> PauseMenuWidget;
+
+    // hold the widget after creation
+    UQLPauseMenuWidget* PauseMenu;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PauseMenuWidget")
+    bool bGamePaused;
 };

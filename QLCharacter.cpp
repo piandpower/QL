@@ -613,5 +613,11 @@ void AQLCharacter::Test()
     //GetController()->GetPlayerViewPoint(Location, Rotation);
     //QLUtility::QLSayLong("player view rot = " + Rotation.ToString() + "     loc = " + Location.ToString());
 
+    //QLUtility::QLSayLong("world = " + this->GetWorld()->GetName());
+    //QLUtility::QLSayLong("level = " + this->GetWorld()->GetCurrentLevel()->GetName());
+    //QLUtility::QLSayLong("game mode = " + this->GetWorld()->GetAuthGameMode()->GetName());
+    //QLUtility::QLSayLong("character = " + this->GetName());
+    //QLUtility::QLSayLong("play controller = " + this->GetController()->GetName());
+
     UnlockAllWeapon();
 }
