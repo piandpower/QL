@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "QLUtility.h"
 #include "Blueprint/UserWidget.h"
 #include "QLPauseMenuWidget.generated.h"
 
@@ -24,10 +25,26 @@
 //    applied to UUserWidget's subclass instead of UUserWidget. Solution:
 //    (1) Create an empty C++ user widget as the subclass.
 //    (2) Re-parent that BP UMG widget accordingly.
+
+// forward declaration
+class AQLPlayerController;
+
 UCLASS()
 class QL_API UQLPauseMenuWidget : public UUserWidget
 {
     GENERATED_BODY()
 
 public:
+    UFUNCTION(BlueprintCallable, Category = "C++Function")
+    virtual void ResumeGame();
+
+    UFUNCTION(BlueprintCallable, Category = "C++Function")
+    virtual void SaveGame();
+
+    UFUNCTION(BlueprintCallable, Category = "C++Function")
+    virtual void ReturnToMainMenu();
+
+    void SetPlayerController(AQLPlayerController* PlayerController);
+private:
+    AQLPlayerController* PlayerController;
 };

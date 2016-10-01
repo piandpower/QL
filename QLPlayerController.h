@@ -42,6 +42,9 @@ public:
     // hold the widget after creation
     UQLPauseMenuWidget* PauseMenu;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PauseMenuWidget")
+    bool GetGamePaused();
+    void PauseGame();
+    void ResumeGame();
+private:
     bool bGamePaused;
 };

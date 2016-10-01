@@ -49,33 +49,56 @@ void AQLPlayerController::Pause()
         {
             // create the pause menu
             PauseMenu = CreateWidget<UQLPauseMenuWidget>(GetWorld(), PauseMenuWidget);
+            PauseMenu->SetPlayerController(this);
         }
 
-        if (PauseMenu)
-        {
-            bGamePaused = true;
-            bShowMouseCursor = true;
-            FInputModeGameAndUI InputMode;
-            InputMode.SetLockMouseToViewport(true);
-            SetInputMode(InputMode);
-            this->SetPause(true);
-
-            PauseMenu->AddToViewport();
-        }
+        PauseGame();
     }
      // resume the game
     else
     {
-        // remove the pause menu
-        if (PauseMenu)
-        {
-            bGamePaused = false;
-            bShowMouseCursor = false;
-            FInputModeGameOnly InputMode;
-            SetInputMode(InputMode);
-            this->SetPause(false);
+        ResumeGame();
+    }
+}
 
-            PauseMenu->RemoveFromViewport();
-        }
+//------------------------------------------------------------
+//------------------------------------------------------------
+bool AQLPlayerController::GetGamePaused()
+{
+    return bGamePaused;
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLPlayerController::PauseGame()
+{
+    // add the pause menu
+    if (PauseMenu)
+    {
+        bGamePaused = true;
+        bShowMouseCursor = true;
+        FInputModeGameAndUI InputMode;
+        InputMode.SetLockMouseToViewport(true);
+        SetInputMode(InputMode);
+        this->SetPause(true);
+
+        PauseMenu->AddToViewport();
+    }
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+void AQLPlayerController::ResumeGame()
+{
+    // remove the pause menu
+    if (PauseMenu)
+    {
+        bGamePaused = false;
+        bShowMouseCursor = false;
+        FInputModeGameOnly InputMode;
+        SetInputMode(InputMode);
+        this->SetPause(false);
+
+        PauseMenu->RemoveFromViewport();
     }
 }
