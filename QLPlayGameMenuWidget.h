@@ -22,7 +22,7 @@ public:
 
 public:
     UFUNCTION(BlueprintCallable, Category = "C++Function")
-    virtual void PlayGame();
+    virtual void Play();
 
     UFUNCTION(BlueprintCallable, Category = "C++Function")
     void SetPlayerController(AQLPlayerController* PlayerController);

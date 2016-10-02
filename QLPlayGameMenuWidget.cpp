@@ -14,7 +14,7 @@
 
 //------------------------------------------------------------
 //------------------------------------------------------------
-void UQLPlayGameMenuWidget::PlayGame()
+void UQLPlayGameMenuWidget::Play()
 {
     if (PlayerController)
     {

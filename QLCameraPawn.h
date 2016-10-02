@@ -31,7 +31,9 @@ public:
     // Called every frame
     virtual void Tick( float DeltaSeconds ) override;
 
+    UPROPERTY(BlueprintReadOnly)
+    AQLDebugHelper* DebugHelper;
+
 private:
     UCameraComponent* QLCameraComponent;
-    AQLDebugHelper* DebugHelper;
 };

@@ -20,6 +20,7 @@ AQLCameraPawn::AQLCameraPawn()
 
     QLCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
     QLCameraComponent->SetupAttachment(RootComponent);
+    QLCameraComponent->bUsePawnControlRotation = true;
 }
 
 //------------------------------------------------------------
@@ -28,9 +29,9 @@ void AQLCameraPawn::BeginPlay()
 {
     Super::BeginPlay();
 
-    DebugHelper = GetWorld()->SpawnActor<AQLDebugHelper>(AQLDebugHelper::StaticClass());
-    DebugHelper->AttachToComponent(QLCameraComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
-    DebugHelper->SetActorRelativeLocation(FVector(100.0f, 0.0f, 0.0f));
+    //DebugHelper = GetWorld()->SpawnActor<AQLDebugHelper>(AQLDebugHelper::StaticClass());
+    //DebugHelper->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    //DebugHelper->SetActorRelativeLocation(FVector(200.0f, 0.0f, 0.0f));
 }
 
 //------------------------------------------------------------
@@ -38,7 +39,6 @@ void AQLCameraPawn::BeginPlay()
 void AQLCameraPawn::Tick( float DeltaTime )
 {
     Super::Tick( DeltaTime );
-    DebugHelper->SetActorRotation(GetControlRotation());
 }
 
 //------------------------------------------------------------

@@ -77,8 +77,8 @@ void AQLCharacter::BeginPlay()
 {
     Super::BeginPlay();
     //DebugHelper = GetWorld()->SpawnActor<AQLDebugHelper>(AQLDebugHelper::StaticClass());
-    //DebugHelper->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-    //DebugHelper->SetActorRelativeLocation(FVector(100.0f, 0.0f, 0.0f));
+    //DebugHelper->AttachToComponent(QLCameraComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    //DebugHelper->SetActorRelativeLocation(FVector(200.0f, 0.0f, 0.0f));
 }
 
 //------------------------------------------------------------
@@ -87,7 +87,6 @@ void AQLCharacter::BeginPlay()
 void AQLCharacter::Tick( float DeltaTime )
 {
     Super::Tick( DeltaTime );
-    //DebugHelper->SetActorRotation(GetControlRotation());
 }
 
 //------------------------------------------------------------

@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "QLUtility.h"
 #include "GameFramework/Actor.h"
 #include "QLDebugHelper.generated.h"
 
@@ -21,10 +22,7 @@
 // add to BeginPlay()
 // DebugHelper = GetWorld()->SpawnActor<AQLDebugHelper>(AQLDebugHelper::StaticClass());
 // DebugHelper->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-// DebugHelper->SetActorRelativeLocation(FVector(100.0f, 0.0f, 0.0f));
-//
-// add to Tick()
-// DebugHelper->SetActorRotation(GetControlRotation());
+// DebugHelper->SetActorRelativeLocation(FVector(200.0f, 0.0f, 0.0f));
 //------------------------------------------------------------
 UCLASS()
 class QL_API AQLDebugHelper : public AActor
