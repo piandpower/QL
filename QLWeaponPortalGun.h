@@ -30,8 +30,8 @@ public:
     virtual void Tick(float DeltaSeconds) override;
     virtual void ResetWeapon() override;
     void QueryPortal();
-    void Zoom() override;
-    void PostInitializeComponents();
+    virtual void Zoom() override;
+    virtual void PostInitializeComponents() override;
 
     UPROPERTY()
     UTimelineComponent* ZoomTimeline;
